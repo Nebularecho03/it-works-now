@@ -14,7 +14,9 @@ NC='\033[0m'
 
 log() { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
 
-BASE_DIR="/home/codecrafter/Documents/combined"
+# Get script directory dynamically
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE_DIR="$SCRIPT_DIR"
 cd "$BASE_DIR"
 
 log "Starting PM2 monitoring dashboard..."

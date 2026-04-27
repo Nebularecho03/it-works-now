@@ -16,7 +16,9 @@ log() { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
 error() { printf "${RED}[ERROR]${NC} %s\n" "$1" >&2; exit 1; }
 warn() { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; }
 
-BASE_DIR="/home/codecrafter/Documents/combined"
+# Get script directory dynamically
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE_DIR="$SCRIPT_DIR"
 cd "$BASE_DIR"
 
 # Check if PM2 is installed
