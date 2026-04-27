@@ -20,8 +20,9 @@ const (
 )
 
 var (
-	websiteDir string
-	envFile    string
+	websiteDir     string
+	envFile        string
+	websiteEnvFile string
 )
 
 // initPaths initializes paths based on current working directory
@@ -82,6 +83,10 @@ func initPaths() {
 	log.Printf("Detected paths:")
 	log.Printf("  Website directory: %s", websiteDir)
 	log.Printf("  Environment file: %s", envFile)
+
+	// Set website env file path
+	websiteEnvFile = filepath.Join(websiteDir, ".env")
+	log.Printf("  Website env file: %s", websiteEnvFile)
 }
 
 type NgrokTunnel struct {
@@ -147,6 +152,10 @@ func (c *Configurator) UpdateDomain(ngrokURL string) error {
 	c.envMap["CORS_ORIGIN"] = ngrokURL
 	c.envMap["ADMIN_ALLOWED_ORIGIN"] = ngrokURL
 	c.envMap["NEXTAUTH_URL"] = ngrokURL
+	c.envMap["NEXT_PUBLIC_SITE_URL"] = ngrokURL
+	c.envMap["NEXT_PUBLIC_SCHOLARS_URL"] = fmt.Sprintf("https://scholars.%s", baseURL)
+	c.envMap["NEXT_PUBLIC_API_URL"] = ngrokURL
+	c.envMap["ADMIN_BACKEND_URL"] = ngrokURL
 
 	return nil
 }
@@ -168,6 +177,36 @@ func (c *Configurator) SaveEnv() error {
 
 	// Write all environment variables
 	for key, value := range c.envMap {
+		file.WriteString(fmt.Sprintf("%s=%s\n", key, value))
+	}
+
+	return nil
+}
+
+// ConfigureWebsiteEnv configures the website's .env file
+func (c *Configurator) ConfigureWebsiteEnv() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	websiteEnv := map[string]string{
+		"DATABASE_URL":             "postgresql://postgres:postgres@localhost:5432/stephenasatsa_v2?schema=public",
+		"NEXTAUTH_SECRET":          "ngrok-dev-secret-change-in-production",
+		"DOMAIN_NAME":              c.envMap["DOMAIN_NAME"],
+		"NEXTAUTH_URL":             c.envMap["NEXTAUTH_URL"],
+		"NEXT_PUBLIC_SITE_URL":     c.envMap["NEXT_PUBLIC_SITE_URL"],
+		"NEXT_PUBLIC_SCHOLARS_URL": c.envMap["NEXT_PUBLIC_SCHOLARS_URL"],
+		"NEXT_PUBLIC_API_URL":      "",
+		"ADMIN_EMAIL":              "admin@localhost",
+		"ADMIN_PASSWORD":           "ChangeMe123!",
+	}
+
+	file, err := os.Create(websiteEnvFile)
+	if err != nil {
+		return fmt.Errorf("failed to create website .env file: %w", err)
+	}
+	defer file.Close()
+
+	for key, value := range websiteEnv {
 		file.WriteString(fmt.Sprintf("%s=%s\n", key, value))
 	}
 
@@ -388,6 +427,15 @@ func Deploy(ctx context.Context) error {
 		}
 
 		log.Println("[config] .env file updated successfully")
+
+		// Configure website .env file
+		log.Println("[config] Configuring website .env file...")
+		if err := configurator.ConfigureWebsiteEnv(); err != nil {
+			log.Printf("Error configuring website .env: %v", err)
+			return
+		}
+
+		log.Println("[config] Website .env file configured successfully")
 	}()
 
 	// Wait for errors or context cancellation
