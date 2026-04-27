@@ -86,9 +86,10 @@ setup_projects() {
     cat > "$WEBSITE_DIR/.env" << EOF
 DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME_WEBSITE?schema=public"
 NEXTAUTH_SECRET="production-secret-key-change-this"
-NEXTAUTH_URL="https://devmain.co.ke"
-NEXT_PUBLIC_SITE_URL="https://devmain.co.ke"
-NEXT_PUBLIC_SCHOLARS_FORGE_URL="https://scholars.devmain.co.ke"
+NEXTAUTH_URL="https://virus-stoning-stubborn.ngrok-free.dev"
+NEXT_PUBLIC_SITE_URL="https://virus-stoning-stubborn.ngrok-free.dev"
+NEXT_PUBLIC_SCHOLARS_FORGE_URL="https://virus-stoning-stubborn.ngrok-free.dev/scholars"
+ADMIN_BACKEND_URL="http://localhost:8000/api"
 EOF
     
     # Setup Scholars-work-bench
@@ -106,9 +107,9 @@ EOF
 PORT=8080
 DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME_SCHOLARS
 SESSION_SECRET=scholarforge-production-secret-key-2024
-NODE_ENV=production
-WEBSITE_URL=https://devmain.co.ke
-CORS_ORIGIN=https://devmain.co.ke
+NODE_ENV=development
+WEBSITE_URL=https://virus-stoning-stubborn.ngrok-free.dev
+CORS_ORIGIN=https://virus-stoning-stubborn.ngrok-free.dev
 EOF
     
     log "Projects setup completed"
@@ -130,14 +131,25 @@ build_applications() {
     warn "Skipping build, using dev mode for Website"
     WEBSITE_MODE="development"
     
-    # Install Scholars API server dependencies directly
+    # Install Scholars API server dependencies using pnpm (workspace protocol)
     log "Installing Scholars API server dependencies..."
-    cd "$SCHOLARS_DIR/artifacts/api-server"
-    npm install
     cd "$SCHOLARS_DIR"
+    pnpm install
+    cd "$SCHOLARS_DIR/artifacts/api-server"
+    pnpm install --filter @workspace/api-server
     
     warn "Using Scholars dev mode"
     SCHOLARS_MODE="development"
+    
+    # Setup Python admin backend
+    log "Setting up Python admin backend..."
+    cd "$WEBSITE_DIR/backend"
+    if [ ! -d "venv" ]; then
+        python3 -m venv venv
+    fi
+    source venv/bin/activate
+    pip install -r requirements.txt
+    deactivate
     
     log "Dependencies installed (dev mode)"
 }
@@ -160,8 +172,8 @@ create_systemd_services() {
         SCHOLARS_CMD="/usr/bin/node dist/index.mjs"
         SCHOLARS_ENV="NODE_ENV=production"
     else
-        # Direct npm run dev in the artifacts/api-server directory
-        SCHOLARS_CMD="/usr/bin/npm run dev"
+        # Use pnpm for workspace protocol support
+        SCHOLARS_CMD="/usr/local/bin/pnpm run dev"
         SCHOLARS_WORKDIR="$SCHOLARS_DIR/artifacts/api-server"
         SCHOLARS_ENV="NODE_ENV=development"
     fi
@@ -201,8 +213,27 @@ WorkingDirectory=$SCHOLARS_WORKDIR
 Environment="$SCHOLARS_ENV"
 Environment="PORT=8080"
 Environment="DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME_SCHOLARS"
-Environment="WEBSITE_URL=https://devmain.co.ke"
+Environment="WEBSITE_URL=https://virus-stoning-stubborn.ngrok-free.dev"
 ExecStart=$SCHOLARS_CMD
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    
+    # Python admin backend service
+    run_root tee /etc/systemd/system/admin-backend.service > /dev/null << EOF
+[Unit]
+Description=Python Admin Backend API
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=codecrafter
+WorkingDirectory=$WEBSITE_DIR/backend
+Environment="PATH=$WEBSITE_DIR/backend/venv/bin"
+ExecStart=$WEBSITE_DIR/backend/venv/bin/python admin_backend_manager.py start
 Restart=always
 RestartSec=10
 
@@ -213,8 +244,9 @@ EOF
     run_root systemctl daemon-reload
     run_root systemctl enable website.service
     run_root systemctl enable scholars.service
+    run_root systemctl enable admin-backend.service
     
-    log "Systemd services created (Website: $WEBSITE_MODE, Scholars: $SCHOLARS_MODE)"
+    log "Systemd services created (Website: $WEBSITE_MODE, Scholars: $SCHOLARS_MODE, Admin Backend: Python)"
 }
 
 # Step 7: Configure Nginx
