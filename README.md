@@ -30,7 +30,71 @@ A full-stack web application combining a Next.js website, Scholar Forge applicat
 
 ## Quick Start
 
-### Option 1: Bare Metal Deployment
+### Deployment Options
+
+The project includes multiple deployment scripts that automatically detect your environment:
+
+- **deploy-codespace.sh** - For GitHub Codespaces and containers (no systemd)
+- **deploy-both-projects.sh** - Auto-detects systemd, falls back to PM2 if unavailable
+- **deploy-docker.sh** - Docker-based deployment with systemd detection
+- **deploy-systemd-bare-metal.sh** - Bare metal with systemd (requires systemd)
+- **start-pm2.sh** - Direct PM2 startup (manual dependency installation)
+
+### Option 1: GitHub Codespaces / Containers (No Systemd)
+
+```bash
+git clone https://github.com/Cyberverse-cent0/combined-project.git
+cd combined-project
+./deploy-codespace.sh
+```
+
+This script automatically:
+- Installs PM2 and pnpm
+- Installs all dependencies
+- Builds Scholar Forge
+- Optionally builds Go services
+- Starts all services with PM2
+
+### Option 2: Bare Metal with Systemd Detection
+
+```bash
+git clone https://github.com/Cyberverse-cent0/combined-project.git
+cd combined-project
+./deploy-both-projects.sh
+```
+
+This script automatically:
+- Detects if systemd is available
+- Uses systemd deployment if available
+- Falls back to PM2 if systemd is not available
+- Installs system dependencies
+- Sets up PostgreSQL databases
+- Configures and starts services
+
+**Force specific deployment mode:**
+```bash
+# Force PM2 mode (even if systemd is available)
+DEPLOYMENT_MODE=pm2 ./deploy-both-projects.sh
+
+# Force systemd mode (will fail if systemd not available)
+DEPLOYMENT_MODE=systemd ./deploy-both-projects.sh
+```
+
+### Option 3: Docker Deployment
+
+```bash
+git clone https://github.com/Cyberverse-cent0/combined-project.git
+cd combined-project
+./deploy-docker.sh
+```
+
+This script automatically:
+- Detects systemd availability
+- Uses appropriate service management
+- Sets up Docker containers
+- Configures networking and volumes
+
+### Option 4: Manual Bare Metal Deployment
 
 #### 1. Clone the Repository
 ```bash

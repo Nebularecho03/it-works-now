@@ -17,6 +17,17 @@ else
     exit 1
 fi
 
+# Detect if systemd is available
+has_systemd() {
+    if command -v systemctl &> /dev/null && systemctl --version &> /dev/null; then
+        # Check if systemd is actually running (not just installed)
+        if systemctl is-system-running &> /dev/null; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
 # Configuration
 PROJECTS_DIR="$HOME/projects"
 WEBSITE_DIR="$PROJECTS_DIR/website"
@@ -33,9 +44,13 @@ DEPLOYMENT_MODE="${DEPLOYMENT_MODE:-docker}"  # Options: pm2, docker
 stop_existing_services() {
     log "Stopping existing services..."
     
-    # Stop systemd services
-    run_root systemctl stop website-frontend website-backend scholars 2>/dev/null || true
-    run_root systemctl disable website-frontend website-backend scholars 2>/dev/null || true
+    # Stop systemd services if available
+    if has_systemd; then
+        run_root systemctl stop website-frontend website-backend scholars 2>/dev/null || true
+        run_root systemctl disable website-frontend website-backend scholars 2>/dev/null || true
+    else
+        log "Systemd not available, skipping systemd service stop"
+    fi
     
     # Stop Docker containers
     cd "$WEBSITE_DIR" 2>/dev/null && docker compose down 2>/dev/null || true
@@ -46,7 +61,52 @@ stop_existing_services() {
 
 # Step 2: Setup PostgreSQL databases (using OS detection library)
 setup_databases_custom() {
-    setup_databases "$DB_USER" "$DB_PASSWORD" "$DB_NAME_WEBSITE" "$DB_NAME_SCHOLARS"
+    if has_systemd; then
+        setup_databases "$DB_USER" "$DB_PASSWORD" "$DB_NAME_WEBSITE" "$DB_NAME_SCHOLARS"
+    else
+        log "Systemd not available, using service command for PostgreSQL..."
+        # Start PostgreSQL with service command
+        if command -v service &> /dev/null; then
+            run_root service postgresql start
+        elif command -v pg_ctlcluster &> /dev/null; then
+            run_root pg_ctlcluster 16 main start
+        else
+            warn "Could not start PostgreSQL automatically, please start it manually"
+        fi
+        
+        # Setup databases without systemd
+        log "Setting up PostgreSQL databases..."
+        sleep 2
+        
+        # Create databases
+        if ! run_root -u postgres psql -lqt | cut -d \| -f 1 | grep -qw $DB_NAME_WEBSITE; then
+            run_root -u postgres psql -c "CREATE DATABASE $DB_NAME_WEBSITE;"
+            log "Created database $DB_NAME_WEBSITE"
+        else
+            warn "Database $DB_NAME_WEBSITE already exists"
+        fi
+        
+        if ! run_root -u postgres psql -lqt | cut -d \| -f 1 | grep -qw $DB_NAME_SCHOLARS; then
+            run_root -u postgres psql -c "CREATE DATABASE $DB_NAME_SCHOLARS;"
+            log "Created database $DB_NAME_SCHOLARS"
+        else
+            warn "Database $DB_NAME_SCHOLARS already exists"
+        fi
+        
+        # Create user if not exists
+        if ! run_root -u postgres psql -c "\du" | grep -qw $DB_USER; then
+            run_root -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+            log "Created database user $DB_USER"
+        else
+            warn "Database user $DB_USER already exists"
+        fi
+        
+        # Grant privileges
+        run_root -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME_WEBSITE TO $DB_USER;"
+        run_root -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME_SCHOLARS TO $DB_USER;"
+        
+        log "Database setup completed"
+    fi
 }
 
 # Step 3: Clone and setup Website project

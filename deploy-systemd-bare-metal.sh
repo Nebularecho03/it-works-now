@@ -17,6 +17,17 @@ else
     exit 1
 fi
 
+# Detect if systemd is available
+has_systemd() {
+    if command -v systemctl &> /dev/null && systemctl --version &> /dev/null; then
+        # Check if systemd is actually running (not just installed)
+        if systemctl is-system-running &> /dev/null; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
 # Configuration
 PROJECTS_DIR="/home/codecrafter/projects"
 WEBSITE_DIR="$PROJECTS_DIR/website"
@@ -25,6 +36,13 @@ DB_USER="codecrafter"
 DB_PASSWORD="change_this_secure_password"
 DB_NAME_WEBSITE="stephenasatsa"
 DB_NAME_SCHOLARS="scholarforge"
+
+# Auto-detect deployment mode based on systemd availability
+if ! has_systemd; then
+    log "Systemd not detected, this script requires systemd"
+    log "Please use deploy-codespace.sh or set DEPLOYMENT_MODE=pm2 with deploy-both-projects.sh"
+    exit 1
+fi
 
 # Step 1: Remove Docker (using OS detection library)
 remove_docker_custom() {
