@@ -8,7 +8,14 @@ set -e
 
 # Source OS detection library
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/website/scripts/utilities/os-detect.sh"
+if [ -f "$SCRIPT_DIR/website/scripts/utilities/os-detect.sh" ]; then
+    source "$SCRIPT_DIR/website/scripts/utilities/os-detect.sh"
+elif [ -f "$SCRIPT_DIR/scripts/utilities/os-detect.sh" ]; then
+    source "$SCRIPT_DIR/scripts/utilities/os-detect.sh"
+else
+    echo "Error: os-detect.sh not found in expected locations"
+    exit 1
+fi
 
 # Configuration
 PROJECTS_DIR="$HOME/projects"
