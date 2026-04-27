@@ -9,16 +9,80 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 )
 
 const (
-	websiteDir = "/home/codecrafter/Documents/combined/website"
-	envFile    = "/home/codecrafter/Documents/combined/.env"
-	ngrokAPI   = "http://127.0.0.1:4040/api/tunnels"
+	ngrokAPI = "http://127.0.0.1:4040/api/tunnels"
 )
+
+var (
+	websiteDir string
+	envFile    string
+)
+
+// initPaths initializes paths based on current working directory
+func initPaths() {
+	// Get current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Failed to get current working directory: %v", err)
+	}
+
+	// Check if we're in the combined directory or a subdirectory
+	// If we're in ~/combined-project, use that as base
+	// If we're in ~/Documents/combined, use that as base
+	// Otherwise, assume we're in the project root
+
+	// Try to detect website directory
+	if _, err := os.Stat("website"); err == nil {
+		websiteDir = filepath.Join(cwd, "website")
+	} else if _, err := os.Stat("../website"); err == nil {
+		websiteDir = filepath.Join(cwd, "..", "website")
+	} else {
+		// Fallback to common locations
+		possiblePaths := []string{
+			filepath.Join(cwd, "website"),
+			filepath.Join(cwd, "..", "website"),
+			"/home/codecrafter/combined-project/website",
+			"/home/codecrafter/Documents/combined/website",
+		}
+		for _, path := range possiblePaths {
+			if _, err := os.Stat(path); err == nil {
+				websiteDir = path
+				break
+			}
+		}
+	}
+
+	// Try to detect .env file
+	if _, err := os.Stat(".env"); err == nil {
+		envFile = filepath.Join(cwd, ".env")
+	} else if _, err := os.Stat("../.env"); err == nil {
+		envFile = filepath.Join(cwd, "..", ".env")
+	} else {
+		// Fallback to common locations
+		possiblePaths := []string{
+			filepath.Join(cwd, ".env"),
+			filepath.Join(cwd, "..", ".env"),
+			"/home/codecrafter/combined-project/.env",
+			"/home/codecrafter/Documents/combined/.env",
+		}
+		for _, path := range possiblePaths {
+			if _, err := os.Stat(path); err == nil {
+				envFile = path
+				break
+			}
+		}
+	}
+
+	log.Printf("Detected paths:")
+	log.Printf("  Website directory: %s", websiteDir)
+	log.Printf("  Environment file: %s", envFile)
+}
 
 type NgrokTunnel struct {
 	PublicURL string `json:"public_url"`
@@ -342,6 +406,9 @@ func Deploy(ctx context.Context) error {
 }
 
 func main() {
+	// Initialize paths based on current working directory
+	initPaths()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
