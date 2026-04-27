@@ -78,44 +78,48 @@ log ""
 
 # Check 4: PostgreSQL status
 log "Check 4: PostgreSQL status"
+POSTGRES_RUNNING=false
 if command -v pg_isready &> /dev/null; then
     if pg_isready -h localhost -p 5432 &> /dev/null; then
         log "✓ PostgreSQL is running"
+        POSTGRES_RUNNING=true
     else
-        error "PostgreSQL is not running"
-        log "Starting PostgreSQL..."
-        sudo systemctl start postgresql || sudo service postgresql start || error "Failed to start PostgreSQL"
-        sleep 2
-        if pg_isready -h localhost -p 5432 &> /dev/null; then
-            log "✓ PostgreSQL started successfully"
-        else
-            error "PostgreSQL still not running after start attempt"
-            exit 1
-        fi
+        warn "PostgreSQL is not running (pg_isready)"
     fi
 else
     warn "pg_isready command not found, checking with systemctl"
-    if systemctl is-active --quiet postgresql || systemctl is-active --quiet postgresql@16-main; then
+    if systemctl is-active --quiet postgresql || systemctl is-active --quiet postgresql@16-main 2>/dev/null; then
         log "✓ PostgreSQL is running (systemctl)"
+        POSTGRES_RUNNING=true
     else
-        error "PostgreSQL is not running"
-        exit 1
+        warn "PostgreSQL is not running (systemctl)"
     fi
+fi
+
+if [ "$POSTGRES_RUNNING" = false ]; then
+    warn "PostgreSQL is not running - database checks will be skipped"
+    log "To fix: sudo systemctl start postgresql"
 fi
 log ""
 
-# Check 5: Database exists
-log "Check 5: Database exists"
-DB_NAME="stephenasatsa_v2"
-if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
-    log "✓ Database '$DB_NAME' exists"
+# Check 5: Database exists (only if PostgreSQL is running)
+if [ "$POSTGRES_RUNNING" = true ]; then
+    log "Check 5: Database exists"
+    DB_NAME="stephenasatsa_v2"
+    if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
+        log "✓ Database '$DB_NAME' exists"
+    else
+        warn "Database '$DB_NAME' does not exist"
+        log "Creating database..."
+        sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" || error "Failed to create database"
+        log "✓ Database created"
+    fi
+    log ""
 else
-    warn "Database '$DB_NAME' does not exist"
-    log "Creating database..."
-    sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" || error "Failed to create database"
-    log "✓ Database created"
+    log "Check 5: Database exists"
+    warn "Skipped (PostgreSQL not running)"
+    log ""
 fi
-log ""
 
 # Check 6: Node.js and npm
 log "Check 6: Node.js and npm"
@@ -145,54 +149,88 @@ if [ ! -d "$WEBSITE_DIR/node_modules" ]; then
 else
     log "✓ node_modules exists"
 fi
-log ""
 
-# Check 8: Database schema/migrations
-log "Check 8: Database schema"
+# Check for common missing dependencies
+log "Check 7.1: Common missing dependencies"
 cd "$WEBSITE_DIR"
-if [ -f "package.json" ]; then
-    log "Running database migrations..."
-    if npx prisma migrate deploy 2>&1 | tee /tmp/prisma-migrate.log; then
-        log "✓ Database migrations applied"
-    else
-        warn "Migration had issues, trying db push..."
-        if npx prisma db push 2>&1 | tee /tmp/prisma-push.log; then
-            log "✓ Database schema synced with db push"
-        else
-            error "Failed to sync database schema"
-            log "Check migration logs:"
-            cat /tmp/prisma-migrate.log
-            cat /tmp/prisma-push.log
-            exit 1
-        fi
-    fi
+MISSING_DEPS=""
+if ! npm list next-auth &>/dev/null; then
+    MISSING_DEPS="$MISSING_DEPS next-auth"
+fi
+if ! npm list @auth/prisma-adapter &>/dev/null; then
+    MISSING_DEPS="$MISSING_DEPS @auth/prisma-adapter"
+fi
+
+if [ -n "$MISSING_DEPS" ]; then
+    warn "Installing missing dependencies: $MISSING_DEPS"
+    npm install $MISSING_DEPS
+    log "✓ Missing dependencies installed"
 else
-    error "package.json not found in website directory"
-    exit 1
+    log "✓ All common dependencies present"
 fi
 cd "$PROJECT_DIR"
 log ""
 
-# Check 9: Test database connection
-log "Check 9: Test database connection"
-cd "$WEBSITE_DIR"
-if npx prisma db execute --stdin << EOF
+# Check 8: Database schema/migrations (only if PostgreSQL is running)
+if [ "$POSTGRES_RUNNING" = true ]; then
+    log "Check 8: Database schema"
+    cd "$WEBSITE_DIR"
+    if [ -f "package.json" ]; then
+        log "Running database migrations..."
+        if npx prisma migrate deploy 2>&1 | tee /tmp/prisma-migrate.log; then
+            log "✓ Database migrations applied"
+        else
+            warn "Migration had issues, trying db push..."
+            if npx prisma db push 2>&1 | tee /tmp/prisma-push.log; then
+                log "✓ Database schema synced with db push"
+            else
+                error "Failed to sync database schema"
+                log "Check migration logs:"
+                cat /tmp/prisma-migrate.log
+                cat /tmp/prisma-push.log
+                exit 1
+            fi
+        fi
+    else
+        error "package.json not found in website directory"
+        exit 1
+    fi
+    cd "$PROJECT_DIR"
+    log ""
+
+    # Check 9: Test database connection
+    log "Check 9: Test database connection"
+    cd "$WEBSITE_DIR"
+    if npx prisma db execute --stdin << EOF
 SELECT 1;
 EOF
-then
-    log "✓ Database connection successful"
+    then
+        log "✓ Database connection successful"
+    else
+        error "Database connection failed"
+        exit 1
+    fi
+    cd "$PROJECT_DIR"
+    log ""
 else
-    error "Database connection failed"
-    exit 1
+    log "Check 8: Database schema"
+    warn "Skipped (PostgreSQL not running)"
+    log ""
+    log "Check 9: Test database connection"
+    warn "Skipped (PostgreSQL not running)"
+    log ""
 fi
-cd "$PROJECT_DIR"
-log ""
 
 # Check 10: Next.js build check
 log "Check 10: Next.js build check"
 cd "$WEBSITE_DIR"
 log "Building Next.js application (this may take a few minutes)..."
 if npm run build 2>&1 | tee /tmp/next-build.log; then
+    if grep -q "Failed to compile" /tmp/next-build.log || grep -q "Build failed" /tmp/next-build.log; then
+        error "Next.js build failed (detected in logs)"
+        log "Check build log: /tmp/next-build.log"
+        exit 1
+    fi
     log "✓ Next.js build successful"
 else
     error "Next.js build failed"
