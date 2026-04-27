@@ -36,53 +36,73 @@ if ! command -v pnpm &> /dev/null; then
 fi
 
 # Install website dependencies
-log "Installing website dependencies..."
-cd website
-if [ ! -d "node_modules" ]; then
-    npm install
+if [ -d "website" ] && [ -f "website/package.json" ]; then
+    log "Installing website dependencies..."
+    cd website
+    if [ ! -d "node_modules" ]; then
+        npm install
+    else
+        log "Website dependencies already installed"
+    fi
+    cd "$SCRIPT_DIR"
 else
-    log "Website dependencies already installed"
+    warn "Website directory or package.json not found, skipping website dependencies"
 fi
-cd "$SCRIPT_DIR"
 
 # Install Scholar Forge dependencies
-log "Installing Scholar Forge dependencies..."
-cd Schoolars-work-bench
-if [ ! -d "node_modules" ]; then
-    pnpm install
+if [ -d "Schoolars-work-bench" ] && [ -f "Schoolars-work-bench/package.json" ]; then
+    log "Installing Scholar Forge dependencies..."
+    cd Schoolars-work-bench
+    if [ ! -d "node_modules" ]; then
+        pnpm install
+    else
+        log "Scholar Forge dependencies already installed"
+    fi
+    cd "$SCRIPT_DIR"
 else
-    log "Scholar Forge dependencies already installed"
+    warn "Scholar Forge directory or package.json not found, skipping Scholar Forge dependencies"
 fi
-cd "$SCRIPT_DIR"
 
 # Install Python backend dependencies
-log "Installing Python backend dependencies..."
-cd website/backend
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+if [ -d "website/backend" ] && [ -f "website/backend/requirements.txt" ]; then
+    log "Installing Python backend dependencies..."
+    cd website/backend
+    if [ ! -d "venv" ]; then
+        python3 -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+    else
+        log "Python backend dependencies already installed"
+    fi
+    cd "$SCRIPT_DIR"
 else
-    log "Python backend dependencies already installed"
+    warn "Python backend directory or requirements.txt not found, skipping Python dependencies"
 fi
-cd "$SCRIPT_DIR"
 
 # Build Scholar Forge
-log "Building Scholar Forge..."
-cd Schoolars-work-bench
-pnpm build
-cd "$SCRIPT_DIR"
+if [ -d "Schoolars-work-bench" ] && [ -f "Schoolars-work-bench/package.json" ]; then
+    log "Building Scholar Forge..."
+    cd Schoolars-work-bench
+    pnpm build
+    cd "$SCRIPT_DIR"
+else
+    warn "Scholar Forge directory not found, skipping build"
+fi
 
 # Build Go services (optional)
 if command -v go &> /dev/null; then
-    log "Building Go microservices..."
-    cd website/backend/go-services
-    if [ -f "build-all.sh" ]; then
-        ./build-all.sh
+    if [ -d "website/backend/go-services" ]; then
+        log "Building Go microservices..."
+        cd website/backend/go-services
+        if [ -f "build-all.sh" ]; then
+            ./build-all.sh
+        else
+            warn "Go services build script not found, skipping"
+        fi
+        cd "$SCRIPT_DIR"
     else
-        warn "Go services build script not found, skipping"
+        warn "Go services directory not found, skipping Go services build"
     fi
-    cd "$SCRIPT_DIR"
 else
     warn "Go not installed, skipping Go services build"
 fi
