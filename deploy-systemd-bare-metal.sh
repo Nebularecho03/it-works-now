@@ -58,6 +58,14 @@ install_system_deps_custom() {
         log "Installing pnpm..."
         run_root npm install -g pnpm
     fi
+    
+    # Ensure pnpm is in PATH for systemd services
+    if command -v pnpm &> /dev/null; then
+        PNPM_PATH=$(which pnpm)
+        log "pnpm found at: $PNPM_PATH"
+    else
+        error "pnpm not found after installation attempt"
+    fi
 }
 
 # Step 3: Setup PostgreSQL databases (using OS detection library)
@@ -188,7 +196,12 @@ create_systemd_services() {
         SCHOLARS_ENV="NODE_ENV=production"
     else
         # Use pnpm for workspace protocol support
-        SCHOLARS_CMD="/usr/local/bin/pnpm run dev"
+        # Detect pnpm path dynamically
+        if command -v pnpm &> /dev/null; then
+            SCHOLARS_CMD="$(which pnpm) run dev"
+        else
+            SCHOLARS_CMD="/usr/local/bin/pnpm run dev"
+        fi
         SCHOLARS_WORKDIR="$SCHOLARS_DIR/artifacts/api-server"
         SCHOLARS_ENV="NODE_ENV=development"
     fi
@@ -204,6 +217,7 @@ Type=simple
 User=codecrafter
 WorkingDirectory=$WEBSITE_DIR
 Environment="$WEBSITE_ENV"
+Environment="PATH=/usr/bin:/home/codecrafter/.local/bin"
 Environment="DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME_WEBSITE?schema=public"
 Environment="NEXTAUTH_URL=https://$DOMAIN_NAME"
 Environment="NEXT_PUBLIC_SITE_URL=https://$DOMAIN_NAME"
