@@ -82,11 +82,22 @@ setup_databases_custom() {
         setup_databases "$DB_USER" "$DB_PASSWORD" "$DB_NAME_WEBSITE" "$DB_NAME_SCHOLARS"
     else
         log "Systemd not available, using service command for PostgreSQL..."
+        # Detect PostgreSQL version
+        PG_VERSION=$(pg_config --version 2>/dev/null | awk '{print $2}' | cut -d. -f1)
+        if [ -z "$PG_VERSION" ]; then
+            # Try to detect from installed packages
+            PG_VERSION=$(dpkg -l | grep postgresql | grep -E "postgresql-[0-9]" | head -1 | awk '{print $2}' | cut -d- -f2 | cut -d. -f1)
+        fi
+        if [ -z "$PG_VERSION" ]; then
+            PG_VERSION="15"  # Default to version 15 for Debian 12
+        fi
+        log "Detected PostgreSQL version: $PG_VERSION"
+        
         # Start PostgreSQL with service command
         if command -v service &> /dev/null; then
             sudo service postgresql start
         elif command -v pg_ctlcluster &> /dev/null; then
-            sudo pg_ctlcluster 16 main start
+            sudo pg_ctlcluster $PG_VERSION main start
         else
             warn "Could not start PostgreSQL automatically, please start it manually"
         fi
