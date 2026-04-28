@@ -15,7 +15,9 @@ NC='\033[0m'
 log() { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
 error() { printf "${RED}[ERROR]${NC} %s\n" "$1" >&2; exit 1; }
 
-BASE_DIR="/home/codecrafter/Documents/combined"
+# Detect base directory (works for both local and remote)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE_DIR="$SCRIPT_DIR"
 cd "$BASE_DIR"
 
 log "Restarting all PM2 processes (graceful reload)..."
