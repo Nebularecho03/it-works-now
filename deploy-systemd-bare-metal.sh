@@ -17,6 +17,13 @@ else
     exit 1
 fi
 
+# Fallback: define has_systemd if not available from os-detect.sh
+if ! command -v has_systemd &> /dev/null; then
+    has_systemd() {
+        command -v systemctl &> /dev/null && systemctl --version &> /dev/null
+    }
+fi
+
 # Detect if systemd is available
 #
 # Configuration
