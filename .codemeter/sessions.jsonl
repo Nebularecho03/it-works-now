@@ -14,3 +14,10 @@
 {"type":"update","sessionId":"3fbc7e69-c5a7-4a94-a6ac-63e08fdd2548","patch":{"focused":true,"idle":false}}
 {"type":"update","sessionId":"3fbc7e69-c5a7-4a94-a6ac-63e08fdd2548","patch":{"focused":true,"idle":false}}
 {"type":"update","sessionId":"3fbc7e69-c5a7-4a94-a6ac-63e08fdd2548","patch":{"focused":true,"idle":false}}
+{"type":"update","sessionId":"3fbc7e69-c5a7-4a94-a6ac-63e08fdd2548","patch":{"focused":true,"idle":false}}
+{"type":"update","sessionId":"3fbc7e69-c5a7-4a94-a6ac-63e08fdd2548","patch":{"focused":true,"idle":false}}
+{"type":"update","sessionId":"3fbc7e69-c5a7-4a94-a6ac-63e08fdd2548","patch":{"endMs":1777357260388}}
+{"type":"create","session":{"id":"391584a9-7b72-48bc-9738-67e8189c2076","projectKey":"7c890649b0deca6482dbe82c79568c42","workspaceFolders":["/home/codecrafter/Documents/combined"],"startMs":1777357260388,"focused":false,"idle":false,"ideInstanceId":"7a15bab4-7f49-4cc4-b628-1ab782ee1a70","ideType":"vscode"}}
+{"type":"update","sessionId":"391584a9-7b72-48bc-9738-67e8189c2076","patch":{"endMs":1777357288132}}
+{"type":"create","session":{"id":"331e22db-ad51-419f-9ca2-21285248eac0","projectKey":"7c890649b0deca6482dbe82c79568c42","workspaceFolders":["/home/codecrafter/Documents/combined"],"startMs":1777357288132,"focused":true,"idle":false,"ideInstanceId":"7a15bab4-7f49-4cc4-b628-1ab782ee1a70","ideType":"vscode"}}
+{"type":"update","sessionId":"331e22db-ad51-419f-9ca2-21285248eac0","patch":{"focused":true,"idle":false}}
