@@ -127,6 +127,8 @@ build_applications() {
     # Install Website dependencies
     log "Installing Website dependencies..."
     cd "$WEBSITE_DIR"
+    # Clean node_modules to avoid ENOTEMPTY errors
+    rm -rf node_modules package-lock.json
     npm install
     
     # Install missing NextAuth dependencies
