@@ -1,0 +1,10 @@
+[Unit]
+Description=Auto-update service for website and schoolars-work-bench projects
+
+[Service]
+Type=oneshot
+User=codecrafter
+WorkingDirectory=/home/codecrafter
+ExecStart=/home/codecrafter/auto-update.sh
+StandardOutput=append:/home/codecrafter/auto-update-logs/service.log
+StandardError=append:/home/codecrafter/auto-update-logs/service-error.log

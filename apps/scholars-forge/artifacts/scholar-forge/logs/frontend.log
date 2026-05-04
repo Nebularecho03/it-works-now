@@ -1,0 +1,12 @@
+
+> @workspace/scholar-forge@0.0.0 dev
+> vite --config vite.config.ts --host 0.0.0.0
+
+Port 4500 is in use, trying another one...
+
+  VITE v7.3.2  ready in 482 ms
+
+  ➜  Local:   http://localhost:4501/
+  ➜  Network: http://192.168.146.134:4501/
+  ➜  Network: http://192.168.122.1:4501/
+  ➜  Network: http://172.19.0.1:4501/

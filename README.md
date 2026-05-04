@@ -2,7 +2,30 @@
 
 A full-stack web application combining a Next.js website, Scholar Forge application, and Go microservices for high-performance computing operations.
 
-## Architecture
+## 🏗️ Project Structure
+
+```
+combined-project/
+├── apps/                    # Application code
+│   ├── website/             # Next.js main website + Python backend
+│   └── scholars-forge/     # Scholar Forge academic platform
+├── deployment/              # Deployment automation
+│   ├── scripts/            # All deployment scripts
+│   ├── configs/            # PM2, nginx, docker configs
+│   └── docs/               # Deployment guides
+├── docs/                    # Documentation
+│   ├── architecture/        # System architecture docs
+│   ├── setup/              # Setup and configuration
+│   └── api/                # API documentation
+├── infrastructure/          # Infrastructure as code
+│   ├── .github/            # CI/CD workflows
+│   ├── logs/               # Log storage
+│   └── auto-update.*       # System service configs
+├── archive/                 # Archived unused files
+└── tools/                   # Utility scripts
+```
+
+## 🚀 Architecture
 
 - **Website Frontend**: Next.js (React) - Main website with admin panel
 - **Scholar Forge Frontend**: React/Vite - Academic collaboration platform
@@ -14,7 +37,7 @@ A full-stack web application combining a Next.js website, Scholar Forge applicat
   - Image Service (Port 9003) - Image processing
   - Worker Service (Port 9004) - Background task processing
 
-## Prerequisites
+## 📋 Prerequisites
 
 ### For Bare Metal Deployment
 - **Node.js** 18+ and npm
@@ -28,17 +51,17 @@ A full-stack web application combining a Next.js website, Scholar Forge applicat
 - **Docker** 20.10+
 - **Docker Compose** 2.0+
 
-## Domain Configuration
+## 🌐 Domain Configuration
 
-Before deploying, configure your domain name. See [DOMAIN-CONFIGURATION.md](./DOMAIN-CONFIGURATION.md) for detailed instructions.
+Before deploying, configure your domain name. See [docs/DOMAIN-CONFIGURATION.md](./docs/DOMAIN-CONFIGURATION.md) for detailed instructions.
 
 All deployment scripts accept the `DOMAIN_NAME` parameter:
 
 ```bash
-DOMAIN_NAME=your-domain.com ./deploy-docker.sh
+DOMAIN_NAME=your-domain.com ./deployment/scripts/deploy-docker.sh
 ```
 
-## Quick Start
+## ⚡ Quick Start
 
 ### Deployment Options
 
@@ -55,7 +78,7 @@ The project includes multiple deployment scripts that automatically detect your 
 ```bash
 git clone https://github.com/Cyberverse-cent0/combined-project.git
 cd combined-project
-./deploy-codespace.sh
+./deployment/scripts/deploy-codespace.sh
 ```
 
 This script automatically:
@@ -70,7 +93,7 @@ This script automatically:
 ```bash
 git clone https://github.com/Cyberverse-cent0/combined-project.git
 cd combined-project
-./deploy-both-projects.sh
+./deployment/scripts/deploy-both-projects.sh
 ```
 
 This script automatically:
@@ -84,10 +107,10 @@ This script automatically:
 **Force specific deployment mode:**
 ```bash
 # Force PM2 mode (even if systemd is available)
-DEPLOYMENT_MODE=pm2 ./deploy-both-projects.sh
+DEPLOYMENT_MODE=pm2 ./deployment/scripts/deploy-both-projects.sh
 
 # Force systemd mode (will fail if systemd not available)
-DEPLOYMENT_MODE=systemd ./deploy-both-projects.sh
+DEPLOYMENT_MODE=systemd ./deployment/scripts/deploy-both-projects.sh
 ```
 
 ### Option 3: Docker Deployment
@@ -95,7 +118,7 @@ DEPLOYMENT_MODE=systemd ./deploy-both-projects.sh
 ```bash
 git clone https://github.com/Cyberverse-cent0/combined-project.git
 cd combined-project
-./deploy-docker.sh
+./deployment/scripts/deploy-docker.sh
 ```
 
 This script automatically:
@@ -116,51 +139,51 @@ cd combined-project
 
 **Website Frontend:**
 ```bash
-cd website
+cd apps/website
 npm install
-cd ..
+cd ../..
 ```
 
 **Website Backend:**
 ```bash
-cd website/backend
+cd apps/website/backend
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cd ../..
+cd ../../..
 ```
 
 **Scholar Forge:**
 ```bash
-cd Schoolars-work-bench
+cd apps/scholars-forge
 pnpm install
-cd ..
+cd ../..
 ```
 
 **Go Microservices:**
 ```bash
-cd website/backend/go-services
+cd apps/website/backend/go-services
 ./build-all.sh
-cd ../..
+cd ../../..
 ```
 
 #### 3. Configure Environment Variables
 
 **Website Backend (.env):**
 ```bash
-cd website/backend
+cd apps/website/backend
 cp .env.example .env
 # Edit .env with your configuration
-cd ../..
+cd ../../..
 ```
 
 **Scholar Forge (.env):**
 ```bash
-cd Schoolars-work-bench
+cd apps/scholars-forge
 cp .env.example .env
 # Edit .env with your configuration
 BASE_PATH=/scholars
-cd ..
+cd ../..
 ```
 
 **Enable Go Services (Optional):**
@@ -173,11 +196,11 @@ export USE_GO_TELEMETRY_SERVICE=true
 
 ```bash
 # Start all services
-./start-pm2.sh
+./deployment/scripts/start-pm2.sh
 
 # Or start specific environment
-./start-pm2.sh dev      # Development
-./start-pm2.sh staging  # Staging
+./deployment/scripts/start-pm2.sh dev      # Development
+./deployment/scripts/start-pm2.sh staging  # Staging
 ```
 
 #### 5. Configure Nginx (Optional but Recommended)
@@ -237,40 +260,7 @@ sudo systemctl reload nginx
 - **Website API**: http://localhost:8000
 - **Scholars API**: http://localhost:8081
 
-### Option 2: Docker Deployment
-
-#### 1. Clone the Repository
-```bash
-git clone https://github.com/Cyberverse-cent0/combined-project.git
-cd combined-project
-```
-
-#### 2. Build and Start with Docker Compose
-
-```bash
-# Build and start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
-#### 3. Access the Application
-
-Docker Compose will expose services on the following ports:
-- **Website Frontend**: 3000
-- **Website Backend**: 8000
-- **Scholar Forge Frontend**: 4500
-- **Scholars API**: 8081
-- **Go Password Service**: 9001
-- **Go Telemetry Service**: 9002
-- **Go Image Service**: 9003
-- **Go Worker Service**: 9004
-
-## Management
+## 🔧 Management
 
 ### PM2 Commands (Bare Metal)
 
@@ -285,10 +275,10 @@ pm2 logs
 pm2 monit
 
 # Restart all services
-./restart-pm2.sh
+./deployment/scripts/restart-pm2.sh
 
 # Stop all services
-./stop-pm2.sh
+./deployment/scripts/stop-pm2.sh
 
 # Restart specific service
 pm2 restart website-frontend
@@ -321,12 +311,12 @@ docker-compose down
 docker-compose down -v
 ```
 
-## Go Microservices
+## 🛠️ Go Microservices
 
 ### Building Go Services
 
 ```bash
-cd website/backend/go-services
+cd apps/website/backend/go-services
 ./build-all.sh
 ```
 
@@ -366,7 +356,7 @@ curl http://localhost:9003/health
 curl http://localhost:9004/health
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 ### Website Backend (.env)
 
@@ -405,7 +395,7 @@ WEBSITE_URL=http://localhost:3000
 CORS_ORIGIN=http://localhost:3000
 ```
 
-## Port Configuration
+## 📊 Port Configuration
 
 | Service | Port | Description |
 |---------|------|-------------|
@@ -418,7 +408,7 @@ CORS_ORIGIN=http://localhost:3000
 | Go Image Service | 9003 | Image processing |
 | Go Worker Service | 9004 | Background tasks |
 
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Services Won't Start
 
@@ -446,7 +436,7 @@ go version
 
 **Rebuild services:**
 ```bash
-cd website/backend/go-services
+cd apps/website/backend/go-services
 ./build-all.sh
 ```
 
@@ -459,12 +449,12 @@ curl http://localhost:9001/health
 
 **Check database permissions:**
 ```bash
-ls -la website/backend/data/
+ls -la apps/website/backend/data/
 ```
 
 **Recreate database:**
 ```bash
-rm website/backend/data/users.db
+rm apps/website/backend/data/users.db
 # Restart the backend service
 pm2 restart website-backend
 ```
@@ -477,30 +467,30 @@ free -h
 top
 ```
 
-**Adjust PM2 memory limits in `ecosystem.config.js`**
+**Adjust PM2 memory limits in `deployment/configs/ecosystem.config.js`**
 
 **Reduce instance counts for low-spec machines**
 
-## Development
+## 🧪 Development
 
 ### Running in Development Mode
 
 **Website Frontend:**
 ```bash
-cd website
+cd apps/website
 npm run dev
 ```
 
 **Website Backend:**
 ```bash
-cd website/backend
+cd apps/website/backend
 source venv/bin/activate
 python server.py
 ```
 
 **Scholar Forge:**
 ```bash
-cd Schoolars-work-bench
+cd apps/scholars-forge
 pnpm dev
 ```
 
@@ -508,50 +498,22 @@ pnpm dev
 
 ```bash
 # Website tests
-cd website
+cd apps/website
 npm test
 
 # Backend tests
-cd website/backend
+cd apps/website/backend
 python -m pytest
 ```
 
-## Deployment Scripts
+## 📚 Documentation
 
-- `start-pm2.sh` - Start all services with PM2
-- `stop-pm2.sh` - Stop all services
-- `restart-pm2.sh` - Restart all services (zero-downtime)
-- `deploy-both-projects.sh` - Deploy both website and Scholar Forge
-- `deploy-docker.sh` - Docker deployment script
-- `deploy-systemd-bare-metal.sh` - Systemd service setup
+- **Architecture**: See `docs/architecture/` for system design
+- **Setup Guides**: See `docs/setup/` for detailed setup instructions
+- **API Documentation**: See `docs/api/` for API references
+- **Deployment**: See `deployment/docs/` for deployment-specific guides
 
-## Monitoring
-
-### PM2 Monitoring
-```bash
-pm2 monit
-```
-
-### Go Telemetry Service
-```bash
-curl http://localhost:9002/stats
-curl http://localhost:9002/system
-```
-
-### Log Files
-Logs are stored in the `logs/` directory:
-- `website-frontend-error.log`
-- `website-frontend-out.log`
-- `website-backend-error.log`
-- `website-backend-out.log`
-- `scholar-forge-error.log`
-- `scholar-forge-out.log`
-- `scholars-api-error.log`
-- `scholars-api-out.log`
-- `go-*-service-error.log`
-- `go-*-service-out.log`
-
-## Security
+## 🔒 Security
 
 - Change default admin passwords
 - Use HTTPS in production
@@ -560,24 +522,24 @@ Logs are stored in the `logs/` directory:
 - Enable Go services for better password hashing performance
 - Regularly backup database and uploads
 
-## Backup
+## 💾 Backup
 
 ### Database Backup
 ```bash
-cp website/backend/data/users.db backups/users-$(date +%Y%m%d).db
+cp apps/website/backend/data/users.db backups/users-$(date +%Y%m%d).db
 ```
 
 ### Full Backup
 ```bash
-tar -czf backup-$(date +%Y%m%d).tar.gz website Schoolars-work-bench
+tar -czf backup-$(date +%Y%m%d).tar.gz apps/website apps/scholars-forge
 ```
 
-## Support
+## 🆘 Support
 
 For issues and questions:
 - GitHub Issues: https://github.com/Cyberverse-cent0/combined-project/issues
 - Documentation: See individual README files in subdirectories
 
-## License
+## 📄 License
 
 [Your License Here]

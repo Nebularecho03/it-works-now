@@ -1,0 +1,784 @@
+2026-04-26 14:18:15: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:15: const http = require('http');
+2026-04-26 14:18:15:              ^
+2026-04-26 14:18:15: 
+2026-04-26 14:18:15: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:15: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:15:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:15:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:15:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:15:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:15:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:15: 
+2026-04-26 14:18:15: Node.js v25.9.0
+2026-04-26 14:18:15: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:15: const http = require('http');
+2026-04-26 14:18:15:              ^
+2026-04-26 14:18:15: 
+2026-04-26 14:18:15: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:15: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:15:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:15:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:15:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:15:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:15:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:15: 
+2026-04-26 14:18:15: Node.js v25.9.0
+2026-04-26 14:18:16: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:16: const http = require('http');
+2026-04-26 14:18:16:              ^
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:16: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:16:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:16:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:16:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:16:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:16:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: Node.js v25.9.0
+2026-04-26 14:18:16: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:16: const http = require('http');
+2026-04-26 14:18:16:              ^
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:16: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:16:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:16:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:16:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:16:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:16:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: Node.js v25.9.0
+2026-04-26 14:18:16: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:16: const http = require('http');
+2026-04-26 14:18:16:              ^
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:16: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:16:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:16:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:16:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:16:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:16:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: Node.js v25.9.0
+2026-04-26 14:18:16: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:16: const http = require('http');
+2026-04-26 14:18:16:              ^
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:16: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:16:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:16:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:16:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:16:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:16:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: Node.js v25.9.0
+2026-04-26 14:18:16: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:16: const http = require('http');
+2026-04-26 14:18:16:              ^
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:16: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:16:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:16:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:16:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:16:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:16:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: Node.js v25.9.0
+2026-04-26 14:18:16: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:16: const http = require('http');
+2026-04-26 14:18:16:              ^
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:16: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:16:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:16:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:16:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:16:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:16:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:16: 
+2026-04-26 14:18:16: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:17: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:17: const http = require('http');
+2026-04-26 14:18:17:              ^
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:17: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:17:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:17:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:17:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:17:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:17: 
+2026-04-26 14:18:17: Node.js v25.9.0
+2026-04-26 14:18:18: file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1
+2026-04-26 14:18:18: const http = require('http');
+2026-04-26 14:18:18:              ^
+2026-04-26 14:18:18: 
+2026-04-26 14:18:18: ReferenceError: require is not defined in ES module scope, you can use import instead
+2026-04-26 14:18:18: This file is being treated as an ES module because it has a '.js' file extension and '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2026-04-26 14:18:18:     at file:///home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js:1:14
+2026-04-26 14:18:18:     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+2026-04-26 14:18:18:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-04-26 14:18:18:     at async node:internal/modules/esm/loader:639:26
+2026-04-26 14:18:18:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-04-26 14:18:18: 
+2026-04-26 14:18:18: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:13: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:13:   throw err;
+2026-04-26 14:19:13:   ^
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:13:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:13:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:13:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:13:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:13:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:13:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:13:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:13:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:13:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:13:   requireStack: []
+2026-04-26 14:19:13: }
+2026-04-26 14:19:13: 
+2026-04-26 14:19:13: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:19:14: node:internal/modules/cjs/loader:1478
+2026-04-26 14:19:14:   throw err;
+2026-04-26 14:19:14:   ^
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:19:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:19:14:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:19:14:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:19:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:19:14:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:19:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:19:14:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:19:14:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:19:14:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:19:14:   requireStack: []
+2026-04-26 14:19:14: }
+2026-04-26 14:19:14: 
+2026-04-26 14:19:14: Node.js v25.9.0
+2026-04-26 14:20:31: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:31:   throw err;
+2026-04-26 14:20:31:   ^
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:31:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:31:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:31:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:31:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:31:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:31:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:31:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:31:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:31:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:31:   requireStack: []
+2026-04-26 14:20:31: }
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Node.js v25.9.0
+2026-04-26 14:20:31: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:31:   throw err;
+2026-04-26 14:20:31:   ^
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:31:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:31:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:31:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:31:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:31:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:31:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:31:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:31:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:31:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:31:   requireStack: []
+2026-04-26 14:20:31: }
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Node.js v25.9.0
+2026-04-26 14:20:31: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:31:   throw err;
+2026-04-26 14:20:31:   ^
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:31:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:31:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:31:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:31:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:31:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:31:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:31:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:31:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:31:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:31:   requireStack: []
+2026-04-26 14:20:31: }
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Node.js v25.9.0
+2026-04-26 14:20:31: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:31:   throw err;
+2026-04-26 14:20:31:   ^
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:31:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:31:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:31:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:31:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:31:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:31:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:31:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:31:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:31:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:31:   requireStack: []
+2026-04-26 14:20:31: }
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Node.js v25.9.0
+2026-04-26 14:20:31: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:31:   throw err;
+2026-04-26 14:20:31:   ^
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:31:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:31:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:31:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:31:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:31:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:31:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:31:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:31:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:31:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:31:   requireStack: []
+2026-04-26 14:20:31: }
+2026-04-26 14:20:31: 
+2026-04-26 14:20:31: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:32: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:32:   throw err;
+2026-04-26 14:20:32:   ^
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:32:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:32:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:32:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:32:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:32:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:32:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:32:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:32:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:32:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:32:   requireStack: []
+2026-04-26 14:20:32: }
+2026-04-26 14:20:32: 
+2026-04-26 14:20:32: Node.js v25.9.0
+2026-04-26 14:20:33: node:internal/modules/cjs/loader:1478
+2026-04-26 14:20:33:   throw err;
+2026-04-26 14:20:33:   ^
+2026-04-26 14:20:33: 
+2026-04-26 14:20:33: Error: Cannot find module '/home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge/server.js'
+2026-04-26 14:20:33:     at Module._resolveFilename (node:internal/modules/cjs/loader:1475:15)
+2026-04-26 14:20:33:     at wrapResolveFilename (node:internal/modules/cjs/loader:1048:27)
+2026-04-26 14:20:33:     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1072:10)
+2026-04-26 14:20:33:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1093:12)
+2026-04-26 14:20:33:     at Module._load (node:internal/modules/cjs/loader:1261:25)
+2026-04-26 14:20:33:     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+2026-04-26 14:20:33:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-04-26 14:20:33:     at node:internal/main/run_main_module:33:47 {
+2026-04-26 14:20:33:   code: 'MODULE_NOT_FOUND',
+2026-04-26 14:20:33:   requireStack: []
+2026-04-26 14:20:33: }
+2026-04-26 14:20:33: 
+2026-04-26 14:20:33: Node.js v25.9.0

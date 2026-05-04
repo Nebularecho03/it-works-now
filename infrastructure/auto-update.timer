@@ -1,0 +1,9 @@
+[Unit]
+Description=Auto-update timer for website and schoolars-work-bench projects
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+
+[Install]
+WantedBy=timers.target

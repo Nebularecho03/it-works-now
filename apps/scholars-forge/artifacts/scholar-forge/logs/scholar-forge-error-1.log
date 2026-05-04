@@ -1,0 +1,640 @@
+2026-04-27 22:36:35: node:events:487
+2026-04-27 22:36:35:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:35:       ^
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:35:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:35:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:35:     at node:net:2274:7
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:35: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:35:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:35:   code: 'EADDRINUSE',
+2026-04-27 22:36:35:   errno: -98,
+2026-04-27 22:36:35:   syscall: 'listen',
+2026-04-27 22:36:35:   address: '0.0.0.0',
+2026-04-27 22:36:35:   port: 4500
+2026-04-27 22:36:35: }
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Node.js v25.9.0
+2026-04-27 22:36:35: node:events:487
+2026-04-27 22:36:35:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:35:       ^
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:35:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:35:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:35:     at node:net:2274:7
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:35: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:35:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:35:   code: 'EADDRINUSE',
+2026-04-27 22:36:35:   errno: -98,
+2026-04-27 22:36:35:   syscall: 'listen',
+2026-04-27 22:36:35:   address: '0.0.0.0',
+2026-04-27 22:36:35:   port: 4500
+2026-04-27 22:36:35: }
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Node.js v25.9.0
+2026-04-27 22:36:35: node:events:487
+2026-04-27 22:36:35:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:35:       ^
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:35:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:35:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:35:     at node:net:2274:7
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:35: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:35:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:35:   code: 'EADDRINUSE',
+2026-04-27 22:36:35:   errno: -98,
+2026-04-27 22:36:35:   syscall: 'listen',
+2026-04-27 22:36:35:   address: '0.0.0.0',
+2026-04-27 22:36:35:   port: 4500
+2026-04-27 22:36:35: }
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Node.js v25.9.0
+2026-04-27 22:36:35: node:events:487
+2026-04-27 22:36:35:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:35:       ^
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:35:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:35:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:35:     at node:net:2274:7
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:35: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:35:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:35:   code: 'EADDRINUSE',
+2026-04-27 22:36:35:   errno: -98,
+2026-04-27 22:36:35:   syscall: 'listen',
+2026-04-27 22:36:35:   address: '0.0.0.0',
+2026-04-27 22:36:35:   port: 4500
+2026-04-27 22:36:35: }
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Node.js v25.9.0
+2026-04-27 22:36:35: node:events:487
+2026-04-27 22:36:35:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:35:       ^
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:35:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:35:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:35:     at node:net:2274:7
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:35: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:35:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:35:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:35:   code: 'EADDRINUSE',
+2026-04-27 22:36:35:   errno: -98,
+2026-04-27 22:36:35:   syscall: 'listen',
+2026-04-27 22:36:35:   address: '0.0.0.0',
+2026-04-27 22:36:35:   port: 4500
+2026-04-27 22:36:35: }
+2026-04-27 22:36:35: 
+2026-04-27 22:36:35: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:36: node:events:487
+2026-04-27 22:36:36:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:36:       ^
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:36:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:36:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:36:     at node:net:2274:7
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:36: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:36:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:36:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:36:   code: 'EADDRINUSE',
+2026-04-27 22:36:36:   errno: -98,
+2026-04-27 22:36:36:   syscall: 'listen',
+2026-04-27 22:36:36:   address: '0.0.0.0',
+2026-04-27 22:36:36:   port: 4500
+2026-04-27 22:36:36: }
+2026-04-27 22:36:36: 
+2026-04-27 22:36:36: Node.js v25.9.0
+2026-04-27 22:36:37: node:events:487
+2026-04-27 22:36:37:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:37:       ^
+2026-04-27 22:36:37: 
+2026-04-27 22:36:37: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:37:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:37:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:37:     at node:net:2274:7
+2026-04-27 22:36:37:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:37: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:37:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:37:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:37:   code: 'EADDRINUSE',
+2026-04-27 22:36:37:   errno: -98,
+2026-04-27 22:36:37:   syscall: 'listen',
+2026-04-27 22:36:37:   address: '0.0.0.0',
+2026-04-27 22:36:37:   port: 4500
+2026-04-27 22:36:37: }
+2026-04-27 22:36:37: 
+2026-04-27 22:36:37: Node.js v25.9.0
+2026-04-27 22:36:37: node:events:487
+2026-04-27 22:36:37:       throw er; // Unhandled 'error' event
+2026-04-27 22:36:37:       ^
+2026-04-27 22:36:37: 
+2026-04-27 22:36:37: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-04-27 22:36:37:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-04-27 22:36:37:     at listenInCluster (node:net:2065:12)
+2026-04-27 22:36:37:     at node:net:2274:7
+2026-04-27 22:36:37:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-27 22:36:37: Emitted 'error' event on Server instance at:
+2026-04-27 22:36:37:     at emitErrorNT (node:net:2044:8)
+2026-04-27 22:36:37:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-04-27 22:36:37:   code: 'EADDRINUSE',
+2026-04-27 22:36:37:   errno: -98,
+2026-04-27 22:36:37:   syscall: 'listen',
+2026-04-27 22:36:37:   address: '0.0.0.0',
+2026-04-27 22:36:37:   port: 4500
+2026-04-27 22:36:37: }
+2026-04-27 22:36:37: 
+2026-04-27 22:36:37: Node.js v25.9.0
+2026-05-02 09:57:27: node:events:487
+2026-05-02 09:57:27:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:27:       ^
+2026-05-02 09:57:27: 
+2026-05-02 09:57:27: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:27:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:27:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:27:     at node:net:2274:7
+2026-05-02 09:57:27:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:27: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:27:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:27:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:27:   code: 'EADDRINUSE',
+2026-05-02 09:57:27:   errno: -98,
+2026-05-02 09:57:27:   syscall: 'listen',
+2026-05-02 09:57:27:   address: '0.0.0.0',
+2026-05-02 09:57:27:   port: 4500
+2026-05-02 09:57:27: }
+2026-05-02 09:57:27: 
+2026-05-02 09:57:27: Node.js v25.9.0
+2026-05-02 09:57:27: node:events:487
+2026-05-02 09:57:27:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:27:       ^
+2026-05-02 09:57:27: 
+2026-05-02 09:57:27: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:27:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:27:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:27:     at node:net:2274:7
+2026-05-02 09:57:27:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:27: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:27:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:27:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:27:   code: 'EADDRINUSE',
+2026-05-02 09:57:27:   errno: -98,
+2026-05-02 09:57:27:   syscall: 'listen',
+2026-05-02 09:57:27:   address: '0.0.0.0',
+2026-05-02 09:57:27:   port: 4500
+2026-05-02 09:57:27: }
+2026-05-02 09:57:27: 
+2026-05-02 09:57:27: Node.js v25.9.0
+2026-05-02 09:57:27: node:events:487
+2026-05-02 09:57:27:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:27:       ^
+2026-05-02 09:57:27: 
+2026-05-02 09:57:27: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:27:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:27:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:27:     at node:net:2274:7
+2026-05-02 09:57:27:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:27: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:27:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:27:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:27:   code: 'EADDRINUSE',
+2026-05-02 09:57:27:   errno: -98,
+2026-05-02 09:57:27:   syscall: 'listen',
+2026-05-02 09:57:27:   address: '0.0.0.0',
+2026-05-02 09:57:27:   port: 4500
+2026-05-02 09:57:27: }
+2026-05-02 09:57:27: 
+2026-05-02 09:57:27: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:28: node:events:487
+2026-05-02 09:57:28:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:28:       ^
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:28:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:28:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:28:     at node:net:2274:7
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:28: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:28:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:28:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:28:   code: 'EADDRINUSE',
+2026-05-02 09:57:28:   errno: -98,
+2026-05-02 09:57:28:   syscall: 'listen',
+2026-05-02 09:57:28:   address: '0.0.0.0',
+2026-05-02 09:57:28:   port: 4500
+2026-05-02 09:57:28: }
+2026-05-02 09:57:28: 
+2026-05-02 09:57:28: Node.js v25.9.0
+2026-05-02 09:57:29: node:events:487
+2026-05-02 09:57:29:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:29:       ^
+2026-05-02 09:57:29: 
+2026-05-02 09:57:29: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:29:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:29:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:29:     at node:net:2274:7
+2026-05-02 09:57:29:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:29: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:29:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:29:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:29:   code: 'EADDRINUSE',
+2026-05-02 09:57:29:   errno: -98,
+2026-05-02 09:57:29:   syscall: 'listen',
+2026-05-02 09:57:29:   address: '0.0.0.0',
+2026-05-02 09:57:29:   port: 4500
+2026-05-02 09:57:29: }
+2026-05-02 09:57:29: 
+2026-05-02 09:57:29: Node.js v25.9.0
+2026-05-02 09:57:29: node:events:487
+2026-05-02 09:57:29:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:29:       ^
+2026-05-02 09:57:29: 
+2026-05-02 09:57:29: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:29:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:29:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:29:     at node:net:2274:7
+2026-05-02 09:57:29:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:29: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:29:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:29:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:29:   code: 'EADDRINUSE',
+2026-05-02 09:57:29:   errno: -98,
+2026-05-02 09:57:29:   syscall: 'listen',
+2026-05-02 09:57:29:   address: '0.0.0.0',
+2026-05-02 09:57:29:   port: 4500
+2026-05-02 09:57:29: }
+2026-05-02 09:57:29: 
+2026-05-02 09:57:29: Node.js v25.9.0
+2026-05-02 09:57:29: node:events:487
+2026-05-02 09:57:29:       throw er; // Unhandled 'error' event
+2026-05-02 09:57:29:       ^
+2026-05-02 09:57:29: 
+2026-05-02 09:57:29: Error: listen EADDRINUSE: address already in use 0.0.0.0:4500
+2026-05-02 09:57:29:     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+2026-05-02 09:57:29:     at listenInCluster (node:net:2065:12)
+2026-05-02 09:57:29:     at node:net:2274:7
+2026-05-02 09:57:29:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-05-02 09:57:29: Emitted 'error' event on Server instance at:
+2026-05-02 09:57:29:     at emitErrorNT (node:net:2044:8)
+2026-05-02 09:57:29:     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-05-02 09:57:29:   code: 'EADDRINUSE',
+2026-05-02 09:57:29:   errno: -98,
+2026-05-02 09:57:29:   syscall: 'listen',
+2026-05-02 09:57:29:   address: '0.0.0.0',
+2026-05-02 09:57:29:   port: 4500
+2026-05-02 09:57:29: }
+2026-05-02 09:57:29: 
+2026-05-02 09:57:29: Node.js v25.9.0

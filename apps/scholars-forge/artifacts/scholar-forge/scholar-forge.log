@@ -1,0 +1,10 @@
+
+> @workspace/scholar-forge@0.0.0 dev /home/codecrafter/Documents/combined/Schoolars-work-bench/artifacts/scholar-forge
+> vite --config vite.config.ts --host 0.0.0.0
+
+
+  VITE v7.3.2  ready in 772 ms
+
+  ➜  Local:   http://localhost:4500/scholars
+  ➜  Network: http://192.168.88.15:4500/scholars
+  ➜  Network: http://172.19.0.1:4500/scholars
