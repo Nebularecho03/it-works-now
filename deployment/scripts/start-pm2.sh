@@ -31,7 +31,7 @@ mkdir -p logs
 
 # Detect system resources
 log "Detecting system resources..."
-node scripts/detect-resources.js
+node ../../docs/setup/scripts/detect-resources.js
 
 # Determine which config to use
 ENV="${1:-production}"

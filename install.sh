@@ -52,7 +52,7 @@ detect_os() {
     fi
 
     case $OS in
-        "Ubuntu"|"Debian")
+        "Ubuntu"|"Debian"*|"Debian GNU/Linux"*)
             PKG_MANAGER="apt"
             PKG_UPDATE="apt update"
             PKG_INSTALL="apt install -y"

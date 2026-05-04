@@ -7,11 +7,11 @@ A professional website built with Next.js, featuring a modern admin panel and hi
 ```
 combined-project/
 ├── apps/                    # Application code
-│   └── website/             # Next.js main website + Python backend
+│   └── website/             # Next.js main website + Python backend + Go microservices
 ├── deployment/              # Deployment automation
 │   ├── scripts/            # All deployment scripts
 │   ├── configs/            # PM2, nginx, docker configs
-│   └── docs/               # Deployment guides
+│   └── production/         # Production-ready configurations
 ├── docs/                    # Documentation
 │   ├── architecture/        # System architecture docs
 │   ├── setup/              # Setup and configuration
@@ -20,7 +20,7 @@ combined-project/
 │   ├── .github/            # CI/CD workflows
 │   ├── logs/               # Log storage
 │   └── auto-update.*       # System service configs
-├── archive/                 # Archived unused files
+├── archive/                 # Archived unused files (includes old Scholar Forge)
 └── tools/                   # Utility scripts
 ```
 
@@ -50,17 +50,32 @@ combined-project/
 
 ## ⚡ Quick Start
 
-### Deployment Options
+### 🚀 One-Click Installation (Recommended)
 
-The project includes multiple deployment scripts that automatically detect your environment:
+For automated installation on a brand new server:
 
-- **deploy-codespace.sh** - For GitHub Codespaces and containers (no systemd)
-- **deploy-website.sh** - Auto-detects systemd, falls back to PM2 if unavailable
-- **deploy-docker.sh** - Docker-based deployment with systemd detection
-- **deploy-systemd-bare-metal.sh** - Bare metal with systemd (requires systemd)
-- **start-pm2.sh** - Direct PM2 startup (manual dependency installation)
+```bash
+# Download and run the installation script
+curl -fsSL https://raw.githubusercontent.com/Cyberverse-cent0/combined-project/main/install.sh | sudo bash
 
-### Option 1: GitHub Codespaces / Containers (No Systemd)
+# Or clone and run manually
+git clone https://github.com/Cyberverse-cent0/combined-project.git
+cd combined-project
+sudo ./install.sh
+```
+
+**The installation script automatically:**
+- Detects your operating system (Ubuntu, Debian, CentOS, Arch Linux)
+- Installs all dependencies (Node.js, Python, Go, PostgreSQL, Nginx)
+- Sets up database and configurations
+- Creates production systemd services
+- Configures SSL certificates with Let's Encrypt
+- Sets up firewall and security configurations
+- Starts all services and performs health checks
+
+### 🔧 Manual Installation
+
+#### Option 1: Development Mode (Quick Start)
 
 ```bash
 git clone https://github.com/Cyberverse-cent0/combined-project.git
@@ -68,13 +83,7 @@ cd combined-project
 ./deployment/scripts/deploy-codespace.sh
 ```
 
-This script automatically:
-- Installs PM2
-- Installs all dependencies
-- Optionally builds Go services
-- Starts all services with PM2
-
-### Option 2: Bare Metal with Systemd Detection
+#### Option 2: Production with PM2
 
 ```bash
 git clone https://github.com/Cyberverse-cent0/combined-project.git
@@ -82,24 +91,7 @@ cd combined-project
 ./deployment/scripts/deploy-website.sh
 ```
 
-This script automatically:
-- Detects if systemd is available
-- Uses systemd deployment if available
-- Falls back to PM2 if systemd is not available
-- Installs system dependencies
-- Sets up PostgreSQL databases
-- Configures and starts services
-
-**Force specific deployment mode:**
-```bash
-# Force PM2 mode (even if systemd is available)
-DEPLOYMENT_MODE=pm2 ./deployment/scripts/deploy-both-projects.sh
-
-# Force systemd mode (will fail if systemd not available)
-DEPLOYMENT_MODE=systemd ./deployment/scripts/deploy-both-projects.sh
-```
-
-### Option 3: Docker Deployment
+#### Option 3: Docker Deployment
 
 ```bash
 git clone https://github.com/Cyberverse-cent0/combined-project.git
@@ -107,11 +99,19 @@ cd combined-project
 ./deployment/scripts/deploy-docker.sh
 ```
 
-This script automatically:
-- Detects systemd availability
-- Uses appropriate service management
-- Sets up Docker containers
-- Configures networking and volumes
+### 📋 System Requirements
+
+**Minimum Requirements:**
+- **RAM**: 2GB (4GB recommended)
+- **CPU**: 2 cores (4 cores recommended)
+- **Storage**: 20GB SSD (50GB recommended)
+- **OS**: Ubuntu 20.04+, Debian 11+, CentOS 8+, Arch Linux
+
+**Supported Operating Systems:**
+- Ubuntu 20.04 LTS, 22.04 LTS, 24.04 LTS
+- Debian 11, 12
+- CentOS 8, 9
+- Arch Linux (latest rolling release)
 
 ### Option 4: Manual Bare Metal Deployment
 
@@ -139,12 +139,6 @@ pip install -r requirements.txt
 cd ../../..
 ```
 
-**Scholar Forge:**
-```bash
-cd apps/scholars-forge
-pnpm install
-cd ../..
-```
 
 **Go Microservices:**
 ```bash
@@ -163,14 +157,6 @@ cp .env.example .env
 cd ../../..
 ```
 
-**Scholar Forge (.env):**
-```bash
-cd apps/scholars-forge
-cp .env.example .env
-# Edit .env with your configuration
-BASE_PATH=/scholars
-cd ../..
-```
 
 **Enable Go Services (Optional):**
 ```bash
@@ -242,9 +228,12 @@ sudo systemctl reload nginx
 
 - **Main Website**: http://localhost:3000 or http://your-domain.com
 - **Admin Panel**: http://localhost:3000/admin
-- **Scholar Forge**: http://localhost:4500 or http://your-domain.com/scholars
-- **Website API**: http://localhost:8000
-- **Scholars API**: http://localhost:8081
+- **Website API**: http://localhost:8001
+- **Research Hub**: http://localhost:3000/research-hub
+
+**Default Admin Login:**
+- **Username**: admin
+- **Password**: admin123 (change immediately after first login)
 
 ## 🔧 Management
 
@@ -368,27 +357,13 @@ USE_GO_TELEMETRY_SERVICE=true
 GO_TELEMETRY_SERVICE_URL=http://localhost:9002
 ```
 
-### Scholar Forge (.env)
-
-```env
-# API
-PORT=8081
-DATABASE_URL=your-database-url
-
-# Frontend
-BASE_PATH=/scholars
-WEBSITE_URL=http://localhost:3000
-CORS_ORIGIN=http://localhost:3000
-```
 
 ## 📊 Port Configuration
 
 | Service | Port | Description |
 |---------|------|-------------|
 | Website Frontend | 3000 | Next.js main website |
-| Website Backend | 8000 | Python admin API |
-| Scholar Forge Frontend | 4500 | React Scholar Forge app |
-| Scholars API | 8081 | Node.js Scholar Forge API |
+| Website Backend | 8001 | Python admin API |
 | Go Password Service | 9001 | Password hashing |
 | Go Telemetry Service | 9002 | Monitoring/metrics |
 | Go Image Service | 9003 | Image processing |
@@ -400,7 +375,7 @@ CORS_ORIGIN=http://localhost:3000
 
 **Check port conflicts:**
 ```bash
-ss -tuln | grep -E ':(3000|8000|4500|8081|9001|9002|9003|9004)'
+ss -tuln | grep -E ':(3000|8001|9001|9002|9003|9004)'
 ```
 
 **Check PM2 logs:**
@@ -474,11 +449,6 @@ source venv/bin/activate
 python server.py
 ```
 
-**Scholar Forge:**
-```bash
-cd apps/scholars-forge
-pnpm dev
-```
 
 ### Running Tests
 
@@ -517,7 +487,7 @@ cp apps/website/backend/data/users.db backups/users-$(date +%Y%m%d).db
 
 ### Full Backup
 ```bash
-tar -czf backup-$(date +%Y%m%d).tar.gz apps/website apps/scholars-forge
+tar -czf backup-$(date +%Y%m%d).tar.gz apps/website
 ```
 
 ## 🆘 Support
