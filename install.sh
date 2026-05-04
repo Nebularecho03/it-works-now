@@ -131,10 +131,22 @@ install_dependencies() {
     case $PKG_MANAGER in
         "apt")
             $PKG_UPDATE
+            # Install basic packages first
             $PKG_INSTALL curl wget git nginx postgresql postgresql-contrib \
                 build-essential python3 python3-pip python3-venv \
-                nodejs npm certbot python3-certbot-nginx \
+                certbot python3-certbot-nginx \
                 ufw fail2ban htop
+            
+            # Handle Node.js and npm separately to avoid conflicts
+            if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
+                log "Node.js and npm already installed"
+            else
+                # Remove conflicting packages if they exist
+                $PKG_INSTALL --purge -y npm nodejs 2>/dev/null || true
+                # Install Node.js from NodeSource (includes compatible npm)
+                curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+                $PKG_INSTALL nodejs
+            fi
             ;;
         "yum")
             $PKG_UPDATE

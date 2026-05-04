@@ -115,9 +115,21 @@ install_dependencies() {
     log "Installing system dependencies..."
 
     $PKG_UPDATE
+    # Install basic packages first
     $PKG_INSTALL curl wget git nginx python3 python3-pip python3-venv \
-        nodejs npm postgresql postgresql-contrib \
+        postgresql postgresql-contrib \
         build-essential htop ufw
+    
+    # Handle Node.js and npm separately to avoid conflicts
+    if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
+        log "Node.js and npm already installed"
+    else
+        # Remove conflicting packages if they exist
+        $PKG_INSTALL --purge -y npm nodejs 2>/dev/null || true
+        # Install Node.js from NodeSource (includes compatible npm)
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        $PKG_INSTALL nodejs
+    fi
 
     # Install PM2 globally
     npm install -g pm2
