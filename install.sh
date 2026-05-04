@@ -110,8 +110,15 @@ check_requirements() {
 
     # Check disk space
     DISK=$(df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
-    if [[ $DISK -lt 20 ]]; then
-        error "Minimum 20GB disk space required. Found: ${DISK}GB"
+    if [[ $DISK -lt 8 ]]; then
+        error "Minimum 8GB disk space required. Found: ${DISK}GB"
+    elif [[ $DISK -lt 20 ]]; then
+        warn "Limited disk space detected: ${DISK}GB. For optimal performance, 20GB+ is recommended."
+        read -p "Continue with ${DISK}GB disk space? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            error "Installation cancelled by user"
+        fi
     fi
 
     log "System requirements met: ${RAM}GB RAM, $CORES cores, ${DISK}GB disk"
@@ -534,9 +541,10 @@ main() {
 
     # Get domain from user if not set
     if [[ "$DOMAIN" == "your-domain.com" ]]; then
-        read -p "Enter your domain name: " DOMAIN
+        read -p "Enter your domain name (press Enter for localhost): " DOMAIN
         if [[ -z "$DOMAIN" ]]; then
-            error "Domain name is required"
+            DOMAIN="localhost"
+            log "Using localhost as domain name"
         fi
     fi
 
