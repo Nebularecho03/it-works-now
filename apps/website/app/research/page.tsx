@@ -65,6 +65,45 @@ export default async function ResearchPage() {
                   ))}
                 </ul>
               ) : null}
+              {project.team ? (
+                <div className="mt-6 space-y-4">
+                  <h4 className="text-sm font-semibold text-foreground">Research Team</h4>
+                  <div className="space-y-4">
+                    {project.team.map((member, index) => (
+                      <div key={index} className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-background/80 to-background/40 p-5 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-accent/10 hover:border-accent/30">
+                        <div className="flex items-start gap-4">
+                          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border-2 border-border/50 shadow-sm">
+                            <Image
+                              src={member.image}
+                              alt={member.name}
+                              fill
+                              sizes="64px"
+                              className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h5 className="font-semibold text-foreground leading-tight">{member.name}</h5>
+                                <p className="text-sm font-medium text-accent mt-1">{member.role}</p>
+                                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{member.affiliation}</p>
+                              </div>
+                              <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
+                                <div className="h-2 w-2 rounded-full bg-accent/60"></div>
+                              </div>
+                            </div>
+                            {member.bio && (
+                              <p className="text-sm text-muted-foreground mt-3 leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                                {member.bio}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               {project.link ? (
                 <div className="mt-4 flex flex-wrap gap-3">
                   <Button asChild variant="ghost" className="px-0">

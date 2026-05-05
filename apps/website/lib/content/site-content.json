@@ -92,11 +92,37 @@
       "status": "Active",
       "funding": "Templeton Foundation and Cultural Evolution Society",
       "details": [
-        "The project studies how globalization affects the practice and transmission of Indigenous mourning rituals in the Luhya community.",
-        "It uses qualitative and quantitative methods including focus groups, interviews, behavioral observations, and psychometric tools.",
-        "The work aims to produce peer-reviewed outputs, op-eds, training materials, and policy briefs for Kenyan mental health practice."
+        "Grief after the loss of a loved one is a universal human emotion. Communities worldwide have developed mourning rituals to bring closure to the bereaved while reintegrating them into the community.",
+        "Indigenous mourning rituals face ongoing threats from globalizing forces, yet limited attention has been paid to how these rituals foster individual and community wellbeing and resilience.",
+        "Our project investigates how globalization has affected the practice and transmission of Indigenous mourning rituals from the Luhya community of western Kenya.",
+        "We specifically aim to answer three interrelated questions: (1) What is the therapeutic value of Indigenous mourning rituals? (2) Do mourning rituals promote cooperation? and (3) How does participation in mourning rituals contribute to cultural transmission?",
+        "Using qualitative and quantitative methods including focus groups, interviews, behavioral observations, and psychometric tests with traditional healers, Christian leaders, and bereaved adolescents and adults.",
+        "Findings will be incorporated into training curricula and policy briefs to promote the valuation of Indigenous practices among Kenyan mental health practitioners."
       ],
-      "link": "https://ces-transformationfund.org/our-projects/traditional-luhya-mourning-rituals/"
+      "link": "https://ces-transformationfund.org/our-projects/traditional-luhya-mourning-rituals/",
+      "team": [
+        {
+          "name": "Stephen Asatsa",
+          "role": "Principal Investigator",
+          "affiliation": "The Catholic University of Eastern Africa, Kenya",
+          "image": "/images/team/asatsa.png",
+          "bio": "Stephen Asatsa, PhD, is the Principal Investigator leading this interdisciplinary research on Indigenous mourning rituals and cultural resilience."
+        },
+        {
+          "name": "Sheina Lew-Levy",
+          "role": "Co-Investigator",
+          "affiliation": "Durham University, UK",
+          "image": "/images/team/sheina-lew-levy.jpg",
+          "bio": "Sheina Lew-Levy is an assistant professor of Psychology at Durham University. She holds a PhD in Psychology from the University of Cambridge (2019). Drawing from anthropological and psychological theory, she conducts research in hunter-gatherer societies to understand the cultural diversity in, and evolution of, social learning in childhood. Specifically, she has used quantitative and qualitative methods to study how and from whom BaYaka and Hadza children from Congo and Tanzania, respectively, learn through meaningful participation in everyday activities. As the co-founder and co-director of Forager Child Studies, she also conducts cross-cultural reviews and secondary data analysis on the pasts, presents, and futures of hunter-gatherer children's learning."
+        },
+        {
+          "name": "Eric J Ringen",
+          "role": "Statistical Consultant",
+          "affiliation": "University of Zurich, Switzerland",
+          "image": "/images/team/eric-ringen.png",
+          "bio": "Erik is the Consultant Statistician for the project. He is an expert in Bayesian bespoke multilevel statistical modeling. He will assist the research team in developing computational workflows in R to clean and analyze our data. He will also ensure that our statistical modeling approach is appropriate to our research question, and that we are interpreting results effectively."
+        }
+      ]
     },
     {
       "title": "The Africa Long Life Study: A longitudinal exploration of the psychological development of young adults in Kenya, Namibia and South Africa",
@@ -105,11 +131,44 @@
       "status": "Active",
       "funding": "Swiss National Science Foundation and the University of Zurich",
       "details": [
-        "The Kenyan sample follows 800 eighteen-year-olds from across Kenya with data collection every six months.",
-        "The study compares universal and culturally specific aspects of psychological development across Kenya, Namibia, and South Africa.",
-        "Findings are intended to support counsellors, educators, and policy makers working with emerging adults."
+        "This is a longitudinal collaborative study examining the psychological development of emerging adults with focus on personality traits and mental disorders with data being collected over a period of 5 years.",
+        "The work is spearheaded by psychologists from the University of Zurich, Switzerland; The Catholic University of Eastern Africa, Kenya; University of Namibia and University of the Free State, South Africa.",
+        "The Kenyan sample consists of eight hundred (800) 18-year-olds at the point of the first wave of data collection, of which 50% are men and 50% are women, from throughout Kenya and belonging to any ethno-linguistic group.",
+        "Data is collected at intervals of six months for a period of 5 years. The Kenya research team is supported by a team of postgraduate students from the Catholic University of Eastern Africa working as research assistants.",
+        "The goals of the study are to compare results to those from other contexts, in order to help differentiate more universal from culturally specific aspects of psychological phenomena among emerging adults.",
+        "The findings will inform counsellors, policy makers and educators in different countries about the characteristics and needs of this generation of young adults."
       ],
-      "link": "https://www.uzh.ch/blog/africalonglifestudy/team/"
+      "link": "https://www.uzh.ch/blog/africalonglifestudy/team/",
+      "team": [
+        {
+          "name": "Stephen Asatsa",
+          "role": "Principal Investigator (Kenya)",
+          "affiliation": "Department of Psychology, The Catholic University of Eastern Africa",
+          "image": "/images/team/asatsa.png",
+          "bio": "Dr. Stephen Asatsa leads the Kenyan component of this landmark longitudinal study on emerging adult development across Africa."
+        },
+        {
+          "name": "Amber Gayle Thalmayer",
+          "role": "Overall Principal Investigator",
+          "affiliation": "Department of Psychology, University of Zürich",
+          "image": "/images/team/amber-thalmayer.jpg",
+          "bio": "Professor Dr. Amber Gayle Thalmayer is the overall principal investigator in all the involved countries. Assistant Professor for Personality, Mental Health, and Culture at the University of Zürich."
+        },
+        {
+          "name": "Elizabeth Shino",
+          "role": "Principal Investigator (Namibia)",
+          "affiliation": "Department Of Psychology, University of Namibia",
+          "image": "/images/team/elizabeth-shino.jpg",
+          "bio": "Dr. Elizabeth Shino leads the Namibian component of the Africa Long Life Study, bringing expertise in cross-cultural developmental psychology."
+        },
+        {
+          "name": "Luzelle Naudé",
+          "role": "Principal Investigator (South Africa)",
+          "affiliation": "Department of Psychology, University of the Free State, South Africa",
+          "image": "/images/team/luzelle-naude.png",
+          "bio": "Professor Luzelle Naudé leads the South African component of the study, contributing extensive expertise in developmental psychology and mental health research."
+        }
+      ]
     },
     {
       "title": "Impact of Covid 19 Experiences on Emotional Regulation among Adolescents in 6 Countries",
@@ -118,11 +177,51 @@
       "status": "Collaborative",
       "funding": "Templeton Foundation and the International Consortium of Developmental Science Societies",
       "details": [
-        "The project examines the mediating role of religiosity and character strengths during pandemic disruption.",
-        "It addresses school closure, stress, meaning-making resources, and adolescent coping strategies during recovery.",
-        "The collaboration includes partners from Griffith University, the University of the Philippines, Addis Ababa University, and Nnamdi Azikiwe University."
+        "The onset of Covid-19 brought about disruption in almost every sector globally, leading to travel restrictions, and the closure of schools, workplaces, and places of worship.",
+        "Meaning-making and religion have emerged as one means for developing coping skills to manage stress. When the ability to use those tools is disrupted, adolescents are likely to revert to maladaptive attempts to cope.",
+        "In the education sector, school shutdowns resulted in the loss of a full academic year, affecting about 168 million children globally (UNICEF, 2021).",
+        "During the recovery period, Kenya witnessed heightened delinquency among school adolescents in the form of arson, indicating a shift in emotional regulation strategies and character strengths of adolescents.",
+        "This study hypothesizes that Covid-19 disruptions inversely affected religiosity and character strengths, consequently reducing their buffering effect against stress.",
+        "The study examines the mediating role of religiosity and character strengths on emotional regulation among adolescents during the Covid-19 pandemic period in 6 countries."
       ],
-      "link": "https://www.fjcolab.org/sra-covid-19-early-career-global-scholars-program"
+      "link": "https://www.fjcolab.org/sra-covid-19-early-career-global-scholars-program",
+      "team": [
+        {
+          "name": "Stephen Asatsa",
+          "role": "Principal Investigator (Kenya)",
+          "affiliation": "Department of Psychology, The Catholic University of Eastern Africa",
+          "image": "/images/team/asatsa.png",
+          "bio": "Dr. Stephen Asatsa leads the Kenyan component of this international study on adolescent emotional regulation during the COVID-19 pandemic."
+        },
+        {
+          "name": "Alex Gardener",
+          "role": "Co-Investigator",
+          "affiliation": "Griffith University, Australia",
+          "image": "/images/team/alex-gardener.jpg",
+          "bio": "Alex Gardener leads the Australian component of the study, bringing expertise in adolescent mental health and emotional regulation."
+        },
+        {
+          "name": "Eden Terol",
+          "role": "Co-Investigator",
+          "affiliation": "University of the Philippines, Philippines",
+          "image": "/images/team/eden-terol.jpg",
+          "bio": "Eden Terol leads the Philippine component of the study, contributing expertise in adolescent psychology and pandemic impacts."
+        },
+        {
+          "name": "Mulat Asnake Goshu",
+          "role": "Co-Investigator",
+          "affiliation": "Addis Ababa University, Ethiopia",
+          "image": "/images/team/mulat-asnake.jpg",
+          "bio": "Mulat Asnake Goshu leads the Ethiopian component of the study, bringing expertise in adolescent mental health and cultural factors."
+        },
+        {
+          "name": "Chidozie Nwafor",
+          "role": "Co-Investigator",
+          "affiliation": "Nnamdi Azikiwe University, Nigeria",
+          "image": "/images/team/chidozie-nwafor.jpg",
+          "bio": "Chidozie Nwafor leads the Nigerian component of the study, contributing expertise in adolescent emotional regulation and cultural psychology."
+        }
+      ]
     },
     {
       "title": "Covid-19 Pandemic-Related Impacts and Severity of Substance Use Disorder Symptoms among Patients in Selected Rehabilitation Centers in Nairobi, Kenya",
@@ -131,11 +230,23 @@
       "status": "Ongoing",
       "funding": "International Consortium of Universities for Drug Demand Reduction (ICUDDR)",
       "details": [
-        "The study examined addiction severity before and during the pandemic among patients in selected rehabilitation centres.",
-        "It used sociodemographic tools, the Epidemic-Pandemic Impacts Inventory, and a Modified Addiction Severity Index.",
-        "The findings were designed to inform treatment-program adjustment during and after the pandemic."
+        "The onset of Covid-19 brought about disruption in almost every sector globally. In an attempt to contain the spread of the virus, many countries imposed travel restrictions, closed social places, and introduced working from home.",
+        "Among the affected places in Kenya were rehabilitation centers, where patients were discharged to avoid infection. This was accompanied by the closure of bars and the introduction of curfews, among other measures.",
+        "Data on the possible impact of these disruptions on substance use disorders remained scant. This study aimed to examine the impact of the Covid-19 pandemic on the severity of substance use disorder symptoms to inform treatment programs during the ongoing pandemic.",
+        "The study was guided by objectives: to assess addiction severity before and during the Covid-19 pandemic among patients in selected rehabilitation centers; to examine the effect of the pandemic on patients; and to explore the relationship between Covid-19 containment measures and the severity of addiction.",
+        "The study targeted 204 residential patients in selected rehabilitation centers in Nairobi, who were selected through simple random sampling, with the inclusion criterion being those who had started treatment before the Covid-19 pandemic.",
+        "Data were collected using a sociodemographic questionnaire, the Epidemic-Pandemic Impacts Inventory (EPII), and the Modified Addiction Severity Index."
       ],
-      "link": "https://nida.nih.gov/international/news/nida-supported-mini-grant-projects-featured-icuddr-annual-meeting"
+      "link": "https://nida.nih.gov/international/news/nida-supported-mini-grant-projects-featured-icuddr-annual-meeting",
+      "team": [
+        {
+          "name": "Stephen Asatsa",
+          "role": "Principal Investigator (Kenya)",
+          "affiliation": "Department of Psychology, The Catholic University of Eastern Africa",
+          "image": "/images/team/asatsa.png",
+          "bio": "Dr. Stephen Asatsa leads this important study on substance use disorder impacts during the COVID-19 pandemic in Nairobi rehabilitation centers."
+        }
+      ]
     },
     {
       "title": "Global research on work addiction",
@@ -144,9 +255,19 @@
       "status": "Collaborative",
       "funding": "National Science Centre in Poland",
       "details": [
-        "This stream focuses on the social and structural dimensions of work addiction and related health problems."
+        "This stream focuses on the social and structural dimensions of work addiction and related health problems.",
+        "The project examines macro-level factors (economic policies, workplace culture), meso-level factors (organizational practices), and micro-level factors (individual differences) in work addiction."
       ],
-      "link": "https://workaddiction.org/"
+      "link": "https://workaddiction.org/",
+      "team": [
+        {
+          "name": "Stephen Asatsa",
+          "role": "Collaborator",
+          "affiliation": "The Catholic University of Eastern Africa, Kenya",
+          "image": "/images/team/asatsa.png",
+          "bio": "Dr. Stephen Asatsa contributes to this international research on work addiction, bringing expertise from the African context."
+        }
+      ]
     },
     {
       "title": "Global Collaboration on Traumatic Stress",
@@ -154,9 +275,19 @@
       "category": "Trauma Studies",
       "status": "Collaborative",
       "details": [
-        "The collaboration centers on culturally sensitive assessment frameworks in psychotrauma research."
+        "The collaboration centers on culturally sensitive assessment frameworks in psychotrauma research.",
+        "This work addresses the need for trauma assessment tools that are culturally appropriate and valid across different contexts and populations."
       ],
-      "link": "https://www.global-psychotrauma.net/cultural-sensitive-assessment"
+      "link": "https://www.global-psychotrauma.net/cultural-sensitive-assessment",
+      "team": [
+        {
+          "name": "Stephen Asatsa",
+          "role": "Collaborator",
+          "affiliation": "The Catholic University of Eastern Africa, Kenya",
+          "image": "/images/team/asatsa.png",
+          "bio": "Dr. Stephen Asatsa contributes to this global collaboration on traumatic stress, bringing expertise in cultural psychology and trauma from the African context."
+        }
+      ]
     }
   ],
   "publications": [

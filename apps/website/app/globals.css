@@ -49,3 +49,11 @@ body {
 .prose-copy li {
   @apply mb-3 leading-7 text-muted-foreground;
 }
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 3;
+}
