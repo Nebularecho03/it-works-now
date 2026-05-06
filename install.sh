@@ -704,13 +704,13 @@ setup_from_remote() {
 setup_local_fallback() {
     log "Setting up project from local fallback..."
     
-    # Use the current working directory as the source
-    local source_dir="/home/codecrafter/Documents/combined"
+    # Use current working directory as the source
+    local source_dir=$(pwd)
     
     if [[ -d "$source_dir/apps/website" ]]; then
         log "Using local project files from: $source_dir"
         
-        # Copy the apps directory
+        # Copy apps directory
         cp -r "$source_dir/apps" "$INSTALL_DIR/"
         
         # Copy other important files
@@ -721,8 +721,25 @@ setup_local_fallback() {
         done
         
         log "Local fallback setup completed"
+    elif [[ -d "$source_dir/website" ]]; then
+        log "Found alternative local structure, reorganizing..."
+        
+        # Create apps directory
+        mkdir -p "$INSTALL_DIR/apps"
+        
+        # Copy website to apps/website
+        cp -r "$source_dir/website" "$INSTALL_DIR/apps/"
+        
+        # Copy other important files
+        for file in "README.md" "package.json" ".env.production" "production"; do
+            if [[ -e "$source_dir/$file" ]]; then
+                cp -r "$source_dir/$file" "$INSTALL_DIR/"
+            fi
+        done
+        
+        log "Local fallback with reorganization completed"
     else
-        error "No valid project source found"
+        error "No valid project source found in: $source_dir"
     fi
 }
 
