@@ -578,43 +578,59 @@ setup_database() {
 setup_project() {
     log "Setting up project files..."
 
-    # Check if we're already in the project directory and have the required structure
+    # Check if we're already in a project directory with required files
     local current_dir=$(pwd)
-    if [[ -f "$current_dir/README.md" ]] && [[ -d "$current_dir/apps/website" ]]; then
-        log "Already in project directory with correct structure, using current location"
+    local has_project_structure=false
+    
+    # Check for apps/website structure
+    if [[ -f "$current_dir/README.md" ]] && [[ -d "$current_dir/apps/website" ]] && [[ -f "$current_dir/apps/website/package.json" ]]; then
+        log "Already in project directory with apps/website structure, using current location"
         INSTALL_DIR="$current_dir"
-        
-        # Verify required files exist
-        if [[ -f "$INSTALL_DIR/apps/website/README.md" ]] && [[ -f "$INSTALL_DIR/apps/website/package.json" ]]; then
-            log "Project structure validated, using local files"
-        else
-            warn "Required files missing in current directory, attempting to use remote repository..."
-            setup_from_remote
-        fi
-    elif [[ -f "$current_dir/README.md" ]] && [[ -d "$current_dir/website" ]]; then
-        log "Found project with alternative structure, using current location"
+        has_project_structure=true
+    # Check for website structure (alternative)
+    elif [[ -f "$current_dir/README.md" ]] && [[ -d "$current_dir/website" ]] && [[ -f "$current_dir/website/package.json" ]]; then
+        log "Found project with website structure, reorganizing to apps/website"
         INSTALL_DIR="$current_dir"
         
         # Create apps directory if it doesn't exist and move website there
         if [[ ! -d "$INSTALL_DIR/apps" ]]; then
             mkdir -p "$INSTALL_DIR/apps"
-            if [[ -d "$INSTALL_DIR/website" ]]; then
-                mv "$INSTALL_DIR/website" "$INSTALL_DIR/apps/"
-                log "Moved website directory to apps/website/"
-            fi
         fi
-        
-        # Verify required files exist
-        if [[ -f "$INSTALL_DIR/apps/website/README.md" ]] && [[ -f "$INSTALL_DIR/apps/website/package.json" ]]; then
-            log "Project structure reorganized and validated"
-        else
-            warn "Required files missing after reorganization, attempting to use remote repository..."
-            setup_from_remote
+        if [[ -d "$INSTALL_DIR/website" ]]; then
+            mv "$INSTALL_DIR/website" "$INSTALL_DIR/apps/"
+            log "Moved website directory to apps/website/"
         fi
-    else
-        log "Not in project directory, setting up from remote repository..."
-        setup_from_remote
+        has_project_structure=true
+    # Check if we're in the installation directory (/opt/stephenasatsa)
+    elif [[ "$current_dir" == "/opt/stephenasatsa" ]] && [[ -d "$current_dir/apps/website" ]]; then
+        log "Already in installation directory with project structure, using current location"
+        INSTALL_DIR="$current_dir"
+        has_project_structure=true
     fi
+    
+    # If we have a valid project structure, use it directly
+    if [[ "$has_project_structure" == "true" ]]; then
+        log "Using existing project files, skipping clone"
+        
+        # Set permissions
+        chown -R www-data:www-data $INSTALL_DIR
+        chmod -R 755 $INSTALL_DIR
+
+        # Create logs directory
+        mkdir -p /var/log/$PROJECT_NAME
+        chown www-data:www-data /var/log/$PROJECT_NAME
+
+        log "Project files setup completed"
+        
+        # Continue with complete deployment workflow
+        complete_deployment_workflow
+        return
+    fi
+    
+    # If no valid project structure found, try remote repository
+    log "No valid project structure found, attempting to clone from remote repository..."
+    setup_from_remote
+}
 
     # Set permissions
     chown -R www-data:www-data $INSTALL_DIR
