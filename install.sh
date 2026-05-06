@@ -21,6 +21,39 @@ DB_USER="stephenasatsa"
 DB_PASSWORD="$(openssl rand -base64 32)"
 ADMIN_PASSWORD="ChangeMeToSecurePassword123!"
 LOG_FILE="/var/log/${PROJECT_NAME}_install.log"
+DEPLOY_ONLY=false
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --deploy-only)
+            DEPLOY_ONLY=true
+            shift
+            ;;
+        --domain)
+            DOMAIN="$2"
+            shift 2
+            ;;
+        --help)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --deploy-only    Skip building, only setup system services and config"
+            echo "  --domain DOMAIN  Set domain name (default: localhost)"
+            echo "  --help          Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  sudo ./install.sh                    # Full installation with build"
+            echo "  sudo ./install.sh --deploy-only       # Just setup services and config"
+            echo "  sudo ./install.sh --domain example.com # Install with custom domain"
+            exit 0
+            ;;
+        *)
+            warn "Unknown option: $1"
+            shift
+            ;;
+    esac
+done
 
 # Logging
 log() {
@@ -585,7 +618,11 @@ main() {
     # Display banner
     echo -e "${BLUE}"
     echo "======================================"
-    echo "  Stephen Asatsa Website Installer  "
+    if [[ "$DEPLOY_ONLY" == "true" ]]; then
+        echo "  Stephen Asatsa Website Deployer    "
+    else
+        echo "  Stephen Asatsa Website Installer  "
+    fi
     echo "======================================"
     echo -e "${NC}"
     
@@ -593,18 +630,34 @@ main() {
     check_root
     get_domain
     install_system_deps
-    install_nodejs
-    setup_database
-    setup_project
-    create_env_file
-    install_frontend
-    install_backend
-    configure_nginx
-    install_services
-    setup_firewall
-    start_services
-    setup_ssl
-    health_check
+    
+    if [[ "$DEPLOY_ONLY" == "true" ]]; then
+        log "Deploy-only mode: Skipping build steps"
+        setup_database
+        setup_project
+        create_env_file
+        # Skip install_frontend and install_backend (build steps)
+        configure_nginx
+        install_services
+        setup_firewall
+        start_services
+        setup_ssl
+        health_check
+    else
+        install_nodejs
+        setup_database
+        setup_project
+        create_env_file
+        install_frontend
+        install_backend
+        configure_nginx
+        install_services
+        setup_firewall
+        start_services
+        setup_ssl
+        health_check
+    fi
+    
     print_summary
     
     log "Installation completed successfully!"
