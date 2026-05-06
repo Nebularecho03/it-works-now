@@ -41,6 +41,28 @@ error() {
     exit 1
 }
 
+# Recovery function for failed operations
+recover_from_error() {
+    local operation="$1"
+    local service="$2"
+    
+    warn "Failed to $operation"
+    read -p "Do you want to continue anyway? (y/N): " -n 1 -r
+    echo
+    
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        error "Installation cancelled by user after $operation failure"
+    fi
+    
+    log "Continuing installation despite $operation failure"
+    
+    # Try to restart service if specified
+    if [[ -n "$service" ]]; then
+        log "Attempting to restart $service..."
+        systemctl restart "$service" 2>/dev/null || warn "Failed to restart $service"
+    fi
+}
+
 # Detect operating system and package manager
 detect_os() {
     if [[ -f /etc/os-release ]]; then
@@ -130,12 +152,17 @@ install_dependencies() {
 
     case $PKG_MANAGER in
         "apt")
-            $PKG_UPDATE
+            if ! $PKG_UPDATE; then
+                recover_from_error "update package lists" ""
+            fi
+            
             # Install basic packages first
-            $PKG_INSTALL curl wget git nginx postgresql postgresql-contrib \
+            if ! $PKG_INSTALL curl wget git nginx postgresql postgresql-contrib \
                 build-essential python3 python3-pip python3-venv \
                 certbot python3-certbot-nginx \
-                ufw fail2ban htop
+                ufw fail2ban htop; then
+                recover_from_error "install system packages" ""
+            fi
             
             # Handle Node.js and npm separately to avoid conflicts
             if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
@@ -144,27 +171,41 @@ install_dependencies() {
                 # Remove conflicting packages if they exist
                 $PKG_INSTALL --purge -y npm nodejs 2>/dev/null || true
                 # Install Node.js from NodeSource (includes compatible npm)
-                curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-                $PKG_INSTALL nodejs
+                if ! curl -fsSL https://deb.nodesource.com/setup_20.x | bash -; then
+                    recover_from_error "add NodeSource repository" ""
+                fi
+                if ! $PKG_INSTALL nodejs; then
+                    recover_from_error "install Node.js" ""
+                fi
             fi
             ;;
         "yum")
-            $PKG_UPDATE
-            $PKG_INSTALL curl wget git nginx postgresql-server postgresql-contrib \
+            if ! $PKG_UPDATE; then
+                recover_from_error "update package lists" ""
+            fi
+            
+            if ! $PKG_INSTALL curl wget git nginx postgresql-server postgresql-contrib \
                 gcc python3 python3-pip \
                 nodejs npm certbot python3-certbot-nginx \
-                firewalld fail2ban htop
+                firewalld fail2ban htop; then
+                recover_from_error "install system packages" ""
+            fi
             ;;
         "pacman")
-            $PKG_UPDATE
-            $PKG_INSTALL curl wget git nginx postgresql \
+            if ! $PKG_UPDATE; then
+                recover_from_error "update package lists" ""
+            fi
+            
+            if ! $PKG_INSTALL curl wget git nginx postgresql \
                 base-devel python python-pip \
                 nodejs npm certbot certbot-nginx \
-                ufw fail2ban htop
+                ufw fail2ban htop; then
+                recover_from_error "install system packages" ""
+            fi
             ;;
     esac
 
-    log "System dependencies installed"
+    log "System dependencies installation completed"
 }
 
 # Install Node.js latest LTS
@@ -230,9 +271,48 @@ setup_database() {
             systemctl enable postgresql
             systemctl start postgresql
             
-            # Create database and user
-            sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
-            sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+            # Check if database already exists
+            DB_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" 2>/dev/null || echo "")
+            if [[ "$DB_EXISTS" == "1" ]]; then
+                warn "Database '$DB_NAME' already exists"
+                read -p "Do you want to drop and recreate the database? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log "Dropping existing database '$DB_NAME'..."
+                    sudo -u postgres psql -c "DROP DATABASE IF EXISTS $DB_NAME;"
+                else
+                    log "Keeping existing database '$DB_NAME'"
+                fi
+            fi
+            
+            # Check if user already exists
+            USER_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'" 2>/dev/null || echo "")
+            if [[ "$USER_EXISTS" == "1" ]]; then
+                warn "User '$DB_USER' already exists"
+                read -p "Do you want to drop and recreate the user? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log "Dropping existing user '$DB_USER'..."
+                    sudo -u postgres psql -c "DROP USER IF EXISTS $DB_USER;"
+                else
+                    log "Keeping existing user '$DB_USER'"
+                    # Get existing password or generate new one
+                    read -p "Do you want to generate a new password for existing user? (y/N): " -n 1 -r
+                    echo
+                    if [[ $REPLY =~ ^[Yy]$ ]]; then
+                        log "Generating new password for existing user..."
+                        sudo -u postgres psql -c "ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+                    else
+                        log "Keeping existing password for user '$DB_USER'"
+                        # Generate a random password anyway for the env file
+                        DB_PASSWORD="existing-password-keep"
+                    fi
+                fi
+            fi
+            
+            # Create database and user (if they don't exist)
+            sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" 2>/dev/null || log "Database already exists or creation failed"
+            sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" 2>/dev/null || log "User already exists or creation failed"
             sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
             sudo -u postgres psql -c "ALTER USER $DB_USER CREATEDB;"
             ;;
@@ -241,8 +321,38 @@ setup_database() {
             systemctl enable postgresql
             systemctl start postgresql
             
-            sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
-            sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+            # Check if database already exists
+            DB_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" 2>/dev/null || echo "")
+            if [[ "$DB_EXISTS" == "1" ]]; then
+                warn "Database '$DB_NAME' already exists"
+                read -p "Do you want to drop and recreate the database? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log "Dropping existing database '$DB_NAME'..."
+                    sudo -u postgres psql -c "DROP DATABASE IF EXISTS $DB_NAME;"
+                else
+                    log "Keeping existing database '$DB_NAME'"
+                fi
+            fi
+            
+            # Check if user already exists
+            USER_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'" 2>/dev/null || echo "")
+            if [[ "$USER_EXISTS" == "1" ]]; then
+                warn "User '$DB_USER' already exists"
+                read -p "Do you want to drop and recreate the user? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log "Dropping existing user '$DB_USER'..."
+                    sudo -u postgres psql -c "DROP USER IF EXISTS $DB_USER;"
+                else
+                    log "Keeping existing user '$DB_USER'"
+                    DB_PASSWORD="existing-password-keep"
+                fi
+            fi
+            
+            # Create database and user (if they don't exist)
+            sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" 2>/dev/null || log "Database already exists or creation failed"
+            sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" 2>/dev/null || log "User already exists or creation failed"
             sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
             sudo -u postgres psql -c "ALTER USER $DB_USER CREATEDB;"
             ;;
@@ -251,14 +361,44 @@ setup_database() {
             sudo -u postgres initdb -D /var/lib/postgres/data
             systemctl start postgresql
             
-            sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
-            sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+            # Check if database already exists
+            DB_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" 2>/dev/null || echo "")
+            if [[ "$DB_EXISTS" == "1" ]]; then
+                warn "Database '$DB_NAME' already exists"
+                read -p "Do you want to drop and recreate the database? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log "Dropping existing database '$DB_NAME'..."
+                    sudo -u postgres psql -c "DROP DATABASE IF EXISTS $DB_NAME;"
+                else
+                    log "Keeping existing database '$DB_NAME'"
+                fi
+            fi
+            
+            # Check if user already exists
+            USER_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'" 2>/dev/null || echo "")
+            if [[ "$USER_EXISTS" == "1" ]]; then
+                warn "User '$DB_USER' already exists"
+                read -p "Do you want to drop and recreate the user? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log "Dropping existing user '$DB_USER'..."
+                    sudo -u postgres psql -c "DROP USER IF EXISTS $DB_USER;"
+                else
+                    log "Keeping existing user '$DB_USER'"
+                    DB_PASSWORD="existing-password-keep"
+                fi
+            fi
+            
+            # Create database and user (if they don't exist)
+            sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" 2>/dev/null || log "Database already exists or creation failed"
+            sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" 2>/dev/null || log "User already exists or creation failed"
             sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
             sudo -u postgres psql -c "ALTER USER $DB_USER CREATEDB;"
             ;;
     esac
 
-    log "PostgreSQL database '$DB_NAME' created"
+    log "PostgreSQL database setup completed"
 }
 
 # Clone and setup project
