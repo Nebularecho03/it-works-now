@@ -248,10 +248,10 @@ configure_nginx() {
     cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup 2>/dev/null || true
     
     # Create nginx configuration
-    cat > /etc/nginx/sites-available/${PROJECT_NAME} << 'EOF'
+    cat > /etc/nginx/sites-available/${PROJECT_NAME} << EOF
 server {
     listen 80;
-    server_name _;
+    server_name ${DOMAIN} www.${DOMAIN};
 
     # Frontend
     location / {
@@ -291,11 +291,32 @@ server {
 
     # Static files
     location /_next/static {
-        alias /opt/stephenasatsa/apps/website/.next/static;
+        alias ${INSTALL_DIR}/apps/website/.next/static;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
 }
+
+# SSL redirect (will be configured by certbot)
+# server {
+#     listen 443 ssl http2;
+#     server_name ${DOMAIN} www.${DOMAIN};
+#     
+#     ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+#     
+#     include /etc/letsencrypt/options-ssl-nginx.conf;
+#     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+#     
+#     location / {
+#         proxy_pass http://localhost:3000;
+#         proxy_http_version 1.1;
+#         proxy_set_header Upgrade $http_upgrade;
+#         proxy_set_header Connection 'upgrade';
+#         proxy_set_header Host $host;
+#         proxy_cache_bypass $http_upgrade;
+#     }
+# }
 EOF
     
     # Enable site
@@ -371,6 +392,104 @@ start_services() {
     log "Services started"
 }
 
+# Setup SSL certificate
+setup_ssl() {
+    if [[ "$DOMAIN" != "localhost" ]]; then
+        log "Setting up SSL certificate for ${DOMAIN}..."
+        
+        # Check if certbot is available
+        if command -v certbot &> /dev/null; then
+            # Stop nginx temporarily to allow certbot to use port 80
+            systemctl stop nginx
+            
+            # Obtain SSL certificate
+            certbot certonly --standalone -d "${DOMAIN}" -d "www.${DOMAIN}" --agree-tos --non-interactive --email "admin@${DOMAIN}" || {
+                warn "SSL certificate setup failed, continuing without SSL"
+                systemctl start nginx
+                return
+            }
+            
+            # Start nginx again
+            systemctl start nginx
+            
+            # Update nginx config to use SSL
+            cat > /etc/nginx/sites-available/${PROJECT_NAME} << EOF
+server {
+    listen 80;
+    server_name ${DOMAIN} www.${DOMAIN};
+    return 301 https://\$server_name\$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name ${DOMAIN} www.${DOMAIN};
+    
+    ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+    
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    
+    # Frontend
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    # Backend API
+    location /api/ {
+        proxy_pass http://localhost:8001/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    # Admin panel
+    location /admin {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    # Static files
+    location /_next/static {
+        alias ${INSTALL_DIR}/apps/website/.next/static;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+EOF
+            
+            # Reload nginx
+            nginx -t && systemctl reload nginx
+            
+            # Setup auto-renewal
+            (crontab -l 2>/dev/null; echo "0 12 * * * /usr/bin/certbot renew --quiet --nginx") | crontab -
+            
+            log "SSL certificate installed and configured"
+        else
+            warn "Certbot not found, skipping SSL setup"
+        fi
+    else
+        log "Using localhost, skipping SSL setup"
+    fi
+}
+
 # Health check
 health_check() {
     log "Performing health checks..."
@@ -397,11 +516,21 @@ health_check() {
 
 # Print summary
 print_summary() {
+    local protocol="http"
+    local ssl_status="Not configured"
+    
+    if [[ "$DOMAIN" != "localhost" ]] && [[ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]]; then
+        protocol="https"
+        ssl_status="Configured and active"
+    fi
+    
     echo ""
     echo -e "${GREEN}=== Installation Summary ===${NC}"
     echo -e "Project Directory: ${BLUE}${INSTALL_DIR}${NC}"
-    echo -e "Website URL: ${BLUE}http://${DOMAIN}${NC}"
-    echo -e "Admin URL: ${BLUE}http://${DOMAIN}/admin${NC}"
+    echo -e "Domain: ${BLUE}${DOMAIN}${NC}"
+    echo -e "SSL Status: ${BLUE}${ssl_status}${NC}"
+    echo -e "Website URL: ${BLUE}${protocol}://${DOMAIN}${NC}"
+    echo -e "Admin URL: ${BLUE}${protocol}://${DOMAIN}/admin${NC}"
     echo -e "Database: ${BLUE}${DB_NAME}${NC}"
     echo -e "Database User: ${BLUE}${DB_USER}${NC}"
     echo -e "Database Password: ${YELLOW}${DB_PASSWORD}${NC}"
@@ -410,18 +539,32 @@ print_summary() {
     echo -e "${GREEN}=== Service Management ===${NC}"
     echo -e "Status: ${BLUE}systemctl status ${PROJECT_NAME}-*${NC}"
     echo -e "Logs: ${BLUE}journalctl -u ${PROJECT_NAME}-* -f${NC}"
-    echo -e "Restart: ${BLUE}systemctl restart ${PROJECT_NAME}-frontend${NC}"
+    echo -e "Restart Frontend: ${BLUE}systemctl restart ${PROJECT_NAME}-frontend${NC}"
+    echo -e "Restart Backend: ${BLUE}systemctl restart ${PROJECT_NAME}-backend${NC}"
     echo ""
     echo -e "${GREEN}=== Important Files ===${NC}"
     echo -e "Environment: ${BLUE}${INSTALL_DIR}/.env.production${NC}"
     echo -e "Nginx Config: ${BLUE}/etc/nginx/sites-available/${PROJECT_NAME}${NC}"
     echo -e "Install Log: ${BLUE}${LOG_FILE}${NC}"
     echo ""
-    echo -e "${YELLOW}=== Next Steps ===${NC}"
-    echo "1. Update your DNS to point ${DOMAIN} to this server"
-    echo "2. Change the admin password in ${INSTALL_DIR}/.env.production"
-    echo "3. Setup SSL with: certbot --nginx -d ${DOMAIN}"
-    echo "4. Configure your SMTP settings in ${INSTALL_DIR}/.env.production"
+    
+    if [[ "$DOMAIN" == "localhost" ]]; then
+        echo -e "${YELLOW}=== Local Development ===${NC}"
+        echo "You are using localhost. To use a custom domain:"
+        echo "1. Update DNS to point your domain to this server"
+        echo "2. Run: sudo certbot --nginx -d yourdomain.com"
+        echo "3. Update DOMAIN in ${INSTALL_DIR}/.env.production"
+    else
+        echo -e "${YELLOW}=== Production Setup ===${NC}"
+        if [[ "$ssl_status" == "Not configured" ]]; then
+            echo "SSL not configured. To setup SSL:"
+            echo "1. Ensure DNS points to this server"
+            echo "2. Run: sudo certbot --nginx -d ${DOMAIN}"
+        fi
+        echo "3. Configure your SMTP settings in ${INSTALL_DIR}/.env.production"
+        echo "4. Change the admin password in ${INSTALL_DIR}/.env.production"
+    fi
+    echo ""
 }
 
 # Cleanup function
@@ -457,6 +600,7 @@ main() {
     install_services
     setup_firewall
     start_services
+    setup_ssl
     health_check
     print_summary
     
