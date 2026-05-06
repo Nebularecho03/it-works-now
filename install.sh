@@ -160,8 +160,8 @@ install_frontend() {
     mkdir -p /var/www/.npm
     chown -R www-data:www-data /var/www/.npm
     
-    # Install npm dependencies as www-data
-    sudo -u www-data HOME=/var/www npm install
+    # Install npm dependencies as www-data with legacy peer deps to resolve conflicts
+    sudo -u www-data HOME=/var/www npm install --legacy-peer-deps
     
     # Generate Prisma client
     sudo -u www-data HOME=/var/www npx prisma generate
