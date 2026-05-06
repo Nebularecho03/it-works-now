@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { siteContent } from "@/lib/content/site-content";
 
 export async function GET() {
   try {
-    const affiliations = await prisma.professionalAffiliation.findMany({
-      where: { published: true },
-      orderBy: { displayOrder: 'asc' }
-    });
+    const affiliations = siteContent.professionalAffiliations?.map((affiliation, index) => ({
+      id: affiliation.id || `affiliation-${index}`,
+      institution: affiliation.institution,
+      role: affiliation.role,
+      period: affiliation.period,
+      logo: affiliation.logo,
+      featured: affiliation.featured || false
+    })) || [];
 
     return NextResponse.json({ affiliations });
   } catch (error) {

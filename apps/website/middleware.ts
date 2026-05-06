@@ -59,6 +59,12 @@ export function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
+  // Add CORS headers
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  response.headers.set("Access-Control-Allow-Credentials", "true");
+
   response.headers.set("X-Robots-Tag", "noindex, nofollow, nosnippet, noarchive");
 
   if (request.method === "GET" && request.nextUrl.pathname.startsWith("/uploads/")) {
@@ -74,6 +80,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|public/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
   ],
 };

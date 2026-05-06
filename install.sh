@@ -243,20 +243,55 @@ install_go() {
     log "Installing Go..."
 
     if command -v go >/dev/null 2>&1; then
-        log "Go $(go version) already installed"
+        GO_VERSION_INSTALLED=$(go version | awk '{print $3}' | sed 's/go//')
+        log "Go $GO_VERSION_INSTALLED already installed"
         return
     fi
 
     GO_VERSION="1.21.6"
+    GO_FILE="go${GO_VERSION}.linux-amd64.tar.gz"
+    DOWNLOAD_URL="https://go.dev/dl/${GO_FILE}"
+    
     cd /tmp
-    wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
-    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
-
-    # Add to PATH
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+    
+    # Clean up any existing downloads
+    rm -f ${GO_FILE}
+    
+    # Download Go with error handling
+    if ! wget -q --timeout=30 --tries=3 ${DOWNLOAD_URL}; then
+        recover_from_error "download Go binary" ""
+        return 1
+    fi
+    
+    # Verify download exists
+    if [[ ! -f "${GO_FILE}" ]]; then
+        error "Go download failed - file not found"
+    fi
+    
+    # Extract with error handling
+    if ! tar -C /usr/local -xzf ${GO_FILE}; then
+        recover_from_error "extract Go archive" ""
+        rm -f ${GO_FILE}
+        return 1
+    fi
+    
+    # Clean up download
+    rm -f ${GO_FILE}
+    
+    # Add to PATH for current session and permanently
+    if ! grep -q "/usr/local/go/bin" /etc/profile; then
+        echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+    fi
     export PATH=$PATH:/usr/local/go/bin
-
-    log "Go $(go version) installed"
+    
+    # Verify installation
+    if command -v go >/dev/null 2>&1; then
+        GO_VERSION_INSTALLED=$(go version | awk '{print $3}' | sed 's/go//')
+        log "Go $GO_VERSION_INSTALLED installed successfully"
+    else
+        recover_from_error "verify Go installation" ""
+        return 1
+    fi
 }
 
 # Setup PostgreSQL database

@@ -430,6 +430,47 @@ def health_check():
 def not_found(error):
     return jsonify({'error': 'Endpoint not found'}), 404
 
+@app.route('/api/admin/gallery/photos', methods=['GET'])
+def get_gallery_photos():
+    """Get all gallery photos for display"""
+    try:
+        # Get list of uploaded gallery photos
+        gallery_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../public/uploads/gallery')
+        photos = []
+        
+        if os.path.exists(gallery_path):
+            for filename in os.listdir(gallery_path):
+                if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+                    file_path = os.path.join(gallery_path, filename)
+                    if os.path.isfile(file_path):
+                        stat = os.stat(file_path)
+                        
+                        # Extract file info
+                        photos.append({
+                            'id': filename.replace('.', '_').replace('-', ' '),
+                            'title': filename.replace('-', ' ').replace('_', ' ').title(),
+                            'description': f'Professional photography from various events and conferences',
+                            'image_url': f'/uploads/gallery/{filename}',
+                            'thumbnail_url': f'/uploads/gallery/{filename}',
+                            'upload_date': datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                            'file_size': stat.st_size,
+                            'dimensions': {
+                                'width': 800,  # Default width
+                                'height': 600   # Default height
+                            },
+                            'category': 'professional',
+                            'tags': ['photography', 'professional']
+                        })
+        
+        return jsonify({'photos': photos})
+    except Exception as e:
+        print(f"Gallery API error: {e}")
+        return jsonify({'error': 'Failed to load gallery photos'}), 500
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Gallery photos not found'}), 404
+
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
