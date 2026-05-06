@@ -1,0 +1,25 @@
+[Unit]
+Description=Stephen Asatsa Telemetry Service (Go)
+After=network.target
+
+[Service]
+Type=simple
+User=http
+Group=http
+WorkingDirectory=/opt/stephenasatsa/apps/website/backend/go-services
+Environment=PORT=9002
+ExecStart=/opt/stephenasatsa/apps/website/backend/go-services/telemetry-service/telemetry-service
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/stephenasatsa/go-telemetry.log
+StandardError=append:/var/log/stephenasatsa/go-telemetry-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/stephenasatsa
+
+[Install]
+WantedBy=multi-user.target

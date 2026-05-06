@@ -1,0 +1,28 @@
+[Unit]
+Description=Stephen Asatsa Website Backend API (Python Flask)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=http
+Group=http
+WorkingDirectory=/opt/stephenasatsa/apps/website/backend
+Environment=PYTHONPATH=/opt/stephenasatsa/apps/website/backend
+Environment=PATH=/opt/stephenasatsa/apps/website/backend/venv/bin
+EnvironmentFile=/opt/stephenasatsa/.env.production
+ExecStart=/opt/stephenasatsa/apps/website/backend/venv/bin/python server.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/stephenasatsa/backend.log
+StandardError=append:/var/log/stephenasatsa/backend-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/stephenasatsa /opt/stephenasatsa/apps/website/backend/data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+[Unit]
+Description=Stephen Asatsa Website Frontend (Next.js)
+After=network.target stephenasatsa-backend.service
+Wants=stephenasatsa-backend.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/stephenasatsa/apps/website
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/opt/stephenasatsa/.env.production
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/stephenasatsa/frontend.log
+StandardError=append:/var/log/stephenasatsa/frontend-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/stephenasatsa /opt/stephenasatsa/apps/website/.next
+
+[Install]
+WantedBy=multi-user.target

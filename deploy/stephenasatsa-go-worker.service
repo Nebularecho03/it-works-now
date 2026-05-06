@@ -1,0 +1,26 @@
+[Unit]
+Description=Stephen Asatsa Worker Service (Go)
+After=network.target
+
+[Service]
+Type=simple
+User=http
+Group=http
+WorkingDirectory=/opt/stephenasatsa/apps/website/backend/go-services
+Environment=PORT=9004
+Environment=MAX_WORKERS=10
+ExecStart=/opt/stephenasatsa/apps/website/backend/go-services/worker-service/worker-service
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/stephenasatsa/go-worker.log
+StandardError=append:/var/log/stephenasatsa/go-worker-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/stephenasatsa
+
+[Install]
+WantedBy=multi-user.target
