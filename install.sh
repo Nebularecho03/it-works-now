@@ -630,8 +630,6 @@ setup_project() {
     # If no valid project structure found, try remote repository
     log "No valid project structure found, attempting to clone from remote repository..."
     setup_from_remote
-}
-}
 
 setup_from_remote() {
     log "Setting up complete deployment from GitHub repository..."
