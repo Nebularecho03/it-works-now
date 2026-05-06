@@ -631,16 +631,6 @@ setup_project() {
     log "No valid project structure found, attempting to clone from remote repository..."
     setup_from_remote
 }
-
-    # Set permissions
-    chown -R www-data:www-data $INSTALL_DIR
-    chmod -R 755 $INSTALL_DIR
-
-    # Create logs directory
-    mkdir -p /var/log/$PROJECT_NAME
-    chown www-data:www-data /var/log/$PROJECT_NAME
-
-    log "Project files setup completed"
 }
 
 setup_from_remote() {
