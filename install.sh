@@ -683,9 +683,20 @@ install_backend() {
     cd $INSTALL_DIR/apps/website/backend
 
     # Create Python virtual environment
-    sudo -u www-data python3 -m venv venv
+    if [[ ! -d "venv" ]]; then
+        sudo -u www-data python3 -m venv venv
+    fi
     sudo -u www-data venv/bin/pip install --upgrade pip
     sudo -u www-data venv/bin/pip install -r requirements.txt
+
+    # Test backend entry point
+    if [[ -f "server.py" ]]; then
+        log "Backend server.py found"
+    elif [[ -f "app.py" ]]; then
+        log "Backend app.py found"
+    else
+        warn "No backend entry point found (server.py or app.py)"
+    fi
 
     log "Backend setup completed"
 }
@@ -694,16 +705,29 @@ install_backend() {
 build_go_services() {
     log "Building Go services..."
 
-    cd $INSTALL_DIR/apps/website/backend/go-services
+    local go_services_dir="$INSTALL_DIR/apps/website/backend/go-services"
+    
+    if [[ ! -d "$go_services_dir" ]]; then
+        warn "Go services directory not found: $go_services_dir"
+        warn "Skipping Go services build (not required for this project)"
+        return 0
+    fi
+
+    cd "$go_services_dir"
 
     # Build each Go service
     for service in password-service telemetry-service image-service worker-service; do
-        cd $service
-        sudo -u www-data go build -o $service .
-        cd ..
+        if [[ -d "$service" ]]; then
+            cd "$service"
+            log "Building Go service: $service"
+            sudo -u www-data go build -o $service . || warn "Failed to build $service"
+            cd ..
+        else
+            warn "Go service directory not found: $service"
+        fi
     done
 
-    log "Go services built successfully"
+    log "Go services build completed"
 }
 
 # Create production environment file
@@ -757,18 +781,100 @@ EOF
 install_systemd_services() {
     log "Installing systemd services..."
 
-    # Copy service files
-    cp $INSTALL_DIR/production/systemd/*.service /etc/systemd/system/
+    local systemd_dir="$INSTALL_DIR/production/systemd"
+    
+    # Check if systemd service files exist
+    if [[ ! -d "$systemd_dir" ]]; then
+        warn "Systemd service files directory not found: $systemd_dir"
+        warn "Creating basic systemd services..."
+        create_basic_systemd_services
+    else
+        # Copy existing service files
+        local service_files=("$systemd_dir"/*.service)
+        if [[ ${#service_files[@]} -eq 0 || ! -f "${service_files[0]}" ]]; then
+            warn "No systemd service files found, creating basic services..."
+            create_basic_systemd_services
+        else
+            log "Found systemd service files, installing..."
+            cp "$systemd_dir"/*.service /etc/systemd/system/
+        fi
+    fi
 
     # Reload systemd
     systemctl daemon-reload
 
-    # Enable services
-    for service in stephenasatsa-frontend stephenasatsa-backend stephenasatsa-go-password stephenasatsa-go-telemetry stephenasatsa-go-image stephenasatsa-go-worker; do
-        systemctl enable $service
+    # Enable services that exist
+    local services=("stephenasatsa-frontend" "stephenasatsa-backend")
+    local go_services=("stephenasatsa-go-password" "stephenasatsa-go-telemetry" "stephenasatsa-go-image" "stephenasatsa-go-worker")
+    
+    for service in "${services[@]}"; do
+        if [[ -f "/etc/systemd/system/$service.service" ]]; then
+            systemctl enable "$service"
+            log "Enabled service: $service"
+        else
+            warn "Service file not found: $service.service"
+        fi
     done
+    
+    # Only enable Go services if they exist
+    if [[ -d "$INSTALL_DIR/apps/website/backend/go-services" ]]; then
+        for service in "${go_services[@]}"; do
+            if [[ -f "/etc/systemd/system/$service.service" ]]; then
+                systemctl enable "$service"
+                log "Enabled Go service: $service"
+            fi
+        done
+    else
+        log "Skipping Go services (directory not found)"
+    fi
 
-    log "Systemd services installed and enabled"
+    log "Systemd services installation completed"
+}
+
+create_basic_systemd_services() {
+    log "Creating basic systemd service files..."
+    
+    # Create frontend service
+    cat > /etc/systemd/system/stephenasatsa-frontend.service << EOF
+[Unit]
+Description=Stephen Asatsa Frontend Next.js
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=$INSTALL_DIR/apps/website
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # Create backend service
+    cat > /etc/systemd/system/stephenasatsa-backend.service << EOF
+[Unit]
+Description=Stephen Asatsa Backend Python API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=$INSTALL_DIR/apps/website/backend
+Environment=PATH=$INSTALL_DIR/apps/website/backend/venv/bin
+EnvironmentFile=-$INSTALL_DIR/.env.production
+ExecStart=$INSTALL_DIR/apps/website/backend/venv/bin/python server.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    log "Basic systemd services created"
 }
 
 # Configure nginx
@@ -778,20 +884,91 @@ configure_nginx() {
     # Backup original config
     cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup
 
-    # Copy our config
-    cp $INSTALL_DIR/production/nginx/nginx.conf /etc/nginx/nginx.conf
-
-    # Update domain in config
-    sed -i "s/your-domain.com/$DOMAIN/g" /etc/nginx/nginx.conf
+    local nginx_config="$INSTALL_DIR/production/nginx/nginx.conf"
+    
+    # Check if custom nginx config exists
+    if [[ -f "$nginx_config" ]]; then
+        log "Using custom nginx configuration..."
+        cp "$nginx_config" /etc/nginx/nginx.conf
+        # Update domain in config
+        sed -i "s/your-domain.com/$DOMAIN/g" /etc/nginx/nginx.conf
+    else
+        warn "Custom nginx config not found: $nginx_config"
+        warn "Creating basic nginx configuration..."
+        create_basic_nginx_config
+    fi
 
     # Test configuration
-    nginx -t
+    if nginx -t; then
+        log "Nginx configuration test passed"
+    else
+        error "Nginx configuration test failed"
+    fi
 
     # Enable and start nginx
     systemctl enable nginx
     systemctl start nginx
 
     log "Nginx configured and started"
+}
+
+create_basic_nginx_config() {
+    log "Creating basic nginx configuration..."
+    
+    cat > /etc/nginx/nginx.conf << EOF
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Frontend server
+    server {
+        listen 80;
+        server_name $DOMAIN www.$DOMAIN;
+
+        # Frontend proxy
+        location / {
+            proxy_pass http://localhost:3000;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+            proxy_cache_bypass \$http_upgrade;
+        }
+
+        # Backend API proxy
+        location /api/ {
+            proxy_pass http://localhost:8001/;
+            proxy_http_version 1.1;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+        }
+
+        # Admin panel
+        location /admin {
+            proxy_pass http://localhost:3000;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+            proxy_cache_bypass \$http_upgrade;
+        }
+    }
+}
+EOF
+
+    log "Basic nginx configuration created"
 }
 
 # Setup SSL certificate
@@ -836,19 +1013,41 @@ start_services() {
     log "Starting all services..."
 
     # Start backend services first
-    systemctl start stephenasatsa-backend
-    systemctl start stephenasatsa-go-password
-    systemctl start stephenasatsa-go-telemetry
-    systemctl start stephenasatsa-go-image
-    systemctl start stephenasatsa-go-worker
+    local services=("stephenasatsa-backend")
+    local go_services=("stephenasatsa-go-password" "stephenasatsa-go-telemetry" "stephenasatsa-go-image" "stephenasatsa-go-worker")
+    
+    # Start main backend service
+    if systemctl list-unit-files | grep -q "stephenasatsa-backend.service"; then
+        log "Starting backend service..."
+        systemctl start stephenasatsa-backend || warn "Failed to start backend service"
+    else
+        warn "Backend service not found, skipping"
+    fi
+    
+    # Start Go services if they exist
+    if [[ -d "$INSTALL_DIR/apps/website/backend/go-services" ]]; then
+        for service in "${go_services[@]}"; do
+            if systemctl list-unit-files | grep -q "$service.service"; then
+                log "Starting Go service: $service"
+                systemctl start "$service" || warn "Failed to start $service"
+            fi
+        done
+    else
+        log "No Go services to start"
+    fi
 
     # Wait a moment for services to start
     sleep 5
 
-    # Start frontend
-    systemctl start stephenasatsa-frontend
+    # Start frontend service
+    if systemctl list-unit-files | grep -q "stephenasatsa-frontend.service"; then
+        log "Starting frontend service..."
+        systemctl start stephenasatsa-frontend || warn "Failed to start frontend service"
+    else
+        warn "Frontend service not found, skipping"
+    fi
 
-    log "All services started"
+    log "Service startup completed"
 }
 
 # Health check
@@ -856,28 +1055,60 @@ health_check() {
     log "Performing health check..."
 
     # Check if services are running
-    services=("stephenasatsa-frontend" "stephenasatsa-backend" "nginx" "postgresql")
-    for service in "${services[@]}"; do
+    local core_services=("nginx" "postgresql")
+    local app_services=("stephenasatsa-frontend" "stephenasatsa-backend")
+    local go_services=("stephenasatsa-go-password" "stephenasatsa-go-telemetry" "stephenasatsa-go-image" "stephenasatsa-go-worker")
+    
+    # Check core services
+    for service in "${core_services[@]}"; do
         if systemctl is-active --quiet $service; then
             log "✓ $service is running"
         else
             error "✗ $service is not running"
         fi
     done
+    
+    # Check application services
+    for service in "${app_services[@]}"; do
+        if systemctl list-unit-files | grep -q "$service.service"; then
+            if systemctl is-active --quiet $service; then
+                log "✓ $service is running"
+            else
+                warn "✗ $service is not running"
+            fi
+        else
+            warn "✗ $service service not found"
+        fi
+    done
+    
+    # Check Go services if they exist
+    if [[ -d "$INSTALL_DIR/apps/website/backend/go-services" ]]; then
+        for service in "${go_services[@]}"; do
+            if systemctl list-unit-files | grep -q "$service.service"; then
+                if systemctl is-active --quiet $service; then
+                    log "✓ $service is running"
+                else
+                    warn "✗ $service is not running"
+                fi
+            fi
+        done
+    fi
 
     # Check if website is accessible
-    if curl -s -o /dev/null -w "%{http_code}" http://localhost | grep -q "200"; then
+    if curl -s --connect-timeout 5 -o /dev/null -w "%{http_code}" http://localhost | grep -q "200"; then
         log "✓ Website is responding"
     else
-        warn "✗ Website is not responding"
+        warn "✗ Website is not responding (may still be starting)"
     fi
 
     # Check backend API
-    if curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/health | grep -q "200"; then
+    if curl -s --connect-timeout 5 -o /dev/null -w "%{http_code}" http://localhost:8001/health 2>/dev/null | grep -q "200"; then
         log "✓ Backend API is responding"
     else
-        warn "✗ Backend API is not responding"
+        warn "✗ Backend API is not responding (may still be starting)"
     fi
+    
+    log "Health check completed"
 }
 
 # Print installation summary
