@@ -27,7 +27,35 @@ LOG_FILE="/var/log/${PROJECT_NAME}_install.log"
 exec > >(tee -a "$LOG_FILE")
 exec 2>&1
 
-# Utility functions
+# Cleanup trap for script interruption
+cleanup_on_exit() {
+    local exit_code=$?
+    if [[ $exit_code -ne 0 ]]; then
+        warn "Script interrupted or failed, performing cleanup..."
+        
+        # Clean up any temp directories in common locations
+        local temp_dirs=("$INSTALL_DIR/temp" "/tmp/temp" "$(pwd)/temp")
+        for temp_dir in "${temp_dirs[@]}"; do
+            if [[ -d "$temp_dir" ]]; then
+                debug "Cleaning up temp directory on exit: $temp_dir"
+                rm -rf "$temp_dir" 2>/dev/null || true
+            fi
+        done
+        
+        log "Cleanup completed"
+    fi
+}
+
+# Set trap for common exit signals
+trap cleanup_on_exit EXIT INT TERM
+
+# Enhanced logging functions
+debug() {
+    if [[ "${DEBUG:-false}" == "true" ]]; then
+        echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')] DEBUG: $1${NC}"
+    fi
+}
+
 log() {
     echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')] $1${NC}"
 }
@@ -39,6 +67,108 @@ warn() {
 error() {
     echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
     exit 1
+}
+
+# Safety validation functions
+validate_safe_path() {
+    local path="$1"
+    local name="${2:-path}"
+    
+    debug "Validating safety of $name: $path"
+    
+    # Check if path is absolute
+    if [[ ! "$path" = /* ]]; then
+        error "$name must be an absolute path: $path"
+    fi
+    
+    # Check for dangerous paths
+    case "$path" in
+        "/"|"/bin"|"/sbin"|"/usr"|"/etc"|"/var"|"/opt"|"/home"|"/root"|"/boot"|"/lib"|"/proc"|"/sys"|"/dev")
+            error "Refusing to operate on critical system path: $path"
+            ;;
+    esac
+    
+    # Check if path is a mount point
+    if mountpoint -q "$path" 2>/dev/null; then
+        error "Refusing to operate on mount point: $path"
+    fi
+    
+    # Check if path is a symlink
+    if [[ -L "$path" ]]; then
+        local target=$(readlink -f "$path")
+        warn "$name is a symlink pointing to: $target"
+        validate_safe_path "$target" "$name target"
+    fi
+    
+    debug "Path validation passed for: $path"
+    return 0
+}
+
+safe_remove_directory() {
+    local dir_path="$1"
+    local dir_name="${2:-directory}"
+    
+    if [[ -z "$dir_path" ]]; then
+        error "Directory path cannot be empty"
+    fi
+    
+    # Safety validation
+    validate_safe_path "$dir_path" "$dir_name"
+    
+    if [[ ! -d "$dir_path" ]]; then
+        debug "$dir_name does not exist: $dir_path"
+        return 0
+    fi
+    
+    debug "Safely removing $dir_name: $dir_path"
+    
+    # Check directory contents for safety
+    local file_count=$(find "$dir_path" -type f | wc -l)
+    if [[ $file_count -gt 10000 ]]; then
+        warn "$dir_name contains $file_count files, this seems unusual"
+        read -p "Continue removing $dir_name? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            log "Skipping removal of $dir_name by user choice"
+            return 1
+        fi
+    fi
+    
+    # Attempt removal with error handling
+    if ! rm -rf "$dir_path" 2>/dev/null; then
+        # Try with different permissions
+        warn "First attempt failed, trying with chmod"
+        chmod -R 755 "$dir_path" 2>/dev/null || true
+        if ! rm -rf "$dir_path"; then
+            error "Failed to remove $dir_name: $dir_path"
+        fi
+    fi
+    
+    log "Successfully removed $dir_name: $dir_path"
+    debug "Verified removal: $(! [[ -d "$dir_path" ]] && echo 'confirmed' || echo 'failed')"
+}
+
+validate_git_clone() {
+    local clone_dir="$1"
+    
+    if [[ ! -d "$clone_dir" ]]; then
+        error "Git clone directory does not exist: $clone_dir"
+    fi
+    
+    if [[ ! -d "$clone_dir/.git" ]]; then
+        error "Git clone directory missing .git folder: $clone_dir"
+    fi
+    
+    # Check for basic project files
+    local required_files=("README.md" "package.json")
+    for file in "${required_files[@]}"; do
+        if [[ ! -f "$clone_dir/$file" ]]; then
+            warn "Git clone missing expected file: $file"
+        fi
+    done
+    
+    debug "Git clone validation passed for: $clone_dir"
+    return 0
 }
 
 # Recovery function for failed operations
@@ -451,12 +581,61 @@ setup_project() {
 
         # Clone repository if not already present
         if [[ ! -d "$INSTALL_DIR/apps" ]] && [[ ! -d "$INSTALL_DIR/website" ]]; then
-            # Clean up any existing temp directory
-            rm -rf temp 2>/dev/null || true
-            git clone https://github.com/Cyberverse-cent0/combined-project.git temp
-            mv temp/* .
-            mv temp/.* . 2>/dev/null || true
-            rmdir temp
+            log "Cloning project repository..."
+            
+            # Define temp directory path
+            local temp_dir="$INSTALL_DIR/temp"
+            
+            # Safe cleanup of any existing temp directory
+            if [[ -d "$temp_dir" ]]; then
+                log "Removing existing temp directory..."
+                safe_remove_directory "$temp_dir" "temp directory"
+            fi
+            
+            # Clone repository with error handling
+            log "Downloading project from repository..."
+            if ! git clone https://github.com/Cyberverse-cent0/combined-project.git "$temp_dir"; then
+                error "Failed to clone repository from GitHub"
+            fi
+            
+            # Validate the clone
+            validate_git_clone "$temp_dir"
+            
+            # Move files with error handling and verification
+            log "Moving project files to installation directory..."
+            
+            # Move visible files
+            if ! mv "$temp_dir"/* . 2>/dev/null; then
+                error "Failed to move visible files from temp directory"
+            fi
+            
+            # Move hidden files (including .git, .env, etc.)
+            if ! mv "$temp_dir"/.* . 2>/dev/null; then
+                warn "Some hidden files could not be moved (this may be normal)"
+                # Try to move specific important hidden files
+                for hidden_file in ".git" ".gitignore" ".env.example" ".env"; do
+                    if [[ -e "$temp_dir/$hidden_file" ]]; then
+                        debug "Moving specific hidden file: $hidden_file"
+                        mv "$temp_dir/$hidden_file" . 2>/dev/null || warn "Could not move $hidden_file"
+                    fi
+                done
+            fi
+            
+            # Verify important files were moved
+            local required_files=("README.md" "package.json")
+            for file in "${required_files[@]}"; do
+                if [[ ! -f "$INSTALL_DIR/$file" ]]; then
+                    error "Required file not found after move: $file"
+                fi
+            done
+            
+            # Safe cleanup of temp directory
+            log "Cleaning up temp directory..."
+            safe_remove_directory "$temp_dir" "temp directory"
+            
+            log "Project files successfully installed"
+        else
+            log "Project files already exist, skipping clone"
         fi
     fi
 
