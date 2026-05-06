@@ -2,460 +2,232 @@
 
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ResearchHubSidebar } from "@/components/research-hub/research-hub-sidebar";
-import { EnhancedHeroSection } from "@/components/research-hub/enhanced-hero-section";
-import { ResearchHubBriefing } from "@/components/research-hub/research-hub-briefing";
-import { QuickStatsRow } from "@/components/research-hub/quick-stats-row";
-import { FilterableProjectGrid } from "@/components/research-hub/filterable-project-grid";
-import { TaskDashboard } from "@/components/research-hub/task-dashboard";
-import { AwardsGrid } from "@/components/research-hub/awards-grid";
-import { BlogSection } from "@/components/research-hub/blog-section";
-import { StickyNavigation } from "@/components/research-hub/sticky-navigation";
-import { IconCard } from "@/components/ui/icon-card";
-import { Accordion } from "@/components/ui/accordion";
-import { createMetadata } from "@/lib/site";
-import { 
-  Brain, 
-  Microscope, 
-  Globe, 
-  Users, 
-  Target,
-  Heart,
-  Lightbulb,
-  CheckCircle,
-  ArrowRight,
-  Mail,
-  BookOpen,
-  Award, 
-  TrendingUp,
-  FileText,
-  BarChart3
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { siteContent } from "@/lib/content/site-content";
-import { useState } from "react";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  Brain,
+  Microscope,
+  FileText,
+  ListChecks,
+  Trophy,
+  Mic2,
+  Lightbulb,
+  TrendingUp,
+  Users,
+  BookOpen,
+  ArrowRight,
+  Target,
+  Award,
+  Globe,
+  Heart
+} from "lucide-react";
 
-
-const researchSections = [
+const quickAccessCards = [
   {
     title: "About",
-    description: "Research philosophy and methodology",
-    icon: BookOpen,
+    description: "Lab identity and research philosophy",
+    icon: Brain,
     href: "/research-hub/about",
-    color: "bg-blue-500",
     count: null
   },
   {
     title: "Projects",
-    description: "Active and completed research projects",
-    icon: Target,
+    description: "Active and completed research",
+    icon: Microscope,
     href: "/research-hub/projects",
-    color: "bg-green-500",
     count: siteContent.researchProjects.length
   },
   {
     title: "Publications",
-    description: "Academic publications and papers",
+    description: "Papers and publications",
     icon: FileText,
-    href: "/research-hub/publications",
-    color: "bg-purple-500",
+    href: "/research-hub/activities",
     count: siteContent.publications.length
   },
   {
     title: "Tasks",
-    description: "Research milestones and task tracking",
-    icon: TrendingUp,
+    description: "Research milestones",
+    icon: ListChecks,
     href: "/research-hub/tasks",
-    color: "bg-orange-500",
     count: null
   },
   {
     title: "Awards",
-    description: "Academic awards and grants",
-    icon: Award,
+    description: "Recognition and grants",
+    icon: Trophy,
     href: "/research-hub/awards",
-    color: "bg-yellow-500",
     count: siteContent.awards.length
   },
   {
-    title: "Invited Talks",
-    description: "Speaking engagements and presentations",
+    title: "Team",
+    description: "Collaborators and network",
     icon: Users,
-    href: "/research-hub/invited-talks",
-    color: "bg-red-500",
-    count: siteContent.invitedTalks.length
-  },
-  {
-    title: "Research Interests",
-    description: "Areas of expertise and research focus",
-    icon: Lightbulb,
-    href: "/research-hub/interests",
-    color: "bg-indigo-500",
-    count: null
-  },
-  {
-    title: "Ongoing",
-    description: "Currently active research initiatives",
-    icon: TrendingUp,
-    href: "/research-hub/ongoing",
-    color: "bg-teal-500",
-    count: null
-  },
-  {
-    title: "Collaborations",
-    description: "Research partnerships and networks",
-    icon: Users,
-    href: "/research-hub/collaborations",
-    color: "bg-pink-500",
+    href: "/research-hub/team",
     count: siteContent.collaborators.length
-  },
-  {
-    title: "Resources",
-    description: "Research tools and documentation",
-    icon: BarChart3,
-    href: "/research-hub/resources",
-    color: "bg-gray-500",
-    count: null
   }
 ];
 
-const statsCards = [
-  {
-    label: "Total Projects",
-    value: siteContent.researchProjects.length,
-    icon: Target,
-    color: "text-green-600"
-  },
-  {
-    label: "Publications",
-    value: siteContent.publications.length,
-    icon: FileText,
-    color: "text-purple-600"
-  },
-  {
-    label: "Awards",
-    value: siteContent.awards.length,
-    icon: Award,
-    color: "text-yellow-600"
-  },
-  {
-    label: "Collaborators",
-    value: siteContent.collaborators.length,
-    icon: Users,
-    color: "text-blue-600"
-  }
+const statsData = [
+  { label: "Projects", value: siteContent.researchProjects.length, icon: Target, color: "text-emerald-600" },
+  { label: "Publications", value: siteContent.publications.length, icon: FileText, color: "text-blue-600" },
+  { label: "Awards", value: siteContent.awards.length, icon: Award, color: "text-amber-600" },
+  { label: "Collaborators", value: siteContent.collaborators.length, icon: Users, color: "text-purple-600" }
 ];
 
-const methodologyItems = [
-  {
-    title: "Mixed-Methods Approach",
-    content: "We combine qualitative and quantitative research methods to provide comprehensive insights. This includes ethnographic studies, focus groups, in-depth interviews, survey research, and statistical analysis to ensure robust findings.",
-    icon: <Microscope className="w-5 h-5" />
-  },
-  {
-    title: "Evidence-Based Practice",
-    content: "Our research is grounded in scientific rigor and empirical evidence. We follow established protocols for data collection, analysis, and interpretation to ensure validity and reliability of our findings.",
-    icon: <Target className="w-5 h-5" />
-  },
-  {
-    title: "Community Engagement",
-    content: "We actively involve community members in the research process, ensuring cultural relevance and practical applicability. This participatory approach enhances the impact and sustainability of our research outcomes.",
-    icon: <Users className="w-5 h-5" />
-  },
-  {
-    title: "Innovative Design",
-    content: "We employ cutting-edge research methodologies and technologies to address complex psychological questions. Our innovative approaches allow us to explore new frontiers in mental health research.",
-    icon: <Lightbulb className="w-5 h-5" />
-  }
+const recentActivity = [
+  { title: "New project submitted", detail: "Traditional Luhya Mourning Rituals", time: "2 days ago", type: "project" },
+  { title: "Publication updated", detail: "Cultural Psychology Review", time: "1 week ago", type: "publication" },
+  { title: "Team member added", detail: "Dr. Jane Doe, Research Fellow", time: "2 weeks ago", type: "team" },
+  { title: "Grant approved", detail: "Templeton Foundation - $150,000", time: "1 month ago", type: "award" }
 ];
 
-const researchAreas = [
-  {
-    title: "Clinical Psychology",
-    description: "Evidence-based interventions and therapeutic approaches for mental health challenges.",
-    icon: Heart,
-    color: "text-red-600"
-  },
-  {
-    title: "Cultural Psychology",
-    description: "Exploring how culture influences psychological processes and mental wellbeing.",
-    icon: Globe,
-    color: "text-blue-600"
-  },
-  {
-    title: "Community Mental Health",
-    description: "Promoting mental health at the community level through prevention and intervention programs.",
-    icon: Users,
-    color: "text-green-600"
-  }
-];
-
-export default function ResearchHubPage() {
-  const router = useRouter();
-  const [showBriefing, setShowBriefing] = useState(false);
-
-  useEffect(() => {
-    // Redirect to about page as default landing
-    router.replace("/research-hub/about");
-  }, [router]);
-
-  const methodologyItems = [
-    {
-      title: "Mixed-Methods Approach",
-      content: "We combine qualitative and quantitative research methods to provide comprehensive insights. This includes ethnographic studies, focus groups, in-depth interviews, survey research, and statistical analysis to ensure robust findings.",
-      icon: <Microscope className="w-5 h-5" />
-    },
-    {
-      title: "Evidence-Based Practice",
-      content: "Our research is grounded in scientific rigor and empirical evidence. We follow established protocols for data collection, analysis, and interpretation to ensure validity and reliability of our findings.",
-      icon: <Target className="w-5 h-5" />
-    },
-    {
-      title: "Community Engagement",
-      content: "We actively involve community members in the research process, ensuring cultural relevance and practical applicability. This participatory approach enhances the impact and sustainability of our research outcomes.",
-      icon: <Users className="w-5 h-5" />
-    },
-    {
-      title: "Innovative Design",
-      content: "We employ cutting-edge research methodologies and technologies to address complex psychological questions. Our innovative approaches allow us to explore new frontiers in mental health research.",
-      icon: <Lightbulb className="w-5 h-5" />
-    }
-  ];
-
-  const researchAreas = [
-    {
-      title: "Clinical Psychology",
-      description: "Evidence-based interventions and therapeutic approaches for mental health challenges.",
-      icon: Heart,
-      color: "text-red-600"
-    },
-    {
-      title: "Cultural Psychology",
-      description: "Exploring how culture influences psychological processes and mental wellbeing.",
-      icon: Globe,
-      color: "text-blue-600"
-    },
-    {
-      title: "Community Mental Health",
-      description: "Promoting mental health at the community level through prevention and intervention programs.",
-      icon: Users,
-      color: "text-green-600"
-    }
-  ];
-
+export default function ResearchHubDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Research Hub Briefing */}
-      <ResearchHubBriefing onDismiss={() => setShowBriefing(false)} />
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Research Hub</h1>
+        <p className="text-muted-foreground mt-1">
+          Human Development, Indigenous Knowledge and Flourishing Lab
+        </p>
+      </div>
 
-      {/* Sticky Navigation */}
-      <StickyNavigation />
-
-      {/* Hero Section */}
-      <section id="hero">
-        <EnhancedHeroSection />
-      </section>
-
-      {/* Quick Stats */}
-      <section id="quick-stats" className="container-shell py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Research Impact at a Glance</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            Key metrics showing our research reach and influence
-          </p>
-        </div>
-        <QuickStatsRow />
-      </section>
-
-      {/* Main Content with Sidebar */}
-      <div className="container-shell pb-16">
-        <div className="flex gap-8">
-          <ResearchHubSidebar />
-          
-          <div className="flex-1 lg:ml-80 pt-20 space-y-20">
-            {/* Research Philosophy */}
-            <section id="philosophy" className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold mb-4">Research Philosophy</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                  Our approach is rooted in cultural relevance and scientific rigor
-                </p>
+      {/* Stats Row */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {statsData.map((stat) => (
+          <Card key={stat.label} className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                <p className="text-3xl font-bold mt-1">{stat.value}</p>
               </div>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <IconCard
-                  title="Evidence-Based"
-                  description="Grounded in scientific research and empirical data"
-                  color="text-blue-600"
-                />
-                <IconCard
-                  title="Cultural Relevance"
-                  description="Respecting indigenous knowledge and local contexts"
-                  color="text-purple-600"
-                />
-                <IconCard
-                  title="Real-World Application"
-                  description="Translating research into practical solutions"
-                  color="text-green-600"
-                />
-                <IconCard
-                  title="Interdisciplinary"
-                  description="Integrating diverse perspectives and methods"
-                  color="text-orange-600"
-                />
-              </div>
+              <stat.icon className={`w-8 h-8 ${stat.color} opacity-80`} />
+            </div>
+          </Card>
+        ))}
+      </div>
 
-              {/* Interactive Methodology */}
-              <div className="mt-12">
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold mb-2">Research Methodology</h3>
-                  <p className="text-muted-foreground">Click to explore our methodological approaches</p>
-                </div>
-                <Accordion items={methodologyItems} className="max-w-4xl mx-auto" />
-              </div>
-            </section>
-
-            {/* Featured Projects */}
-            <section id="featured-projects" className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold mb-4">Featured Research Projects</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                  Explore our active and completed research initiatives
-                </p>
-              </div>
-              <FilterableProjectGrid />
-            </section>
-
-            {/* Active Tasks */}
-            <section id="tasks" className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold mb-4">Active Tasks & Progress</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                  Track our current research milestones and deadlines
-                </p>
-              </div>
-              <TaskDashboard />
-            </section>
-
-            {/* Awards & Recognition */}
-            <section id="awards" className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold mb-4">Awards & Recognition</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                  Celebrating our academic achievements and research grants
-                </p>
-              </div>
-              <AwardsGrid />
-            </section>
-
-            {/* Blog & Publications */}
-            <section id="blog" className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold mb-4">Research Blog & Publications</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                  Insights, publications, and thought leadership from our research
-                </p>
-              </div>
-              <BlogSection />
-            </section>
-
-            {/* Core Research Areas */}
-            <section className="space-y-8">
-              <div className="text-center">
-                <h2 className="text-4xl font-bold mb-4">Core Research Areas</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                  Our primary focus areas in psychological research
-                </p>
-              </div>
-              <div className="grid gap-6 md:grid-cols-3">
-                {researchAreas.map((area, index) => (
-                  <IconCard
-                    key={index}
-                    title={area.title}
-                    description={area.description}
-                    color={area.color}
-                  />
-                ))}
-              </div>
-            </section>
-
-            {/* Collaboration CTA */}
-            <section className="bg-gradient-to-r from-[#0F766E] to-teal-600 rounded-2xl p-8 text-white">
-              <div className="text-center space-y-6">
-                <h2 className="text-3xl font-bold">Join Our Research Community</h2>
-                <p className="text-lg max-w-2xl mx-auto opacity-90">
-                  Collaborate with us and contribute to impactful studies that advance psychological science and improve lives.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg"
-                    className="bg-white text-[#0F766E] hover:bg-gray-100 border-0 px-8"
-                  >
-                    <Link href="/contact" className="flex items-center">
-                      Get Involved
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Link>
-                  </Button>
-                  <Button 
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-[#0F766E] px-8"
-                  >
-                    <Link href="/contact" className="flex items-center">
-                      Contact Us
-                      <Mail className="w-4 h-4 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </section>
-
-            {/* Footer */}
-            <footer className="border-t pt-8">
-              <div className="grid gap-6 md:grid-cols-3">
-                <div>
-                  <h3 className="font-semibold mb-3">Stay Updated</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Subscribe to our research newsletter for latest updates
-                  </p>
-                  <Button variant="outline" size="sm">
-                    <Mail className="w-4 h-4 mr-2" />
-                    Subscribe
-                  </Button>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Quick Links</h3>
-                  <div className="space-y-2">
-                    <Link href="#featured-projects" className="block text-sm text-muted-foreground hover:text-foreground">
-                      Research Projects
-                    </Link>
-                    <Link href="#awards" className="block text-sm text-muted-foreground hover:text-foreground">
-                      Awards & Recognition
-                    </Link>
-                    <Link href="/contact" className="block text-sm text-muted-foreground hover:text-foreground">
-                      Contact
-                    </Link>
+      {/* Quick Access Grid */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4">Quick Access</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {quickAccessCards.map((card) => (
+            <Link key={card.title} href={card.href}>
+              <Card className="p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer h-full">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <card.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{card.title}</h3>
+                      <p className="text-sm text-muted-foreground">{card.description}</p>
+                    </div>
                   </div>
+                  {card.count !== null && (
+                    <Badge variant="secondary">{card.count}</Badge>
+                  )}
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Connect</h3>
-                  <div className="space-y-2">
-                    <Link href="https://scholar.google.com/citations?user=nBzSCvUAAAAJ&hl=en" className="block text-sm text-muted-foreground hover:text-foreground">
-                      Google Scholar
-                    </Link>
-                    <Link href="/admin" className="block text-sm text-muted-foreground hover:text-foreground">
-                      Research Portal
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </footer>
-          </div>
+              </Card>
+            </Link>
+          ))}
         </div>
       </div>
+
+      {/* Two Column Layout */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Recent Activity */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Recent Activity</h2>
+            <Button variant="ghost" size="sm">
+              View All
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {recentActivity.map((activity, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">{activity.title}</p>
+                  <p className="text-sm text-muted-foreground truncate">{activity.detail}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Research Focus Areas */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Research Focus</h2>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+              <Globe className="w-5 h-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium">Cultural Psychology</p>
+                <p className="text-xs text-muted-foreground">Indigenous knowledge systems</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+              <Heart className="w-5 h-5 text-red-600" />
+              <div>
+                <p className="text-sm font-medium">Clinical Psychology</p>
+                <p className="text-xs text-muted-foreground">Evidence-based interventions</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+              <Users className="w-5 h-5 text-green-600" />
+              <div>
+                <p className="text-sm font-medium">Community Mental Health</p>
+                <p className="text-xs text-muted-foreground">Prevention and intervention</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+              <Lightbulb className="w-5 h-5 text-amber-600" />
+              <div>
+                <p className="text-sm font-medium">Decolonization</p>
+                <p className="text-xs text-muted-foreground">Transforming psychological practice</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Active Projects Preview */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Active Projects</h2>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/research-hub/projects">
+              View All
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </Button>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {siteContent.researchProjects.slice(0, 3).map((project, index) => (
+            <Card key={index} className="p-4 border-l-4 border-l-primary">
+              <div className="flex items-start justify-between mb-2">
+                <Badge variant={project.status === "Active" ? "default" : "secondary"}>
+                  {project.status}
+                </Badge>
+                {project.funding && (
+                  <span className="text-xs text-muted-foreground">{project.funding}</span>
+                )}
+              </div>
+              <h3 className="font-semibold text-sm mb-1">{project.title}</h3>
+              <p className="text-xs text-muted-foreground line-clamp-2">{project.summary}</p>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">{project.category}</span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }

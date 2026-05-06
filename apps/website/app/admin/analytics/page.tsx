@@ -55,7 +55,7 @@ export default function AnalyticsPage() {
           <p className="text-slate-600">Monitor your website performance and user behavior</p>
           <div className="flex items-center gap-2">
             <Tabs value={activeSection} onValueChange={setActiveSection}>
-              <TabsList value="overview">
+              <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="traffic">Traffic</TabsTrigger>
                 <TabsTrigger value="content">Content</TabsTrigger>

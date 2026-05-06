@@ -154,6 +154,14 @@ export interface MediaItem extends BaseContent {
   tags: string[];
 }
 
+export interface ExternalProfile extends BaseContent {
+  platform: string;
+  url: string;
+  username?: string;
+  displayName?: string;
+  profileType: 'academic' | 'professional' | 'social' | 'other';
+}
+
 // Lab information interface
 export interface LabInfo {
   name: string;

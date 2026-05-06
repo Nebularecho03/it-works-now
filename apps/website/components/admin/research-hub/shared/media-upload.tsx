@@ -484,7 +484,7 @@ export function ImageGallery({
             
             {onRemove && (
               <Button
-                variant="destructive"
+                variant="outline"
                 size="sm"
                 className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6"
                 onClick={() => onRemove(index)}

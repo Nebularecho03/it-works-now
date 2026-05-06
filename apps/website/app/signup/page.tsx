@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { UserPlus, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
+import { UserPlus, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle, ChevronUp, ChevronDown, Building, GraduationCap, MapPin, Linkedin, Globe } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

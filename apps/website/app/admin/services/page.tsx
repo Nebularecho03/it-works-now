@@ -26,7 +26,7 @@ import {
   Calendar,
   Info
 } from "lucide-react";
-import { api } from "@/components/api/client";
+import { api, ApiClient } from "@/components/api/client";
 
 interface Service {
   id: number;
@@ -155,7 +155,10 @@ export default function ServicesAdminPage() {
 
   const deleteService = async (id: number) => {
     try {
-      await api.delete("/api/admin/services", { body: JSON.stringify({ id }) });
+      await ApiClient.fetch("/api/admin/services", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
       loadServices();
     } catch (error) {
       console.error("Failed to delete service:", error);

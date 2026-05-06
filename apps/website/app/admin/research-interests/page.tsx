@@ -30,7 +30,7 @@ import {
   Heart,
   Info
 } from "lucide-react";
-import { api } from "@/components/api/client";
+import { api, ApiClient } from "@/components/api/client";
 
 interface ResearchInterest {
   id: string;
@@ -198,7 +198,10 @@ export default function ResearchInterestsAdminPage() {
 
   const deleteInterest = async (id: string) => {
     try {
-      await api.delete("/api/admin/research-interests", { body: JSON.stringify({ id }) });
+      await ApiClient.fetch("/api/admin/research-interests", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
       loadInterests();
     } catch (error) {
       console.error("Failed to delete research interest:", error);

@@ -90,9 +90,8 @@ export function RichTextEditor({
           "prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded prose-code:text-sm",
           "prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto",
           "min-h-[200px] p-4 focus:ring-2 focus:ring-[#0F766E] focus:ring-offset-2 rounded-lg border border-gray-200"
-        ),
-        style: { minHeight: height },
-      },
+      ),
+    },
     },
   });
 
@@ -398,13 +397,6 @@ export function RichTextEditorWithCount(props: RichTextEditorProps) {
   return (
     <RichTextEditor
       {...props}
-      extensions={[
-        StarterKit,
-        Image,
-        Link,
-        Placeholder,
-        CharacterCount,
-      ]}
     />
   );
 }

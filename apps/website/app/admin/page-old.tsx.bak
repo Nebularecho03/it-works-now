@@ -55,6 +55,7 @@ export default function AdminDashboard() {
   const [recentContent, setRecentContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Check authentication
   useEffect(() => {
@@ -84,62 +85,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadDashboardData();
   }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      // Mock data for now - replace with actual API calls
-      const mockStats: SystemStats = {
-        totalContent: 24,
-        totalMedia: 156,
-        publishedPages: 18,
-        draftPages: 6,
-        totalViews: 15420,
-        lastUpdate: new Date().toISOString()
-      };
-
-      const mockRecentContent: ContentItem[] = [
-        {
-          id: '1',
-          title: 'Home Page Hero Section',
-          type: 'page',
-          status: 'published',
-          updatedAt: '2024-01-15T10:30:00Z',
-          views: 8920
-        },
-        {
-          id: '2',
-          title: 'Research on Afrocentric Psychology',
-          type: 'research',
-          status: 'published',
-          updatedAt: '2024-01-14T15:45:00Z',
-          views: 3420
-        },
-        {
-          id: '3',
-          title: 'Professional Services Overview',
-          type: 'service',
-          status: 'draft',
-          updatedAt: '2024-01-13T09:20:00Z',
-          views: 2100
-        },
-        {
-          id: '4',
-          title: 'Client Testimonial - John Doe',
-          type: 'testimonial',
-          status: 'published',
-          updatedAt: '2024-01-12T14:15:00Z',
-          views: 1560
-        }
-      ];
-
-      setStats(mockStats);
-      setRecentContent(mockRecentContent);
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Keyboard shortcut for search
   useEffect(() => {

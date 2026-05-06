@@ -22,7 +22,7 @@ import {
   Copy,
   Check
 } from "lucide-react";
-import { api } from "@/components/api/client";
+import { api, ApiClient } from "@/components/api/client";
 
 interface HeroContent {
   id: number;
@@ -127,7 +127,10 @@ export default function HeroAdminPage() {
 
   const deleteHero = async (id: number) => {
     try {
-      await api.delete("/api/admin/hero", { body: JSON.stringify({ id }) });
+      await ApiClient.fetch("/api/admin/hero", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
       loadHeroes();
     } catch (error) {
       console.error("Failed to delete hero content:", error);

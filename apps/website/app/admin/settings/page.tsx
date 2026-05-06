@@ -18,6 +18,7 @@ import {
   Save,
   Bell,
   User,
+  Plus,
   Key,
   Activity,
   Globe,

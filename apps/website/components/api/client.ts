@@ -93,13 +93,56 @@ export class ApiClient {
   }
 }
 
+// Admin proxy function for API routes
+export async function proxyAdminRequest(request: Request, endpoint: string) {
+  const BACKEND_BASE = process.env.ADMIN_BACKEND_URL || "http://localhost:8000/api";
+  const target = `${BACKEND_BASE}${endpoint}`;
+  const headers = new Headers(request.headers);
+  headers.delete("host");
+  headers.delete("content-length");
+
+  // Forward the session cookie from the request
+  const cookieHeader = request.headers.get('cookie');
+  if (cookieHeader) {
+    headers.set('Cookie', cookieHeader);
+  }
+
+  const init: RequestInit = {
+    method: request.method,
+    headers,
+    credentials: 'include',
+    redirect: "manual",
+  };
+
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    init.body = await request.arrayBuffer();
+  }
+
+  try {
+    const response = await fetch(target, init);
+    const responseClone = response.clone();
+    
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    });
+  } catch (error) {
+    console.error(`Proxy error for ${target}:`, error);
+    return new Response(
+      JSON.stringify({ error: "Failed to connect to backend", message: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 502, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
+
 // Convenience functions
 export const api = {
   get: (endpoint: string) => ApiClient.get(endpoint),
   post: (endpoint: string, data?: any) => ApiClient.post(endpoint, data),
   put: (endpoint: string, data?: any) => ApiClient.put(endpoint, data),
   delete: (endpoint: string) => ApiClient.delete(endpoint),
-  upload: (endpoint: string, formData: FormData) => ApiClient.upload(endpoint),
+  upload: (endpoint: string, formData: FormData) => ApiClient.upload(endpoint, formData),
   getBaseUrl: () => ApiClient.getBaseUrl(),
   setBaseUrl: (url: string) => ApiClient.setBaseUrl(url),
 };

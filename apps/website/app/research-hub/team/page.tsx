@@ -1,4 +1,3 @@
-import { ResearchHubSidebar } from "@/components/research-hub/research-hub-sidebar";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,12 +12,7 @@ export const metadata = {
 
 export default function TeamPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container-shell py-10">
-        <div className="flex gap-8">
-          <ResearchHubSidebar />
-          
-          <div className="flex-1 lg:ml-80 pt-8 space-y-20">
+    <div className="space-y-8">
             {/* Hero Section */}
             <section className="text-center space-y-6">
               <div className="flex items-center justify-center gap-3 mb-4">
@@ -170,9 +164,6 @@ export default function TeamPage() {
                 </div>
               </div>
             </section>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { SessionProvider } from "@/components/admin/session-provider";
+import { SessionGuard } from "@/components/admin/session-guard";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { ContentManagementSection } from "@/components/admin/content-management-section";
 import { MediaLibrarySection } from "@/components/admin/media-library-section";
@@ -70,38 +72,13 @@ interface SystemStats {
   avgSessionDuration: string;
 }
 
-export default function AdminDashboard() {
-  const router = useRouter();
+function AdminDashboardContent() {
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [recentContent, setRecentContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-
-  // Check authentication
-  useEffect(() => {
-    const session = localStorage.getItem('userSession');
-    if (!session) {
-      router.push('/admin-signup');
-      return;
-    }
-    try {
-      const parsed = JSON.parse(session);
-      const sessionAge = Date.now() - parsed.timestamp;
-      if (sessionAge > 24 * 60 * 60 * 1000) {
-        localStorage.removeItem('userSession');
-        localStorage.removeItem('authToken');
-        router.push('/admin-signup');
-        return;
-      }
-    } catch {
-      localStorage.removeItem('userSession');
-      localStorage.removeItem('authToken');
-      router.push('/admin-signup');
-      return;
-    }
-  }, [router]);
 
   // Load dashboard data
   useEffect(() => {
@@ -438,14 +415,18 @@ export default function AdminDashboard() {
   };
 
   return (
-    <AdminLayout 
-      user={{
-        username: 'admin',
-        displayName: 'Website Administrator',
-        role: 'super_admin'
-      }}
-    >
+    <AdminLayout>
       {renderSection()}
     </AdminLayout>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <SessionProvider>
+      <SessionGuard>
+        <AdminDashboardContent />
+      </SessionGuard>
+    </SessionProvider>
   );
 }

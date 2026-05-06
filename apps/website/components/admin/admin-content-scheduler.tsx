@@ -296,59 +296,60 @@ export function AdminContentScheduler({ scheduledContent = [], onSave }: Content
                   .filter(item => item.status === 'scheduled')
                   .sort((a, b) => new Date(a.publishDate || 0).getTime() - new Date(b.publishDate || 0).getTime())
                   .map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${getPriorityColor(item.priority)}`} />
-                          <div className="flex-1">
-                            <h4 className="font-medium text-slate-900">{item.title}</h4>
-                            <p className="text-sm text-slate-600">
-                              {item.publishDate ? `Publishing on ${item.publishDate.toLocaleDateString()}` : 'No date set'}
-                            </p>
+                    <div key={item.id} className="border border-slate-200 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-3 h-3 rounded-full ${getPriorityColor(item.priority || 'medium')}`} />
+                            <div className="flex-1">
+                              <h4 className="font-medium text-slate-900">{item.title}</h4>
+                              <p className="text-sm text-slate-600">
+                                {item.publishDate ? `Publishing on ${item.publishDate.toLocaleDateString()}` : 'No date set'}
+                              </p>
+                            </div>
                           </div>
                         </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {item.status}
+                          </Badge>
+                          <span className={`text-xs ${getPriorityColor(item.priority || 'medium')}`}>
+                            {item.priority}
+                          </span>
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          {item.status}
-                        </Badge>
-                        <span className={`text-xs ${getPriorityColor(item.priority)}`}>
-                          {item.priority}
-                        </span>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedContent(item)}
-                      >
-                        <Eye className="w-3 h-3 mr-1" />
-                        Preview
-                      </Button>
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {/* Edit content */}}
-                      >
-                        <Edit3 className="w-3 h-3 mr-1" />
-                        Edit
-                      </Button>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {/* Remove from queue */}}
-                      >
-                        <X className="w-3 h-3 mr-1" />
-                        Remove
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedContent(item)}
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          Preview
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {/* Edit content */}}
+                        >
+                          <Edit3 className="w-3 h-3 mr-1" />
+                          Edit
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {/* Remove from queue */}}
+                        >
+                          <X className="w-3 h-3 mr-1" />
+                          Remove
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </Card>
 

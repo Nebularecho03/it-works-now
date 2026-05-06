@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  flask-session-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_PORT=5001
+      - SESSION_TIMEOUT=300
+      - SQLITE_PATH=/app/data/users.db
+      - ALLOWED_ORIGIN=http://localhost:3000
+    volumes:
+      - ./data:/app/data
+      - ./login.html:/app/login.html
+    networks:
+      - admin-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/admin/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nextjs-admin:
+    build:
+      context: ../
+      dockerfile: Dockerfile.nextjs
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_FLASK_SESSION_URL=http://localhost:5001
+      - NEXT_PUBLIC_API_URL=http://localhost:5001
+    depends_on:
+      - flask-session-manager
+    networks:
+      - admin-network
+    restart: unless-stopped
+    volumes:
+      - ../:/app
+      - /app/node_modules
+
+networks:
+  admin-network:
+    driver: bridge
+
+volumes:
+  data:

@@ -34,6 +34,11 @@ let homepageContent = {
         availability: 'Available 24/7'
       }
     },
+    // Add fields expected by InteractiveHeroSection component
+    headline: 'Culturally Grounded Psychological Science & Research',
+    cta_text: 'Book a Consultation',
+    cta_url: '/contact',
+    background_image_url: '/assets/people/hero.webp',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },

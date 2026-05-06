@@ -24,11 +24,17 @@ export default function HomePage() {
   return (
     <>
       <InteractiveHeroSection />
+      <StatisticsSection />
+      <TrustStrip />
       <ParallaxAboutSection />
       <InteractiveServicesSection />
       <ScrollZoomResearchSection />
       <ProfessionalAffiliations />
+      <CollaboratorsSection />
       <TestimonialsCarousel />
+      <ResultsMetrics />
+      <GallerySection />
+      <NewsletterSection />
     </>
   );
 }

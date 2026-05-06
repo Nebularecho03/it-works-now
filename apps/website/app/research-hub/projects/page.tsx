@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ResearchHubSidebar } from "@/components/research-hub/research-hub-sidebar";
 import { siteContent } from "@/lib/content/site-content";
 import { createMetadata } from "@/lib/site";
 import { ExternalLink, Calendar, Users, Target } from "lucide-react";
@@ -16,11 +15,7 @@ export const revalidate = 3600;
 
 export default function ResearchProjectsPage() {
   return (
-    <div className="container-shell py-8">
-      <div className="flex gap-8">
-        <ResearchHubSidebar />
-        
-        <div className="flex-1 lg:ml-80 pt-20 space-y-8">
+    <div className="space-y-8">
           {/* Header */}
           <div>
             <h1 className="text-3xl font-bold mb-4">Research Projects</h1>
@@ -153,8 +148,6 @@ export default function ResearchProjectsPage() {
               </div>
             </div>
           </Card>
-        </div>
-      </div>
     </div>
   );
 }

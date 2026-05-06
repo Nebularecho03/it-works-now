@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Admin Portal</h1>
+                <p class="text-gray-600 mt-2">Secure Admin Control</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                        Username
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter your username"
+                    />
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter your password"
+                    />
+                </div>
+
+                <div id="error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+                    <!-- Error messages will appear here -->
+                </div>
+
+                <div id="success-message" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+                    <!-- Success messages will appear here -->
+                </div>
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center justify-center"
+                >
+                    <span id="button-text">Sign In</span>
+                    <svg id="loading-spinner" class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">
+                    Secure authentication with auto-logout protection
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FLASK_URL = window.location.origin;
+        const NEXTJS_URL = 'http://localhost:3000'; // Configure this based on your Next.js setup
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const button = document.getElementById('loginButton');
+            const buttonText = document.getElementById('button-text');
+            const spinner = document.getElementById('loading-spinner');
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+
+            // Hide previous messages
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            // Show loading state
+            button.disabled = true;
+            buttonText.textContent = 'Signing in...';
+            spinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${FLASK_URL}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                const sessionId = response.headers.get('X-Session-ID');
+
+                if (response.ok && data.authenticated && sessionId) {
+                    // Store session ID
+                    localStorage.setItem('admin_session_id', sessionId);
+                    
+                    // Show success message
+                    successDiv.textContent = 'Login successful! Redirecting...';
+                    successDiv.classList.remove('hidden');
+
+                    // Redirect to Next.js admin
+                    setTimeout(() => {
+                        window.location.href = NEXTJS_URL + '/admin';
+                    }, 1000);
+                } else {
+                    // Show error message
+                    errorDiv.textContent = data.error || 'Login failed. Please try again.';
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Network error. Please check your connection and try again.';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                // Reset button state
+                button.disabled = false;
+                buttonText.textContent = 'Sign In';
+                spinner.classList.add('hidden');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('load', async () => {
+            const sessionId = localStorage.getItem('admin_session_id');
+            if (sessionId) {
+                try {
+                    const response = await fetch(`${FLASK_URL}/api/admin/check-session`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Session-ID': sessionId,
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.authenticated) {
+                            // Already logged in, redirect to admin
+                            window.location.href = NEXTJS_URL + '/admin';
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.log('Session check failed, continuing to login page');
+                }
+
+                // Session invalid, remove it
+                localStorage.removeItem('admin_session_id');
+            }
+        });
+    </script>
+</body>
+</html>

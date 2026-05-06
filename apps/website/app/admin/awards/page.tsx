@@ -25,7 +25,7 @@ import {
   Gem,
   Info
 } from "lucide-react";
-import { api } from "@/components/api/client";
+import { api, ApiClient } from "@/components/api/client";
 
 interface Award {
   id: string;
@@ -196,7 +196,10 @@ export default function AwardsAdminPage() {
 
   const deleteAward = async (id: string) => {
     try {
-      await api.delete("/api/admin/awards", { body: JSON.stringify({ id }) });
+      await ApiClient.fetch("/api/admin/awards", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
       loadAwards();
     } catch (error) {
       console.error("Failed to delete award:", error);

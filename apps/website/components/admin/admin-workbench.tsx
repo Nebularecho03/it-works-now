@@ -1,14 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import {
-  type ChangeEvent,
-  type FormEvent,
-  type ReactNode,
-  startTransition,
-  useEffect,
-  useState,
-} from "react";
+import { useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,19 +16,22 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { siteContent as seedSiteContent, type SiteContent } from "@/lib/content/site-content";
+import { seedBlogPosts, seedBlogContent, type BlogData, type BlogPostSummary, type BlogContent } from "@/lib/content/blog-types";
+import { Award, ExternalProfile, Collaborator, MediaItem as ResearchMediaItem } from "@/lib/admin/research-hub/types";
 
 type Panel = "overview" | "content" | "research" | "media" | "security" | 
   "testimonials" | "images" | "videos" | "documents" | "uploads" | 
   "admin-users" | "permissions" | "sessions" | "traffic" | "content-performance" | 
   "reports" | "meta-tags" | "sitemap" | "analytics-tracking" | "theme" | 
   "navigation" | "footer" | "backup" | "cache" | "logs" | "contact-forms" | 
-  "newsletter" | "notifications";
+  "newsletter" | "notifications" | "blog";
 
 type DashboardPayload = {
   welcome: {
@@ -73,8 +68,20 @@ type AuthUser = {
   displayName: string;
   role: string;
   mfaConfigured: boolean;
+  phoneNumber?: string;
+  email?: string;
 };
 
+const emptyBlogPost: BlogPostSummary = {
+  id: "",
+  title: "",
+  slug: "",
+  excerpt: "",
+  category: "",
+  publishedAt: "",
+  author: "",
+  status: "draft"
+};
 
 const API_BASE = "/api/admin";
 
@@ -82,13 +89,13 @@ const panels: Array<{ id: Panel; label: string; description: string; icon: typeo
   { id: "overview", label: "Overview", description: "Status, quick actions, and publishing visibility.", icon: LayoutDashboard },
   { id: "content", label: "Site Content", description: "Hero, story, services, quote, and contact info.", icon: Sparkles },
   { id: "research", label: "Research Data", description: "Projects, publications, testimonials, and advanced collections.", icon: FileText },
-  { id: "media", label: "Media Library", description: "Upload image and document assets for the website.", icon: Images },
+  { id: "media", label: "Media Library", description: "Upload image and PDF assets for website.", icon: Images },
   { id: "security", label: "Security", description: "Authentication posture, sessions, and audit history.", icon: ShieldCheck },
 ];
 
 const advancedKeys = [
   "awards",
-  "conferences",
+  "conferences", 
   "invitedTalks",
   "externalProfiles",
   "collaborators",
@@ -97,7 +104,6 @@ const advancedKeys = [
 ] as const;
 
 type AdvancedKey = (typeof advancedKeys)[number];
-
 
 function toLines(value: string[]) {
   return value.join("\n");
@@ -121,7 +127,7 @@ function Field({
 }: {
   label: string;
   hint?: string;
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
     <label className="space-y-2">
@@ -141,7 +147,7 @@ function SectionCard({
 }: {
   title: string;
   description: string;
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
     <Card className="space-y-6 p-6">
@@ -174,37 +180,19 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
   } : null);
   const [dashboard, setDashboard] = useState<DashboardPayload | null>(null);
   const [siteContent, setSiteContent] = useState<SiteContent>(seedSiteContent);
-
-  // Sync external props with internal state
-  useEffect(() => {
-    if (externalActivePanel) {
-      setActivePanel(externalActivePanel);
-    }
-  }, [externalActivePanel]);
-
-  useEffect(() => {
-    if (externalUser) {
-      setUser({
-        username: externalUser.username,
-        displayName: externalUser.displayName,
-        role: externalUser.role,
-        mfaConfigured: false
-      });
-    }
-  }, [externalUser]);
   const [blogData, setBlogData] = useState<BlogData>({
     blogPosts: seedBlogPosts,
     blogContentBySlug: seedBlogContent,
+    blogCategories: ["Cultural Psychology", "Mental Health", "Research Methods", "Community Engagement"]
   });
   const [advancedDrafts, setAdvancedDrafts] = useState<Record<AdvancedKey, string>>(() => ({
-    awards: prettyJson(seedSiteContent.awards),
-    conferences: prettyJson(seedSiteContent.conferences),
-    invitedTalks: prettyJson(seedSiteContent.invitedTalks),
-    externalProfiles: prettyJson(seedSiteContent.externalProfiles),
-    collaborators: prettyJson(seedSiteContent.collaborators),
-    media: prettyJson(seedSiteContent.media),
-    gallery: prettyJson(seedSiteContent.gallery),
-    blogCategories: prettyJson(seedSiteContent.blogCategories),
+    awards: prettyJson(seedSiteContent.awards || []),
+    conferences: prettyJson(seedSiteContent.conferences || []),
+    invitedTalks: prettyJson(seedSiteContent.invitedTalks || []),
+    externalProfiles: prettyJson(seedSiteContent.externalProfiles || []),
+    collaborators: prettyJson(seedSiteContent.collaborators || []),
+    media: prettyJson(seedSiteContent.media || []),
+    gallery: prettyJson(seedSiteContent.gallery || []),
   }));
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [auditEvents, setAuditEvents] = useState<AuditEvent[]>([]);
@@ -246,14 +234,13 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
 
   const syncAdvancedDrafts = (content: SiteContent) => {
     setAdvancedDrafts({
-      awards: prettyJson(content.awards),
-      conferences: prettyJson(content.conferences),
-      invitedTalks: prettyJson(content.invitedTalks),
-      externalProfiles: prettyJson(content.externalProfiles),
-      collaborators: prettyJson(content.collaborators),
-      media: prettyJson(content.media),
-      gallery: prettyJson(content.gallery),
-      blogCategories: prettyJson(content.blogCategories),
+      awards: prettyJson(content.awards || []),
+      conferences: prettyJson(content.conferences || []),
+      invitedTalks: prettyJson(content.invitedTalks || []),
+      externalProfiles: prettyJson(content.externalProfiles || []),
+      collaborators: prettyJson(content.collaborators || []),
+      media: prettyJson(content.media || []),
+      gallery: prettyJson(content.gallery || []),
     });
   };
 
@@ -274,47 +261,38 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
     setAuditEvents(auditPayload.events);
   };
 
-  useEffect(() => {
-    async function boot() {
-      setBooting(true);
-      setErrorMessage("");
+  const updateBlogPost = (index: number, field: string, value: string) => {
+    setBlogData((current) => {
+      const blogPosts = [...current.blogPosts];
+      blogPosts[index] = { ...blogPosts[index], [field]: value };
+      return { ...current, blogPosts };
+    });
+  };
 
-      try {
-        const auth = await request<{ authenticated: boolean; user?: AuthUser }>("/auth/me", {
-          headers: {},
-        });
-
-        if (!auth.authenticated || !auth.user) {
-          setUser(null);
-          setDashboard(null);
-          setBooting(false);
-          return;
-        }
-
-        setUser(auth.user);
-        setPhoneNumber(auth.user.phoneNumber || "");
-        setEmail(auth.user.email || "");
-        setDisplayName(auth.user.displayName || "");
-        await loadWorkspace();
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Unable to connect to the admin service.";
-        setErrorMessage(message);
-      } finally {
-        setBooting(false);
+  const updateBlogBody = (slug: string, body: string, previousSlug?: string) => {
+    setBlogData((current) => {
+      const blogContentBySlug = { ...current.blogContentBySlug };
+      
+      if (previousSlug && previousSlug !== slug) {
+        delete blogContentBySlug[previousSlug];
       }
-    }
-
-    void boot();
-    // Mount-only boot for the admin workspace.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      
+      blogContentBySlug[slug] = {
+        ...blogContentBySlug[slug],
+        content: body,
+        updatedAt: new Date().toISOString()
+      };
+      
+      return { ...current, blogContentBySlug };
+    });
+  };
 
   const blogRows = blogData.blogPosts.map((post) => ({
     ...post,
-    body: toLines(blogData.blogContentBySlug[post.slug] || []),
+    body: toLines(blogData.blogContentBySlug[post.slug] ? [blogData.blogContentBySlug[post.slug].content] : []),
   }));
 
-  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPendingAction("auth");
     setStatusMessage("");
@@ -325,6 +303,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
         method: "POST",
         body: JSON.stringify(loginForm),
       });
+      
       setUser(result.user);
       setStatusMessage("Signed in successfully.");
       await loadWorkspace();
@@ -377,6 +356,9 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
         body: JSON.stringify({ phoneNumber }),
       });
       setStatusMessage("Phone number updated successfully.");
+      if (user) {
+        setUser({ ...user, phoneNumber });
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to update phone number.";
       setErrorMessage(message);
@@ -396,6 +378,9 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
         body: JSON.stringify({ email }),
       });
       setStatusMessage("Email updated successfully.");
+      if (user) {
+        setUser({ ...user, email });
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to update email.";
       setErrorMessage(message);
@@ -415,7 +400,6 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
         body: JSON.stringify({ displayName }),
       });
       setStatusMessage("Display name updated successfully.");
-      // Update local user state
       if (user) {
         setUser({ ...user, displayName });
       }
@@ -435,14 +419,13 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
     try {
       const payload: SiteContent = {
         ...siteContent,
-        awards: JSON.parse(advancedDrafts.awards),
-        conferences: JSON.parse(advancedDrafts.conferences),
-        invitedTalks: JSON.parse(advancedDrafts.invitedTalks),
-        externalProfiles: JSON.parse(advancedDrafts.externalProfiles),
-        collaborators: JSON.parse(advancedDrafts.collaborators),
-        media: JSON.parse(advancedDrafts.media),
-        gallery: JSON.parse(advancedDrafts.gallery),
-        blogCategories: JSON.parse(advancedDrafts.blogCategories),
+        awards: JSON.parse(advancedDrafts.awards || '[]'),
+        conferences: JSON.parse(advancedDrafts.conferences || '[]'),
+        invitedTalks: JSON.parse(advancedDrafts.invitedTalks || '[]'),
+        externalProfiles: JSON.parse(advancedDrafts.externalProfiles || '[]'),
+        collaborators: JSON.parse(advancedDrafts.collaborators || '[]'),
+        media: JSON.parse(advancedDrafts.media || '[]'),
+        gallery: JSON.parse(advancedDrafts.gallery || '[]'),
       };
 
       await request("/content/site", {
@@ -450,7 +433,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
         body: JSON.stringify(payload),
       });
       setSiteContent(payload);
-      setStatusMessage("Site content saved to the live JSON data source.");
+      setStatusMessage("Site content saved to live JSON data source.");
       await loadWorkspace();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Content save failed.";
@@ -480,7 +463,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
     }
   }
 
-  async function uploadMedia(event: ChangeEvent<HTMLInputElement>) {
+  async function uploadMedia(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) {
       return;
@@ -494,69 +477,28 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`${API_BASE}/media`, {
+      const response = await fetch("/api/admin/media/upload", {
         method: "POST",
         body: formData,
         credentials: "include",
       });
-      const contentType = response.headers.get("content-type") || "";
-      const responseText = await response.text();
 
       if (!response.ok) {
-        if (contentType.includes("application/json")) {
-          const data = JSON.parse(responseText) as { error?: string };
-          throw new Error(data.error || "Upload failed");
-        }
-        throw new Error(responseText.slice(0, 180) || "Upload failed");
+        throw new Error("Upload failed");
       }
 
-      if (!contentType.includes("application/json")) {
-        throw new Error(`Expected JSON from upload response, got ${contentType || "unknown content type"}`);
-      }
-
-      const data = JSON.parse(responseText) as { item?: MediaItem };
-      setStatusMessage(`${file.name} uploaded successfully.`);
-      if (data.item) {
-        setMediaItems((current) => [data.item as MediaItem, ...current]);
-      }
-      await loadWorkspace();
+      const result = await response.json();
+      setMediaItems((prev) => [...prev, result]);
+      setStatusMessage("File uploaded successfully.");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Upload failed.";
       setErrorMessage(message);
     } finally {
-      event.target.value = "";
       setPendingAction(null);
     }
   }
 
-  function updateBlogPost(index: number, field: keyof BlogPostSummary, value: string) {
-    setBlogData((current) => {
-      const nextPosts = [...current.blogPosts];
-      nextPosts[index] = {
-        ...nextPosts[index],
-        [field]: value,
-      };
-      return { ...current, blogPosts: nextPosts };
-    });
-  }
-
-  function updateBlogBody(slug: string, value: string, previousSlug?: string) {
-    setBlogData((current) => {
-      const sourceSlug = previousSlug || slug;
-      const nextContent = { ...current.blogContentBySlug };
-      const paragraphs = fromLines(value);
-
-      if (sourceSlug !== slug) {
-        delete nextContent[sourceSlug];
-      }
-      nextContent[slug] = paragraphs;
-
-      return {
-        ...current,
-        blogContentBySlug: nextContent,
-      };
-    });
-  }
+  const welcome = dashboard?.welcome;
 
   if (booting) {
     return (
@@ -578,7 +520,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
           <Card className="space-y-6 p-8">
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Python-backed admin</p>
-              <h1 className="font-display text-5xl">Secure website operations without the clutter.</h1>
+              <h1 className="font-display text-5xl">Secure website operations without clutter.</h1>
               <p className="max-w-2xl text-muted-foreground">
                 This new admin is designed for fast content updates, blog publishing, image uploads, and a stronger
                 security posture. The frontend lives here in Next.js, while the control API runs from a Python service.
@@ -601,72 +543,54 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
               </Card>
             </div>
             <Card className="space-y-2 border-dashed p-5">
-              <p className="text-sm font-semibold">Run the backend service</p>
+              <p className="text-sm font-semibold">Run backend service</p>
               <code className="block rounded-2xl bg-slate-950 px-4 py-3 text-xs text-white">
                 cd /home/kopen/Documents/website && python -m backend
               </code>
-              <p className="text-xs text-muted-foreground">
-                Default API URL: <code>{API_BASE}</code>. Default credentials come from `ADMIN_USERNAME` and
-                `ADMIN_PASSWORD`.
-              </p>
             </Card>
           </Card>
-
-          <Card className="space-y-6 p-8">
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Admin sign in</p>
-              <h2 className="font-display text-4xl">Open the control room</h2>
-            </div>
-
-            <form className="space-y-4" onSubmit={handleLogin}>
-              <Field label="Username">
-                <Input
-                  value={loginForm.username}
-                  onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
-                />
-              </Field>
-
-              <Field label="Password">
-                <Input
-                  type="password"
-                  value={loginForm.password}
-                  onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
-                />
-              </Field>
-
-              <Field label="One-time code" hint="Required only when `ADMIN_TOTP_SECRET` is configured.">
-                <Input
-                  inputMode="numeric"
-                  value={loginForm.otp}
-                  onChange={(event) => setLoginForm((current) => ({ ...current, otp: event.target.value }))}
-                />
-              </Field>
-
-              <Button className="w-full" type="submit" disabled={pendingAction === "auth"}>
-                {pendingAction === "auth" ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <LockKeyhole className="mr-2 h-4 w-4" />
-                    Sign in
-                  </>
-                )}
-              </Button>
-            </form>
-
-            {errorMessage ? (
-              <Card className="border-red-200 bg-red-50 p-4 text-sm text-red-700">{errorMessage}</Card>
-            ) : null}
-          </Card>
+          <form className="space-y-4" onSubmit={handleLogin}>
+            <Field label="Username">
+              <Input
+                value={loginForm.username}
+                onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
+              />
+            </Field>
+            <Field label="Password">
+              <Input
+                type="password"
+                value={loginForm.password}
+                onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
+              />
+            </Field>
+            <Field label="One-time code" hint="Required only when `ADMIN_TOTP_SECRET` is configured.">
+              <Input
+                inputMode="numeric"
+                value={loginForm.otp}
+                onChange={(event) => setLoginForm((current) => ({ ...current, otp: event.target.value }))}
+              />
+            </Field>
+            <Button className="w-full" type="submit" disabled={pendingAction === "auth"}>
+              {pendingAction === "auth" ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <LockKeyhole className="mr-2 h-4 w-4" />
+                  Sign in
+                </>
+              )}
+            </Button>
+          </form>
+          {errorMessage ? (
+            <Card className="border-red-200 bg-red-50 p-4 text-sm text-red-700">{errorMessage}</Card>
+          ) : null}
         </div>
       </section>
     );
   }
-
-  const welcome = dashboard?.welcome;
 
   return (
     <section className="section-space">
@@ -696,18 +620,34 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-white/70 bg-white/80 p-5">
-              <p className="text-sm font-semibold text-foreground">{user.displayName}</p>
-              <p className="text-sm text-muted-foreground">
-                {user.role} • {welcome?.mfaConfigured ? "MFA enabled" : "MFA not configured yet"}
-              </p>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Keep this session private. Every content save, upload, login, and logout is recorded in the audit log.
-              </p>
-              <Button className="mt-5" variant="outline" onClick={() => void handleLogout()}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
-              </Button>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Quick actions</p>
+                  <p className="text-sm text-muted-foreground">Common admin tasks</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </Button>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                {dashboard?.quickActions.map((action) => {
+                  const Icon = panels.find((p) => p.id === action.section)?.icon || LayoutDashboard;
+                  return (
+                    <Button
+                      key={action.id}
+                      variant="outline"
+                      className="justify-start"
+                      onClick={() => setActivePanel(action.section)}
+                    >
+                      <Icon className="mr-2 h-4 w-4" />
+                      {action.label}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -720,21 +660,19 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                   <button
                     key={panel.id}
                     type="button"
-                    onClick={() => startTransition(() => setActivePanel(panel.id))}
-                    className={`w-full rounded-[24px] border px-4 py-4 text-left transition ${
+                    onClick={() => setActivePanel(panel.id)}
+                    className={`w-full rounded-[24px] border px-4 py-4 text-left transition-colors ${
                       active
                         ? "border-accent/40 bg-accent/10 shadow-soft"
-                        : "border-border/70 bg-background hover:bg-muted/70"
+                        : "border-border/70 hover:bg-muted/70"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="rounded-2xl bg-white/80 p-2">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold">{panel.label}</p>
-                        <p className="text-xs text-muted-foreground">{panel.description}</p>
-                      </div>
+                    <span className="rounded-2xl bg-white/80 p-2">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold">{panel.label}</p>
+                      <p className="text-xs text-muted-foreground">{panel.description}</p>
                     </div>
                   </button>
                 );
@@ -742,113 +680,20 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
             </aside>
 
             <div className="space-y-6">
-              {statusMessage ? <Card className="border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">{statusMessage}</Card> : null}
-              {errorMessage ? <Card className="border-red-200 bg-red-50 p-4 text-sm text-red-700">{errorMessage}</Card> : null}
+              {statusMessage ? (
+                <Card className="border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">{statusMessage}</Card>
+              ) : null}
+              {errorMessage ? (
+                <Card className="border-red-200 bg-red-50 p-4 text-sm text-red-700">{errorMessage}</Card>
+              ) : null}
 
-              <SectionCard
-                title="Where this content appears"
-                description="A quick map of what gets updated on the public site when you save each section."
-              >
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  <Card className="p-5">
-                    <p className="text-sm font-semibold">Homepage essentials</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Hero text, about copy, services, quote, and contact details appear on the homepage, about page,
-                      services page, and contact page.
-                    </p>
-                  </Card>
-                  <Card className="p-5">
-                    <p className="text-sm font-semibold">Blog manager</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Blog posts and article bodies appear on `/blog` and the individual blog post pages.
-                    </p>
-                  </Card>
-                  <Card className="p-5">
-                    <p className="text-sm font-semibold">Research data</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Research projects, publications, awards, collaborators, talks, and profiles appear on the
-                      research and about pages.
-                    </p>
-                  </Card>
-                  <Card className="p-5">
-                    <p className="text-sm font-semibold">Media library</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Uploaded images and PDFs are stored in `public/uploads/admin` and become available for page
-                      content, galleries, and downloads.
-                    </p>
-                  </Card>
-                  <Card className="p-5">
-                    <p className="text-sm font-semibold">Testimonials</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Testimonials and collaborator headshots appear in the testimonial carousel and related profile
-                      sections.
-                    </p>
-                  </Card>
-                  <Card className="p-5">
-                    <p className="text-sm font-semibold">Security and audit</p>
-
-                  <SectionCard
-                    title="System Information"
-                    description="Current system runtime and configuration details."
-                  >
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                      <Card className="p-5">
-                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Session Timeout</p>
-                        <p className="mt-3 font-display text-2xl">10 min</p>
-                      </Card>
-                      
-                      <Card className="p-5">
-                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Database</p>
-                        <p className="mt-3 font-display text-lg">SQLite</p>
-                      </Card>
-                      
-                      <Card className="p-5">
-                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Debug Mode</p>
-                        <p className="mt-3 font-display text-lg">Enabled</p>
-                      </Card>
-                    </div>
-                  </SectionCard>
-
-                  <SectionCard
-                    title="Operational overview"
-                    description="Current publishing volume, media readiness, and recent admin activity."
-                  >
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                      {dashboard?.metrics.map((metric) => (
-                        <Card key={metric.label} className="p-5">
-                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{metric.label}</p>
-                          <p className="mt-3 font-display text-4xl">{metric.value}</p>
-                        </Card>
-                      ))}
-                    </div>
-                  </SectionCard>
-
-                  <SectionCard title="Quick actions" description="Jump straight into tasks that matter most day to day.">
-                    <div className="flex flex-wrap gap-3">
-                      {dashboard?.quickActions.map((action) => (
-                        <Button key={action.id} variant="outline" onClick={() => startTransition(() => setActivePanel(action.section))}>
-                          {action.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </SectionCard>
-
-                  <SectionCard title="Recent activity" description="Authentication and publishing actions recorded by the backend service.">
-                    <div className="space-y-3">
-                      {auditEvents.slice(0, 8).map((event) => (
-                        <Card key={event.id} className="flex items-center justify-between gap-4 p-4">
-                          <div>
-                            <p className="text-sm font-semibold">{event.summary}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {event.actor} • {event.action}
-                            </p>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{new Date(event.createdAt).toLocaleString()}</p>
-                        </Card>
-                      ))}
-                    </div>
-                  </SectionCard>
-                </>
+              {activePanel === "overview" ? (
+                <SectionCard title="Dashboard Overview" description="System status and recent activity">
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">Welcome to the admin dashboard.</p>
+                    <p className="text-sm text-muted-foreground">Select a panel from the sidebar to begin managing content.</p>
+                  </div>
+                </SectionCard>
               ) : null}
 
               {activePanel === "content" ? (
@@ -903,77 +748,68 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                           />
                         </Field>
                       </div>
+                      <div className="grid gap-4 lg:grid-cols-3">
+                        <Field label="Primary CTA label">
+                          <Input
+                            value={siteContent.hero.primaryCta.label}
+                            onChange={(event) =>
+                              setSiteContent((current) => ({
+                                ...current,
+                                hero: { ...current.hero, primaryCta: { ...current.hero.primaryCta, label: event.target.value } },
+                              }))
+                            }
+                          />
+                        </Field>
+                        <Field label="Primary CTA link">
+                          <Input
+                            value={siteContent.hero.primaryCta.href}
+                            onChange={(event) =>
+                              setSiteContent((current) => ({
+                                ...current,
+                                hero: { ...current.hero, primaryCta: { ...current.hero.primaryCta, href: event.target.value } },
+                              }))
+                            }
+                          />
+                        </Field>
+                        <Field label="Publications CTA label">
+                          <Input
+                            value={siteContent.hero.publicationsCta.label}
+                            onChange={(event) =>
+                              setSiteContent((current) => ({
+                                ...current,
+                                hero: { ...current.hero, publicationsCta: { ...current.hero.publicationsCta, label: event.target.value } },
+                              }))
+                            }
+                          />
+                        </Field>
+                        <Field label="Publications CTA link">
+                          <Input
+                            value={siteContent.hero.publicationsCta.href}
+                            onChange={(event) =>
+                              setSiteContent((current) => ({
+                                ...current,
+                                hero: { ...current.hero, publicationsCta: { ...current.hero.publicationsCta, href: event.target.value } },
+                              }))
+                            }
+                          />
+                        </Field>
+                      </div>
                     </div>
                   </SectionCard>
 
-                  <SectionCard title="Calls to action" description="Keep the main site buttons accurate and aligned with the current booking flow.">
-                    <div className="grid gap-4 lg:grid-cols-3">
-                      {[
-                        ["primaryCta", "Primary CTA"],
-                        ["publicationsCta", "Publications CTA"],
-                        ["secondaryCta", "Secondary CTA"],
-                      ].map(([key, label]) => {
-                        const cta = siteContent.hero[key as keyof typeof siteContent.hero];
-                        if (typeof cta !== "object" || !cta || !("label" in cta)) {
-                          return null;
-                        }
-                        return (
-                          <Card key={key} className="space-y-4 p-5">
-                            <p className="text-sm font-semibold">{label}</p>
-                            <Field label="Label">
-                              <Input
-                                value={cta.label}
-                                onChange={(event) =>
-                                  setSiteContent((current) => ({
-                                    ...current,
-                                    hero: {
-                                      ...current.hero,
-                                      [key]: { ...cta, label: event.target.value },
-                                    },
-                                  }))
-                                }
-                              />
-                            </Field>
-                            <Field label="Link">
-                              <Input
-                                value={cta.href}
-                                onChange={(event) =>
-                                  setSiteContent((current) => ({
-                                    ...current,
-                                    hero: {
-                                      ...current.hero,
-                                      [key]: { ...cta, href: event.target.value },
-                                    },
-                                  }))
-                                }
-                              />
-                            </Field>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  </SectionCard>
-
-                  <SectionCard title="Bio and quote" description="Short and long-form content that supports the homepage and about sections.">
+                  <SectionCard title="Bio and quote" description="Short and long-form content that supports homepage and about sections.">
                     <Field label="Short biography">
                       <Textarea
                         value={siteContent.aboutShort}
                         onChange={(event) => setSiteContent((current) => ({ ...current, aboutShort: event.target.value }))}
                       />
                     </Field>
-
                     <Field label="Full biography paragraphs" hint="One paragraph per line break block.">
                       <Textarea
                         value={toLines(siteContent.aboutFull)}
-                        onChange={(event) =>
-                          setSiteContent((current) => ({
-                            ...current,
-                            aboutFull: fromLines(event.target.value),
-                          }))
-                        }
+                        onChange={(event) => setSiteContent((current) => ({ ...current, aboutFull: fromLines(event.target.value) }))}
                       />
                     </Field>
-
                     <div className="grid gap-4 md:grid-cols-[1fr_280px]">
                       <Field label="Quote text">
                         <Textarea
@@ -1069,7 +905,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                           ...current,
                           services: [
                             ...current.services,
-                            { title: "New service", description: "Describe the service offering.", bullets: ["Key outcome"] },
+                            { title: "New service", description: "Describe service offering.", bullets: ["Key outcome"] },
                           ],
                         }))
                       }
@@ -1079,7 +915,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                     </Button>
                   </SectionCard>
 
-                  <SectionCard title="Contact channels" description="Details used across the contact page, footer, and booking calls to action.">
+                  <SectionCard title="Contact channels" description="Details used across contact page, footer, and booking calls to action.">
                     <div className="grid gap-4 md:grid-cols-2">
                       <Field label="Address lines" hint="One line per row.">
                         <Textarea
@@ -1127,7 +963,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                       </Field>
                       <div className="md:col-span-2">
                         <Field label="Map embed URL">
-                          <Input
+                          <Textarea
                             value={siteContent.contact.mapEmbed}
                             onChange={(event) =>
                               setSiteContent((current) => ({
@@ -1138,83 +974,86 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                           />
                         </Field>
                       </div>
-                    </div>
 
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <p className="text-sm font-semibold">Social links</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setSiteContent((current) => ({
-                              ...current,
-                              contact: {
-                                ...current.contact,
-                                socialLinks: [...current.contact.socialLinks, { label: "Platform", href: "https://" }],
-                              },
-                            }))
-                          }
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add social link
-                        </Button>
-                      </div>
-
-                      {siteContent.contact.socialLinks.map((social, index) => (
-                        <Card key={`${social.label}-${index}`} className="grid gap-4 p-4 md:grid-cols-[220px_1fr_auto]">
-                          <Input
-                            value={social.label}
-                            onChange={(event) =>
-                              setSiteContent((current) => {
-                                const socialLinks = [...current.contact.socialLinks];
-                                socialLinks[index] = { ...socialLinks[index], label: event.target.value };
-                                return { ...current, contact: { ...current.contact, socialLinks } };
-                              })
-                            }
-                          />
-                          <Input
-                            value={social.href}
-                            onChange={(event) =>
-                              setSiteContent((current) => {
-                                const socialLinks = [...current.contact.socialLinks];
-                                socialLinks[index] = { ...socialLinks[index], href: event.target.value };
-                                return { ...current, contact: { ...current.contact, socialLinks } };
-                              })
-                            }
-                          />
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between gap-4">
+                          <p className="text-sm font-semibold">Social links</p>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() =>
                               setSiteContent((current) => ({
                                 ...current,
                                 contact: {
                                   ...current.contact,
-                                  socialLinks: current.contact.socialLinks.filter((_, itemIndex) => itemIndex !== index),
+                                  socialLinks: [
+                                    ...current.contact.socialLinks,
+                                    { label: "Platform", href: "https://" },
+                                  ],
                                 },
                               }))
                             }
                           >
-                            Remove
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add social link
                           </Button>
-                        </Card>
-                      ))}
-                    </div>
+                        </div>
 
-                    <Button onClick={() => void saveSiteContent()} disabled={pendingAction === "content"}>
-                      {pendingAction === "content" ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-2 h-4 w-4" />
-                          Save site content
-                        </>
-                      )}
-                    </Button>
+                        {siteContent.contact.socialLinks.map((social, index) => (
+                          <Card key={`${social.label}-${index}`} className="grid gap-4 p-4 md:grid-cols-[220px_1fr_auto]">
+                            <Input
+                              value={social.label}
+                              onChange={(event) =>
+                                setSiteContent((current) => {
+                                  const socialLinks = [...current.contact.socialLinks];
+                                  socialLinks[index] = { ...socialLinks[index], label: event.target.value };
+                                  return { ...current, contact: { ...current.contact, socialLinks } };
+                                })
+                              }
+                            />
+                            <Input
+                              value={social.href}
+                              onChange={(event) =>
+                                setSiteContent((current) => {
+                                  const socialLinks = [...current.contact.socialLinks];
+                                  socialLinks[index] = { ...socialLinks[index], href: event.target.value };
+                                  return { ...current, contact: { ...current.contact, socialLinks } };
+                                })
+                              }
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                setSiteContent((current) => ({
+                                  ...current,
+                                  contact: {
+                                    ...current.contact,
+                                    socialLinks: current.contact.socialLinks.filter((_, itemIndex) => itemIndex !== index),
+                                  },
+                                }))
+                              }
+                            >
+                              Remove
+                            </Button>
+                          </Card>
+                        ))}
+                      </div>
+
+                      <Button onClick={() => void saveSiteContent()} disabled={pendingAction === "content"}>
+                        {pendingAction === "content" ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Save site content
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </SectionCard>
                 </>
               ) : null}
@@ -1224,7 +1063,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                   <SectionCard title="Research projects" description="Structured cards for research, grants, status, and public links.">
                     <div className="space-y-4">
                       {siteContent.researchProjects.map((project, index) => (
-                        <Card key={`${project.title}-${index}`} className="space-y-4 p-5">
+                        <Card key={`${project.title}-${index}`} className="space-y-5 p-5">
                           <div className="flex items-center justify-between gap-4">
                             <p className="text-sm font-semibold">Project {index + 1}</p>
                             <Button
@@ -1314,20 +1153,20 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                                   }
                                 />
                               </Field>
-                            </div>
-                            <div className="md:col-span-2">
-                              <Field label="Detail bullets" hint="One bullet per line.">
-                                <Textarea
-                                  value={toLines(project.details || [])}
-                                  onChange={(event) =>
-                                    setSiteContent((current) => {
-                                      const researchProjects = [...current.researchProjects];
-                                      researchProjects[index] = { ...researchProjects[index], details: fromLines(event.target.value) };
-                                      return { ...current, researchProjects };
-                                    })
-                                  }
-                                />
-                              </Field>
+                              <div className="md:col-span-2">
+                                <Field label="Detail bullets" hint="One bullet per line.">
+                                  <Textarea
+                                    value={toLines(project.details || [])}
+                                    onChange={(event) =>
+                                      setSiteContent((current) => {
+                                        const researchProjects = [...current.researchProjects];
+                                        researchProjects[index] = { ...researchProjects[index], details: fromLines(event.target.value) };
+                                        return { ...current, researchProjects };
+                                      })
+                                    }
+                                  />
+                                </Field>
+                              </div>
                             </div>
                           </div>
                         </Card>
@@ -1342,7 +1181,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                             ...current.researchProjects,
                             {
                               title: "New research project",
-                              summary: "Describe the project focus and impact.",
+                              summary: "Describe project focus and impact.",
                               category: "Category",
                               status: "Draft",
                               funding: "",
@@ -1380,6 +1219,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                             Add publication
                           </Button>
                         </div>
+
                         {siteContent.publications.map((publication, index) => (
                           <Card key={`${publication.title}-${index}`} className="space-y-4 p-4">
                             <Input
@@ -1413,27 +1253,35 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                                   })
                                 }
                               />
+                              <div className="md:col-span-2">
+                                <Field label="Summary">
+                                  <Textarea
+                                    value={publication.summary}
+                                    onChange={(event) =>
+                                      setSiteContent((current) => {
+                                        const publications = [...current.publications];
+                                        publications[index] = { ...publications[index], summary: event.target.value };
+                                        return { ...current, publications };
+                                      })
+                                    }
+                                  />
+                                </Field>
+                                <div className="md:col-span-2">
+                                  <Field label="File URL">
+                                    <Input
+                                      value={publication.fileUrl || ""}
+                                      onChange={(event) =>
+                                        setSiteContent((current) => {
+                                          const publications = [...current.publications];
+                                          publications[index] = { ...publications[index], fileUrl: event.target.value };
+                                          return { ...current, publications };
+                                        })
+                                      }
+                                    />
+                                  </Field>
+                                </div>
+                              </div>
                             </div>
-                            <Textarea
-                              value={publication.summary}
-                              onChange={(event) =>
-                                setSiteContent((current) => {
-                                  const publications = [...current.publications];
-                                  publications[index] = { ...publications[index], summary: event.target.value };
-                                  return { ...current, publications };
-                                })
-                              }
-                            />
-                            <Input
-                              value={publication.fileUrl || ""}
-                              onChange={(event) =>
-                                setSiteContent((current) => {
-                                  const publications = [...current.publications];
-                                  publications[index] = { ...publications[index], fileUrl: event.target.value };
-                                  return { ...current, publications };
-                                })
-                              }
-                            />
                           </Card>
                         ))}
                       </div>
@@ -1458,6 +1306,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                             Add testimonial
                           </Button>
                         </div>
+
                         {siteContent.testimonials.map((testimonial, index) => (
                           <Card key={`${testimonial.name}-${index}`} className="space-y-4 p-4">
                             <Input
@@ -1506,13 +1355,13 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                     </div>
                   </SectionCard>
 
-                  <SectionCard title="Advanced collections" description="These JSON editors cover the more structured content that changes less frequently.">
+                  <SectionCard title="Advanced collections" description="These JSON editors cover more structured content that changes less frequently.">
                     <div className="grid gap-5 xl:grid-cols-2">
                       {advancedKeys.map((key) => (
                         <Field
                           key={key}
                           label={key}
-                          hint="Leave valid JSON here. This is the fallback editor for complex collections."
+                          hint="Leave valid JSON here. This is fallback editor for complex collections."
                         >
                           <Textarea
                             className="min-h-[220px] font-mono text-xs"
@@ -1561,14 +1410,13 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                                   const nextPosts = current.blogPosts.filter((_, itemIndex) => itemIndex !== index);
                                   const nextContent = { ...current.blogContentBySlug };
                                   delete nextContent[post.slug];
-                                  return { blogPosts: nextPosts, blogContentBySlug: nextContent };
+                                  return { ...current, blogPosts: nextPosts, blogContentBySlug: nextContent };
                                 })
                               }
                             >
                               Remove
                             </Button>
                           </div>
-
                           <div className="grid gap-4 md:grid-cols-2">
                             <Field label="Title">
                               <Input value={post.title} onChange={(event) => updateBlogPost(index, "title", event.target.value)} />
@@ -1606,14 +1454,14 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                               <Field label="Excerpt">
                                 <Textarea value={post.excerpt} onChange={(event) => updateBlogPost(index, "excerpt", event.target.value)} />
                               </Field>
-                            </div>
-                            <div className="md:col-span-2">
-                              <Field label="Article body" hint="One paragraph per line.">
-                                <Textarea
-                                  value={post.body}
-                                  onChange={(event) => updateBlogBody(post.slug, event.target.value)}
-                                />
-                              </Field>
+                              <div className="md:col-span-2">
+                                <Field label="Article body" hint="One paragraph per line.">
+                                  <Textarea
+                                    value={post.body}
+                                    onChange={(event) => updateBlogBody(post.slug, event.target.value)}
+                                  />
+                                </Field>
+                              </div>
                             </div>
                           </div>
                         </Card>
@@ -1629,11 +1477,23 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                           const nextSlug = `new-post-${timestamp}`;
 
                           setBlogData((current) => ({
+                            ...current,
                             blogPosts: [...current.blogPosts, { ...emptyBlogPost, id: nextId, slug: nextSlug }],
                             blogContentBySlug: {
                               ...current.blogContentBySlug,
-                              [nextSlug]: [],
-                            },
+                              [nextSlug]: {
+                                id: nextId,
+                                title: "",
+                                content: "",
+                                excerpt: "",
+                                slug: nextSlug,
+                                category: "",
+                                publishedAt: new Date().toISOString(),
+                                status: "draft",
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                              }
+                            }
                           }));
                         }}
                       >
@@ -1660,7 +1520,7 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
 
               {activePanel === "media" ? (
                 <>
-                  <SectionCard title="Media library" description="Upload image and PDF assets into the public website folder without leaving the admin.">
+                  <SectionCard title="Media library" description="Upload image and PDF assets into public website folder without leaving admin.">
                     <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
                       <Field label="Upload file" hint="Accepted types: JPG, PNG, WEBP, GIF, PDF up to 10MB.">
                         <Input type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf" onChange={(event) => void uploadMedia(event)} />
@@ -1698,16 +1558,16 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
 
               {activePanel === "security" ? (
                 <>
-                  <SectionCard title="Authentication posture" description="Keep the admin restricted to trusted operators only.">
+                  <SectionCard title="Authentication posture" description="Keep admin restricted to trusted operators only.">
                     <div className="grid gap-4 md:grid-cols-2">
-                      <Card className="space-y-3 p-5">
+                      <Card className="p-5">
                         <p className="text-sm font-semibold">Current session</p>
                         <p className="text-sm text-muted-foreground">
                           Signed in as <span className="font-semibold text-foreground">{user.username}</span> with role{" "}
                           <span className="font-semibold text-foreground">{user.role}</span>.
                         </p>
                       </Card>
-                      <Card className="space-y-3 p-5">
+                      <Card className="p-5">
                         <p className="text-sm font-semibold">MFA status</p>
                         <p className="text-sm text-muted-foreground">
                           {user.mfaConfigured
@@ -1784,8 +1644,8 @@ export function AdminWorkbench({ user: externalUser, activePanel: externalActive
                     <Card className="space-y-3 border-dashed p-5">
                       <p className="text-sm font-semibold">Recommended production hardening</p>
                       <p className="text-sm text-muted-foreground">
-                        Move off the fallback password immediately, define `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and
-                        `ADMIN_TOTP_SECRET`, restrict `ADMIN_ALLOWED_ORIGIN`, and run the Python service behind HTTPS.
+                        Move off fallback password immediately, define `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and
+                        `ADMIN_TOTP_SECRET`, restrict `ADMIN_ALLOWED_ORIGIN`, and run Python service behind HTTPS.
                       </p>
                     </Card>
                   </SectionCard>

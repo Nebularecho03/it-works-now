@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ResearchHubSidebar } from "@/components/research-hub/research-hub-sidebar";
 import { siteContent } from "@/lib/content/site-content";
 import { createMetadata } from "@/lib/site";
 import { Calendar, User, ExternalLink, FileText, TrendingUp, Clock } from "lucide-react";
@@ -87,11 +86,7 @@ export default function ResearchBlogPage() {
   const regularPosts = blogPosts.filter(post => !post.featured);
 
   return (
-    <div className="container-shell py-8">
-      <div className="flex gap-8">
-        <ResearchHubSidebar />
-        
-        <div className="flex-1 lg:ml-80 pt-20 space-y-8">
+    <div className="space-y-8">
           {/* Header */}
           <div>
             <h1 className="text-3xl font-bold mb-4">Research Blog & Portfolio</h1>
@@ -254,8 +249,6 @@ export default function ResearchBlogPage() {
               </div>
             </div>
           </Card>
-        </div>
-      </div>
     </div>
   );
 }

@@ -36,7 +36,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface Column<T> {
-  key: keyof T;
+  key: keyof T | string;
   title: string;
   sortable?: boolean;
   render?: (value: any, row: T) => React.ReactNode;

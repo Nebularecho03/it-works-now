@@ -38,7 +38,7 @@ export function InteractiveHeroSection() {
                   
                   {/* Main image container */}
                   <div className="relative overflow-hidden rounded-[32px] border border-white/20 bg-white/10 backdrop-blur-sm shadow-[0_25px_50px_rgba(16,185,129,0.15)]">
-                    <div className="aspect-[3/4] lg:aspect-[4/5]">
+                    <div className="relative aspect-[3/4] lg:aspect-[4/5]">
                       <Image
                         src={heroData?.background_image_url || "/assets/people/hero.webp"}
                         alt="Dr. Stephen Asatsa"

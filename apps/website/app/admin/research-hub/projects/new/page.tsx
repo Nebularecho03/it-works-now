@@ -16,6 +16,7 @@ import {
   UrlField 
 } from "@/components/admin/research-hub/ui/form-field";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { 
   ArrowLeft, 
   Save, 
@@ -502,6 +503,7 @@ export default function NewProjectPage() {
                 {formData.keyFindings.map((finding, index) => (
                   <div key={index} className="flex gap-3">
                     <TextField
+                      label={`Key Finding ${index + 1}`}
                       name={`keyFinding-${index}`}
                       value={finding}
                       onChange={(value) => handleUpdateKeyFinding(index, value)}
@@ -533,6 +535,7 @@ export default function NewProjectPage() {
                 {formData.outputs.map((output, index) => (
                   <div key={index} className="flex gap-3">
                     <TextField
+                      label={`Output ${index + 1}`}
                       name={`output-${index}`}
                       value={output}
                       onChange={(value) => handleUpdateOutput(index, value)}
@@ -571,16 +574,18 @@ export default function NewProjectPage() {
                 {formData.externalLinks.map((link, index) => (
                   <div key={index} className="grid gap-4 md:grid-cols-3">
                     <TextField
+                      label="Link Title"
                       name={`link-title-${index}`}
                       value={link.title}
                       onChange={(value) => handleUpdateExternalLink(index, 'title', value)}
-                      placeholder="Link title"
+                      placeholder="Enter link title"
                     />
-                    <UrlField
+                    <TextField
+                      label="Link URL"
                       name={`link-url-${index}`}
                       value={link.url}
                       onChange={(value) => handleUpdateExternalLink(index, 'url', value)}
-                      placeholder="https://example.com"
+                      placeholder="Enter link URL (e.g., https://example.com)"
                     />
                     <Button
                       variant="outline"

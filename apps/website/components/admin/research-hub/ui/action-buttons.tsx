@@ -38,14 +38,15 @@ import {
 import { cn } from "@/lib/utils";
 
 interface ActionButtonProps {
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
-  size?: "default" | "sm" | "lg" | "icon";
+  variant?: "default" | "outline" | "secondary" | "ghost" | "scholar";
+  size?: "default" | "sm" | "lg";
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
   loading?: boolean;
   className?: string;
   icon?: React.ReactNode;
+  asChild?: boolean;
 }
 
 // Base Action Button
@@ -111,7 +112,7 @@ export function EditButton({ onClick, disabled = false, ...props }: Partial<Acti
 export function DeleteButton({ onClick, disabled = false, loading = false, ...props }: Partial<ActionButtonProps>) {
   return (
     <ActionButton
-      variant="destructive"
+      variant="outline"
       size="sm"
       onClick={onClick}
       disabled={disabled}

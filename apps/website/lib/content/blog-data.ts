@@ -1,6 +1,7 @@
 export const blogPosts = [
   {
     id: "1",
+    slug: "understanding-cultural-psychology",
     title: "Understanding Cultural Psychology in African Contexts",
     excerpt: "Exploring the intersection of traditional wisdom and modern psychological practice.",
     content: "Full blog post content here...",
@@ -11,6 +12,7 @@ export const blogPosts = [
   },
   {
     id: "2", 
+    slug: "decolonizing-mental-health",
     title: "Decolonizing Mental Health Practice",
     excerpt: "A critical examination of Western-centric approaches to mental health.",
     content: "Full blog post content here...",

@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   Trophy, 
-  Award, 
+  Award as AwardIcon, 
   Calendar, 
   Building, 
   ExternalLink,
@@ -29,7 +29,6 @@ const mockAwards: Award[] = [
     id: "1",
     slug: "durham-university-award-2024",
     title: "Durham University International Research Collaboration Award",
-    shortDescription: "Recognition for outstanding international research collaboration in cultural psychology",
     status: "published",
     featured: true,
     issuingBody: "Durham University",
@@ -52,7 +51,6 @@ const mockAwards: Award[] = [
     id: "2",
     slug: "hraf-global-scholar-2023",
     title: "Human Relations Area Files Global Scholar",
-    shortDescription: "Recognition for contributions to cross-cultural research and indigenous knowledge systems",
     status: "published",
     featured: true,
     issuingBody: "Human Relations Area Files",
@@ -75,7 +73,6 @@ const mockAwards: Award[] = [
     id: "3",
     slug: "icdss-covid-scholar-2022",
     title: "ICDSS Covid Global Scholar",
-    shortDescription: "Recognition for research on COVID-19 impacts on adolescent development across cultures",
     status: "published",
     featured: false,
     issuingBody: "International Consortium of Developmental Science Societies",
@@ -98,7 +95,6 @@ const mockAwards: Award[] = [
     id: "4",
     slug: "issbd-fellowship-2016",
     title: "International Society for the Study of Behavioral Development Developing Country Fellowship",
-    shortDescription: "Three-year fellowship supporting research on behavioral development in developing countries",
     status: "published",
     featured: false,
     issuingBody: "International Society for the Study of Behavioral Development",
@@ -194,7 +190,7 @@ export default function AwardsPage() {
       render: (value: string, row: Award) => (
         <div className="space-y-1">
           <div className="font-medium text-gray-900">{value}</div>
-          <div className="text-sm text-gray-500">{truncateText(row.shortDescription, 80)}</div>
+          <div className="text-sm text-gray-500">{truncateText(row.description, 80)}</div>
           <div className="flex items-center gap-2">
             <StatusBadge status={row.status} />
             {row.featured && (

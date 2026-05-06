@@ -1,0 +1,568 @@
+"use client";
+
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Target,
+  Globe,
+  Tag,
+  Search,
+  Download,
+  Upload,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  Save,
+  Copy,
+  Check,
+  AlertCircle,
+  Info,
+  TrendingUp,
+  BarChart3,
+  FileText,
+  Settings,
+  Zap,
+  Link as LinkIcon,
+  ExternalLink,
+  Image,
+  Hash,
+  ShieldCheck,
+  X,
+  Plus
+} from "lucide-react";
+
+interface SEOData {
+  title: string;
+  description: string;
+  keywords: string[];
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  canonicalUrl: string;
+  robotsTxt: string;
+  sitemapUrl: string;
+  structuredData: any;
+  twitterTitle: string;
+  twitterDescription: string;
+}
+
+interface SEOToolsProps {
+  currentSEO?: SEOData;
+  onSave?: (seo: SEOData) => void;
+}
+
+export default function AdminSEOPage({ currentSEO, onSave }: SEOToolsProps) {
+  const [seoData, setSEOData] = useState<SEOData>(currentSEO || {
+    title: '',
+    description: '',
+    keywords: [],
+    ogTitle: '',
+    ogDescription: '',
+    ogImage: '',
+    canonicalUrl: '',
+    robotsTxt: '',
+    sitemapUrl: '',
+    structuredData: {},
+    twitterTitle: '',
+    twitterDescription: ''
+  });
+
+  const [activeTab, setActiveTab] = useState<'basic' | 'social' | 'technical' | 'preview'>('basic');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [seoScore, setSEOScore] = useState(0);
+
+  const calculateSEOScore = () => {
+    let score = 0;
+    
+    // Title optimization
+    if (seoData.title.length >= 30 && seoData.title.length <= 60) score += 20;
+    if (seoData.title.toLowerCase().includes(seoData.keywords[0]?.toLowerCase() || '')) score += 15;
+    
+    // Description optimization
+    if (seoData.description.length >= 120 && seoData.description.length <= 160) score += 20;
+    if (seoData.keywords.length >= 3 && seoData.keywords.length <= 10) score += 15;
+    
+    // Technical SEO
+    if (seoData.ogTitle && seoData.ogDescription) score += 15;
+    if (seoData.canonicalUrl) score += 10;
+    if (seoData.structuredData) score += 10;
+    
+    setSEOScore(Math.min(100, score));
+    return score;
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const generateSitemap = async () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setSEOData(prev => ({
+        ...prev,
+        sitemapUrl: 'https://example.com/sitemap.xml'
+      }));
+      setIsGenerating(false);
+    }, 2000);
+  };
+
+  const generateRobots = async () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setSEOData(prev => ({
+        ...prev,
+        robotsTxt: 'User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: https://example.com/sitemap.xml'
+      }));
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  const handleSave = () => {
+    if (onSave) {
+      onSave(seoData);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <div className="border-b border-slate-200 bg-white">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                <Target className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="font-display text-3xl font-bold text-slate-900">SEO Management</h1>
+                <p className="text-sm text-slate-600">Optimize your website for search engines</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs">
+                Score: {seoScore}/100
+              </Badge>
+              <div className={`text-sm font-medium ${getScoreColor(seoScore)}`}>
+                {seoScore >= 80 ? 'Excellent' : seoScore >= 60 ? 'Good' : 'Needs Work'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 border-b border-slate-200">
+        <button
+            onClick={() => setActiveTab('basic')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'basic' 
+                ? 'border-b-2 border-emerald-500 text-emerald-600' 
+                : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Target className="w-4 h-4 mr-2" />
+            Basic SEO
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('social')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'social' 
+                ? 'border-b-2 border-emerald-500 text-emerald-600' 
+                : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Globe className="w-4 h-4 mr-2" />
+            Social Media
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('technical')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'technical' 
+                ? 'border-b-2 border-emerald-500 text-emerald-600' 
+                : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Technical
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('preview')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'preview' 
+                ? 'border-b-2 border-emerald-500 text-emerald-600' 
+                : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            Preview
+          </button>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="p-6 space-y-6">
+        {activeTab === 'basic' && (
+          <div className="space-y-6">
+            {/* Title and Description */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Page Title</label>
+                <Input
+                  value={seoData.title}
+                  onChange={(e) => setSEOData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter page title (30-60 characters)"
+                  className="w-full"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  {seoData.title.length}/60 characters
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Meta Description</label>
+                <Textarea
+                  value={seoData.description}
+                  onChange={(e) => setSEOData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Enter meta description (120-160 characters)"
+                  rows={3}
+                  className="w-full"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  {seoData.description.length}/160 characters
+                </p>
+              </div>
+            </div>
+
+            {/* Keywords */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Keywords</label>
+              <div className="space-y-2">
+                {seoData.keywords.map((keyword, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      value={keyword}
+                      onChange={(e) => {
+                        const newKeywords = [...seoData.keywords];
+                        newKeywords[index] = e.target.value;
+                        setSEOData(prev => ({ ...prev, keywords: newKeywords }));
+                      }}
+                      placeholder="Enter keyword"
+                      className="flex-1"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newKeywords = seoData.keywords.filter((_, i) => i !== index);
+                        setSEOData(prev => ({ ...prev, keywords: newKeywords }));
+                      }}
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSEOData(prev => ({ ...prev, keywords: [...prev.keywords, ''] }));
+                  }}
+                >
+                  <Plus className="w-3 h-3 mr-1" />
+                  Add Keyword
+                </Button>
+              </div>
+            </div>
+
+            {/* Canonical URL */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Canonical URL</label>
+                <Input
+                  value={seoData.canonicalUrl}
+                  onChange={(e) => setSEOData(prev => ({ ...prev, canonicalUrl: e.target.value }))}
+                  placeholder="https://example.com/page"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-4 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={generateSitemap}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-3 h-3 mr-1" />
+                    Generate Sitemap
+                  </>
+                )}
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={generateRobots}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-3 h-3 mr-1" />
+                    Generate Robots.txt
+                  </>
+                )}
+              </Button>
+              
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleSave}
+              >
+                <Save className="w-3 h-3 mr-1" />
+                Save SEO Settings
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'social' && (
+          <div className="space-y-6">
+            {/* Open Graph */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-slate-900 mb-3">Open Graph Tags</h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">OG Title</label>
+                  <Input
+                    value={seoData.ogTitle}
+                    onChange={(e) => setSEOData(prev => ({ ...prev, ogTitle: e.target.value }))}
+                    placeholder="Social media title"
+                    className="w-full"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">OG Description</label>
+                  <Textarea
+                    value={seoData.ogDescription}
+                    onChange={(e) => setSEOData(prev => ({ ...prev, ogDescription: e.target.value }))}
+                    placeholder="Social media description"
+                    rows={3}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              {/* Twitter Card */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-slate-900 mb-3">Twitter Card</h3>
+              
+                <div className="space-y-2">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Twitter Title</label>
+                    <Input
+                      value={seoData.twitterTitle}
+                      onChange={(e) => setSEOData(prev => ({ ...prev, twitterTitle: e.target.value }))}
+                      placeholder="Twitter card title"
+                      className="w-full"
+                    />
+                  </div>
+                
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Twitter Description</label>
+                    <Textarea
+                      value={seoData.twitterDescription}
+                      onChange={(e) => setSEOData(prev => ({ ...prev, twitterDescription: e.target.value }))}
+                      placeholder="Twitter card description"
+                      rows={2}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'technical' && (
+          <div className="space-y-6">
+            {/* Sitemap */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-slate-900 mb-3">Sitemap Generation</h3>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={seoData.sitemapUrl}
+                    onChange={(e) => setSEOData(prev => ({ ...prev, sitemapUrl: e.target.value }))}
+                    placeholder="https://example.com/sitemap.xml"
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={generateSitemap}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-3 h-3 mr-1" />
+                        Generate Sitemap
+                      </>
+                    )}
+                  </Button>
+                </div>
+                
+                {seoData.sitemapUrl && (
+                  <div className="mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {/* Download sitemap */}}
+                    >
+                      <Download className="w-3 h-3 mr-1" />
+                      Download
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Robots.txt */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-slate-900 mb-3">Robots.txt</h3>
+              
+              <div className="space-y-2">
+                <Textarea
+                  value={seoData.robotsTxt}
+                  onChange={(e) => setSEOData(prev => ({ ...prev, robotsTxt: e.target.value }))}
+                  placeholder="User-agent: *\nAllow: /\nDisallow: /admin/"
+                  rows={6}
+                  className="w-full font-mono text-xs"
+                />
+                
+                <div className="flex items-center gap-2 mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={generateRobots}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-3 h-3 mr-1" />
+                        Generate Robots.txt
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Structured Data */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-slate-900 mb-3">Structured Data (Schema.org)</h3>
+              
+              <Textarea
+                value={JSON.stringify(seoData.structuredData || {}, null, 2)}
+                onChange={(e) => setSEOData(prev => ({ ...prev, structuredData: JSON.parse(e.target.value) }))}
+                placeholder='{"@context": "https://schema.org","@type": "WebSite"}'
+                rows={8}
+                className="w-full font-mono text-xs"
+              />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'preview' && (
+          <div className="space-y-6">
+            <h3 className="font-semibold text-slate-900 mb-3">SEO Preview</h3>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Google Preview */}
+              <Card className="p-4">
+                <h4 className="font-medium text-slate-900 mb-2">Google Search Result</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="text-blue-600 font-medium">{seoData.title || 'Your Page Title'}</div>
+                  <div className="text-green-600">{seoData.canonicalUrl || 'https://example.com/page'}</div>
+                  <div className="text-slate-600">{seoData.description || 'Your meta description will appear here...'}</div>
+                </div>
+              </Card>
+
+              {/* Social Media Preview */}
+              <Card className="p-4">
+                <h4 className="font-medium text-slate-900 mb-2">Social Media Preview</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 bg-slate-200 rounded flex items-center justify-center">
+                      <Hash className="w-6 h-6 text-slate-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-900">{seoData.ogTitle || seoData.title}</div>
+                      <div className="text-slate-600 text-sm">{seoData.ogDescription || seoData.description}</div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 pt-4 border-t border-slate-200">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {/* Preview functionality */}}
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            Preview SEO
+          </Button>
+          
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleSave}
+          >
+            <Save className="w-3 h-3 mr-1" />
+            Save SEO Settings
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

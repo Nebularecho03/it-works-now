@@ -10,8 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const blogRoutes = blogPosts.map((post) => ({
-    url: `${siteConfig.url}/blog/${post.slug}`,
-    lastModified: new Date(post.publishedAt),
+    url: `${siteConfig.url}/blog/${post.id}`,
+    lastModified: new Date(post.date),
   }));
 
   return [...baseRoutes, ...blogRoutes];

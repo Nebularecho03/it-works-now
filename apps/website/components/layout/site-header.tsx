@@ -100,7 +100,7 @@ export function SiteHeader() {
     const checkBackend = async () => {
       setBackendStatus('checking');
       try {
-        const response = await fetch('http://localhost:8000/api/health');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/health`);
         if (response.ok) {
           setBackendStatus('online');
         } else {
