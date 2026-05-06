@@ -155,14 +155,19 @@ install_frontend() {
     
     cd "$INSTALL_DIR/apps/website"
     
-    # Install npm dependencies
-    sudo -u www-data npm install
+    # Ensure npm cache directory exists and is writable
+    export HOME="/var/www"
+    mkdir -p /var/www/.npm
+    chown -R www-data:www-data /var/www/.npm
+    
+    # Install npm dependencies as www-data
+    sudo -u www-data HOME=/var/www npm install
     
     # Generate Prisma client
-    sudo -u www-data npx prisma generate
+    sudo -u www-data HOME=/var/www npx prisma generate
     
     # Build for production
-    sudo -u www-data npm run build
+    sudo -u www-data HOME=/var/www npm run build
     
     log "Frontend installation completed"
 }
