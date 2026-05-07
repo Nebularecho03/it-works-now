@@ -33,7 +33,7 @@ check_system_requirements() {
     local required_space=4294967296  # 4GB in KB
     
     if [[ $available_space -lt $required_space ]]; then
-        warn "⚠️  Low disk space detected: $(echo "scale=1; $available_space/1024/1024^2" | bc)GB available"
+        warn "⚠️  Low disk space detected: $(echo "scale=1; $available_space/1024/1024" 2>/dev/null || echo "N/A")GB available"
         warn "Minimum 4GB required, 8GB recommended"
         read -p "Continue anyway? This may cause installation issues (y/N): " continue_install
         if [[ ! "$continue_install" =~ ^[Yy] ]]; then
@@ -41,7 +41,7 @@ check_system_requirements() {
             exit 0
         fi
     else
-        log "✓ Sufficient disk space available ($(echo "scale=1; $available_space/1024/1024^2" | bc)GB)"
+        log "✓ Sufficient disk space available ($(echo "scale=1; $available_space/1024/1024" 2>/dev/null || echo "N/A")GB)"
     fi
     
     # Additional check: ensure we can write to installation directory
