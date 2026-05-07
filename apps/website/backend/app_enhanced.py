@@ -22,6 +22,25 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
+# Import gallery API
+try:
+    from gallery_api import *
+except ImportError:
+    # Fallback if gallery_api not available
+    pass
+
+# Import gallery API
+try:
+    from gallery_api import create_gallery_app, init_gallery_table
+except ImportError:
+    # Fallback if gallery_api not available
+    def create_gallery_app():
+        from flask import Flask
+        return Flask(__name__)
+    
+    def init_gallery_table():
+        pass
+
 # Import template functions
 try:
     from email_templates import (
@@ -48,6 +67,13 @@ logger = logging.getLogger(__name__)
 # Initialize database and cleanup expired sessions
 init_db()
 cleanup_expired_sessions()
+
+# Register gallery API
+try:
+    gallery_app = create_gallery_app()
+    app.register_blueprint(gallery_app)
+except ImportError:
+    print("Gallery API not available, using fallback")
 
 # Initialize email service
 email_service = EmailService()
