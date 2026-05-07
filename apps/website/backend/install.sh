@@ -159,9 +159,9 @@ install_dependencies() {
         pip install -r requirements.txt
         print_success "Dependencies installed"
     else
-        print_warning "requirements.txt not found, installing default dependencies..."
-        pip install flask flask-cors python-dotenv
-        print_success "Default dependencies installed"
+        print_warning "requirements.txt not found, installing enhanced system dependencies..."
+        pip install flask flask-cors python-dotenv jinja2
+        print_success "Enhanced dependencies installed"
     fi
 }
 

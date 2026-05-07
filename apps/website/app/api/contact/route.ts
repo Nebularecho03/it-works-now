@@ -80,9 +80,27 @@ export async function POST(request: Request) {
       data: sanitizedData,
     });
 
+    // Save message to backend storage
+    try {
+      const backendUrl = process.env.ADMIN_BACKEND_URL || "http://localhost:5001";
+      const response = await fetch(`${backendUrl}/api/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sanitizedData),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to save message to backend:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error saving message to backend:", error);
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Contact request received. Wire this handler to Resend, SMTP, or another transactional email service for production notifications.",
+      message: "Contact request received. We'll get back to you soon!",
       data: sanitizedData,
     });
   } catch (error) {

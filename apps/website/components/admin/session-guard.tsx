@@ -23,14 +23,16 @@ interface SessionGuardProps {
   fallback?: ReactNode;
 }
 
+const FLASK_SESSION_URL = process.env.NEXT_PUBLIC_FLASK_SESSION_URL || "http://localhost:5001";
+
 export function SessionGuard({ children, fallback }: SessionGuardProps) {
   const { isAuthenticated, loading } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      // Redirect to Flask login page
-      window.location.href = `${process.env.NEXT_PUBLIC_FLASK_SESSION_URL || "http://localhost:6354"}/login`;
+      // Redirect to Next.js admin signup page if not authenticated
+      router.push('/admin-signup');
     }
   }, [isAuthenticated, loading, router]);
 
@@ -52,7 +54,7 @@ export function SessionGuard({ children, fallback }: SessionGuardProps) {
           <p className="text-gray-600 mb-4">Please log in to access this page.</p>
           <button
             onClick={() => {
-              window.location.href = `${process.env.NEXT_PUBLIC_FLASK_SESSION_URL || "http://localhost:5001"}/login`;
+              router.push('/admin-signup');
             }}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >

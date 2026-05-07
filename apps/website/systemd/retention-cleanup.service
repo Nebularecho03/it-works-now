@@ -1,0 +1,29 @@
+[Unit]
+Description=Server Metrics Data Retention and Cleanup Service
+Documentation=https://github.com/stephenasatsa/website
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/home/codecrafter/Documents/combined/apps/website/backend
+ExecStart=/usr/bin/python3 /home/codecrafter/Documents/combined/apps/website/backend/data_retention/scheduler.py run-once
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=retention-cleanup
+
+# Environment variables
+Environment=PYTHONPATH=/home/codecrafter/Documents/combined/apps/website/backend
+Environment=RETENTION_LOG_LEVEL=INFO
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log /tmp
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+[Unit]
+Description=Stephen Asatsa Website Frontend (Next.js)
+After=network.target stephenasatsa-backend.service
+
+[Service]
+Type=simple
+User={{SERVICE_USER}}
+Group={{SERVICE_USER}}
+WorkingDirectory={{INSTALL_DIR}}
+Environment=NODE_ENV=production
+Environment=PORT={{FRONTEND_PORT}}
+EnvironmentFile=-{{INSTALL_DIR}}/.env.auto
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=10
+StandardOutput=append:{{LOGS_DIR}}/frontend.log
+StandardError=append:{{LOGS_DIR}}/frontend-error.log
+
+[Install]
+WantedBy=multi-user.target

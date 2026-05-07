@@ -18,7 +18,6 @@ export function EnhancedCaseStudies() {
         { label: "Research Funding", value: "$150K secured" },
         { label: "Student Impact", value: "50+ graduate students mentored" }
       ],
-      image: "/assets/research/cultural-adaptation.jpg",
       tags: ["Cultural Psychology", "Research", "Academic Partnership"]
     },
     {
@@ -30,7 +29,6 @@ export function EnhancedCaseStudies() {
         { label: "Service Improvement", value: "40% increase in access" },
         { label: "Training Programs", value: "12 workshops conducted" }
       ],
-      image: "/assets/research/community-health.jpg",
       tags: ["Community Psychology", "Public Health", "Training"]
     },
     {
@@ -42,7 +40,6 @@ export function EnhancedCaseStudies() {
         { label: "Student Engagement", value: "25% increase in participation" },
         { label: "Faculty Adoption", value: "90% implementation rate" }
       ],
-      image: "/assets/research/curriculum-development.jpg",
       tags: ["Education", "Curriculum Design", "Decolonization"]
     }
   ];
@@ -63,51 +60,41 @@ export function EnhancedCaseStudies() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
             >
-              <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="lg:grid lg:grid-cols-2">
-                  <div className="relative h-64 lg:h-full">
-                    <Image
-                      src={study.image}
-                      alt={study.title}
-                      fill
-                      className="object-cover"
-                    />
+              <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 p-8">
+                <div className="space-y-6">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {study.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
-                  <div className="p-8 space-y-6">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {study.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
-                        >
-                          {tag}
-                        </span>
+                  <h3 className="font-display text-2xl mb-4">{study.title}</h3>
+                  <p className="text-muted-foreground mb-6 leading-relaxed">{study.description}</p>
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      Measurable Results
+                    </h4>
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      {study.metrics.map((metric) => (
+                        <div key={metric.label} className="text-center p-4 bg-muted/30 rounded-lg">
+                          <div className="text-2xl font-bold text-primary mb-1">{metric.value}</div>
+                          <div className="text-sm font-medium text-muted-foreground">{metric.label}</div>
+                        </div>
                       ))}
                     </div>
-                    <h3 className="font-display text-2xl mb-4">{study.title}</h3>
-                    <p className="text-muted-foreground mb-6 leading-relaxed">{study.description}</p>
-                    <div className="space-y-4">
-                      <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        Measurable Results
-                      </h4>
-                      <div className="grid gap-4 sm:grid-cols-3">
-                        {study.metrics.map((metric) => (
-                          <div key={metric.label} className="text-center p-4 bg-muted/30 rounded-lg">
-                            <div className="text-2xl font-bold text-primary mb-1">{metric.value}</div>
-                            <div className="text-sm font-medium text-muted-foreground">{metric.label}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="pt-4">
-                      <Button asChild variant="outline" className="w-full">
-                        <a href="/contact" className="flex items-center justify-center gap-2">
-                          <ExternalLink className="h-4 w-4" />
-                          Discuss Similar Project
-                        </a>
-                      </Button>
-                    </div>
+                  </div>
+                  <div className="pt-4">
+                    <Button asChild variant="outline" className="w-full">
+                      <a href="/contact" className="flex items-center justify-center gap-2">
+                        <ExternalLink className="h-4 w-4" />
+                        Discuss Similar Project
+                      </a>
+                    </Button>
                   </div>
                 </div>
               </Card>

@@ -34,6 +34,7 @@ interface Service {
   description: string;
   icon: string;
   bullets: string;
+  link?: string;
   display_order: number;
   published: boolean;
   created_at: string;
@@ -49,6 +50,11 @@ const iconMap: Record<string, any> = {
   GraduationCap,
   Building,
   Calendar
+};
+
+const IconComponent = ({ iconName, className }: { iconName: string; className?: string }) => {
+  const Icon = iconMap[iconName] || Brain;
+  return <Icon className={className || "h-6 w-6"} />;
 };
 
 const colorOptions = ["emerald", "blue", "purple", "orange", "red", "pink"];
@@ -144,6 +150,7 @@ export default function ServicesAdminPage() {
       description: "",
       icon: "Brain",
       bullets: JSON.stringify(["Feature 1", "Feature 2", "Feature 3"]),
+      link: "/services",
       display_order: services.length,
       published: true,
       created_at: "",
@@ -243,10 +250,7 @@ export default function ServicesAdminPage() {
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4 flex-1">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                  {(() => {
-                    const Icon = iconMap[item.icon] || Brain;
-                    return <Icon className="h-6 w-6" />;
-                  })()}
+                  <IconComponent iconName={item.icon} className="h-6 w-6" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -333,6 +337,16 @@ export default function ServicesAdminPage() {
                 </div>
                 
                 <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Service Link (Optional)</label>
+                  <Input
+                    value={selectedItem.link || ''}
+                    onChange={(e) => { setSelectedItem(prev => prev ? {...prev, link: e.target.value} : null); setPreviewData(prev => prev ? {...prev, link: e.target.value} : null); }}
+                    className="w-full"
+                    placeholder="/services or https://example.com"
+                  />
+                </div>
+                
+                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Bullet Points (JSON array)</label>
                   <Textarea
                     value={selectedItem.bullets}
@@ -373,14 +387,11 @@ export default function ServicesAdminPage() {
                   <Card className="relative h-full border border-slate-200 p-6 transition-all duration-300 hover:border-blue-300 hover:shadow-lg bg-gradient-to-br from-slate-50 to-white">
                     <div className="mb-4">
                       <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 transition-colors">
-                        {(() => {
-                          const Icon = iconMap[previewData.icon] || Brain;
-                          return <Icon className="w-6 h-6 text-blue-600" />;
-                        })()}
+                        <IconComponent iconName={previewData.icon} className="w-6 h-6 text-blue-600" />
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-semibold mb-3 text-slate-900">
+                    <h3 className="text-lg font-semibold text-slate-900">
                       {previewData.title || "Service Title"}
                     </h3>
 
@@ -405,6 +416,16 @@ export default function ServicesAdminPage() {
                         return null;
                       }
                     })()}
+                    
+                    {/* Show link in preview */}
+                    {previewData.link && (
+                      <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <span className="text-sm font-medium text-blue-700">Link: </span>
+                        <a href={previewData.link} target="_blank" className="text-sm text-blue-600 hover:underline ml-2">
+                          {previewData.link}
+                        </a>
+                      </div>
+                    )}
                   </Card>
                 </div>
               )}

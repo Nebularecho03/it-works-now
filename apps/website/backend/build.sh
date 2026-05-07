@@ -71,8 +71,9 @@ if [ -f "requirements.txt" ]; then
     pip install -r requirements.txt
     print_success "Dependencies installed"
 else
-    print_error "requirements.txt not found"
-    exit 1
+    print_status "Installing enhanced messaging system dependencies..."
+    pip install flask flask-cors python-dotenv jinja2
+    print_success "Enhanced dependencies installed"
 fi
 
 # Create environment file if it doesn't exist
@@ -181,7 +182,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=$(pwd)
 Environment=PATH=$(pwd)/venv/bin
-ExecStart=$(pwd)/venv/bin/python app.py
+ExecStart=$(pwd)/venv/bin/python app_enhanced.py
 Restart=always
 RestartSec=10
 StandardOutput=append:$(pwd)/logs/app.log
@@ -212,6 +213,12 @@ sudo systemctl stop stephen-asatsa-backend || true
 
 # Build the application
 ./build.sh
+
+# Install enhanced dependencies if needed
+if [ -f "requirements_enhanced.txt" ]; then
+    print_status "Installing enhanced requirements..."
+    pip install -r requirements_enhanced.txt
+fi
 
 # Install systemd service
 sudo cp stephen-asatsa-backend.service /etc/systemd/system/
@@ -246,12 +253,17 @@ echo "📦 Creating backup..."
 # Create backup
 tar -czf "${BACKUP_DIR}/${BACKUP_FILE}" \
     app.py \
+    app_enhanced.py \
     main.py \
+    auth.py \
+    email_service.py \
+    email_templates \
     requirements.txt \
     .env \
     venv/ \
     logs/ \
-    data/
+    data/ \
+    templates/
 
 echo "✅ Backup created: ${BACKUP_DIR}/${BACKUP_FILE}"
 

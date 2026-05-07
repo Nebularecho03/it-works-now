@@ -5,9 +5,58 @@ import secrets
 import json
 import hashlib
 import re
+import bcrypt
+
+# Import monitoring routes
+from monitoring.routes import create_monitoring_routes
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3001", "http://localhost:3000"])
+
+# Register monitoring blueprint
+monitoring_bp = create_monitoring_routes()
+app.register_blueprint(monitoring_bp)
+
+# Admin user management endpoints
+@app.route("/api/admin/users", methods=["GET"])
+def get_users():
+    """Get all users (admin only)"""
+    try:
+        # Simple admin check - in production, use proper auth
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return jsonify({"error": "Unauthorized"}), 401
+        
+        return jsonify({
+            "success": True,
+            "data": list(users.values())
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+@app.route("/api/admin/unlock-account", methods=["POST"])
+def unlock_account():
+    """Unlock user account (admin only)"""
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        
+        if not email:
+            return jsonify({"error": "Email is required"}), 400
+        
+        if email in users:
+            users[email]["account_locked_until"] = None
+            users[email]["failed_login_attempts"] = 0
+            return jsonify({
+                "success": True,
+                "message": "Account unlocked successfully"
+            })
+        
+        return jsonify({"error": "User not found"}), 404
+        
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 # Admin credentials (stored in variables for easy updating)
 ADMIN_EMAIL = "admin@stephenasatsa.com"
@@ -20,17 +69,24 @@ user_profiles = {}
 admin_credentials_history = []  # Track credential changes
 gallery_photos = {}  # Store gallery photos
 next_photo_id = 1
+messages = {}  # Store messages
+message_replies = {}  # Store message replies
+conversations = {}  # Store conversation threads
+next_message_id = 1
+next_reply_id = 1
+next_conversation_id = 1
 
 def hash_password(password: str) -> str:
-    """Hash password using SHA-256"""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Hash password using bcrypt"""
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 def verify_password(email: str, password: str) -> bool:
     """Verify password for admin or regular user"""
     if email == ADMIN_EMAIL:
         return password == ADMIN_PASSWORD
     elif email in users:
-        return users[email]["password"] == hash_password(password)
+        return bcrypt.checkpw(password.encode('utf-8'), users[email]["password"].encode('utf-8'))
     return False
 
 def generate_token() -> str:
@@ -43,10 +99,21 @@ def verify_token(token: str) -> dict:
         # Check if token is not expired (24 hours)
         token_data = tokens[token]
         if datetime.now().timestamp() - token_data["created"] < 24 * 60 * 60:
+            # Check if user account is locked
+            user_email = token_data["email"]
+            if user_email in users:
+                user_data = users[user_email]
+                account_locked_until = user_data.get("account_locked_until")
+                if account_locked_until:
+                    lock_expiry = datetime.fromisoformat(account_locked_until)
+                    if lock_expiry > datetime.now():
+                        return None  # Account is locked
+            
             return token_data
         else:
             # Remove expired token
             del tokens[token]
+            return None
     return None
 
 def is_valid_email(email: str) -> bool:
@@ -141,6 +208,26 @@ def user_login():
         if not verify_password(email, password):
             return jsonify({"detail": "Invalid email or password"}), 401
         
+        # Check if account is locked
+        if email in users:
+            user_data = users[email]
+            if user_data.get("account_locked_until"):
+                lock_expiry = datetime.fromisoformat(user_data["account_locked_until"])
+                if lock_expiry > datetime.now():
+                    return jsonify({"detail": "Account is locked. Please try again later."}), 403
+        
+        # Check failed login attempts
+        if email in users:
+            failed_attempts = users[email].get("failed_login_attempts", 0)
+            last_failed = users[email].get("last_failed_login")
+            
+            # Lock account if too many failed attempts (5 in last hour)
+            if failed_attempts >= 5 and last_failed:
+                last_failed_time = datetime.fromisoformat(last_failed)
+                if (datetime.now() - last_failed_time).total_seconds() < 3600:
+                    users[email]["account_locked_until"] = (datetime.now() + timedelta(hours=1)).isoformat()
+                    return jsonify({"detail": "Account locked due to too many failed login attempts. Try again in 1 hour."}), 429
+        
         # Generate token
         token = generate_token()
         user_role = "admin" if email == ADMIN_EMAIL else "user"
@@ -151,9 +238,11 @@ def user_login():
             "role": user_role
         }
         
-        # Update last login
-        if email in user_profiles:
-            user_profiles[email]["last_login"] = datetime.now().isoformat()
+        # Update last login and reset failed attempts on successful login
+        if email in users:
+            users[email]["last_login"] = datetime.now().isoformat()
+            users[email]["failed_login_attempts"] = 0
+            users[email]["last_failed_login"] = None
         
         return jsonify({
             "access_token": token,
@@ -167,6 +256,50 @@ def user_login():
     except Exception as e:
         return jsonify({"detail": "Invalid request"}), 400
 
+@app.route("/api/user/change-password", methods=["POST"])
+def change_password():
+    """User password change endpoint"""
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+        confirm_password = data.get("confirm_password")
+        
+        # Validation
+        if not all([email, current_password, new_password, confirm_password]):
+            return jsonify({"error": "All fields are required"}), 400
+        
+        if new_password != confirm_password:
+            return jsonify({"error": "New passwords do not match"}), 400
+        
+        if len(new_password) < 8:
+            return jsonify({"error": "Password must be at least 8 characters"}), 400
+        
+        # Check if user exists and verify current password
+        if email not in users:
+            return jsonify({"error": "User not found"}), 404
+        
+        user = users[email]
+        if user["password"] != hash_password(current_password):
+            return jsonify({"error": "Current password is incorrect"}), 401
+        
+        # Hash new password
+        new_password_hash = hash_password(new_password)
+        
+        # Update user password
+        users[email]["password"] = new_password_hash
+        users[email]["password_updated_at"] = datetime.now().isoformat()
+        users[email]["failed_login_attempts"] = 0  # Reset failed attempts on successful password change
+        
+        return jsonify({
+            "success": True,
+            "message": "Password changed successfully"
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
 @app.route("/api/auth/me")
 def get_current_user():
     """Get current user info"""
@@ -174,18 +307,15 @@ def get_current_user():
     token_data = verify_token(token)
     
     if not token_data:
-        return jsonify({"detail": "Invalid token"}), 401
+        return jsonify({"error": "Invalid token"}), 401
     
-    email = token_data["email"]
-    role = token_data["role"]
-    
-    if role == "admin":
-        return jsonify({
-            "email": ADMIN_EMAIL,
-            "name": "Administrator",
-            "role": "admin",
-            "status": "Active"
-        })
+    return jsonify({
+        "user": {
+            "email": token_data["email"],
+            "name": users.get(token_data["email"], {}).get("name", ""),
+            "role": token_data["role"]
+        }
+    })
     else:
         user_data = users.get(email, {})
         profile_data = user_profiles.get(email, {})
@@ -707,6 +837,749 @@ def get_admin_gallery_photos():
         })
     except Exception as e:
         return jsonify({"detail": "Failed to fetch photos"}), 500
+
+# Message Management Endpoints
+@app.route("/api/messages", methods=["GET"])
+def get_messages():
+    """Get all messages with filtering and pagination"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        # Get query parameters
+        status = request.args.get("status", "all")
+        priority = request.args.get("priority", "all")
+        category = request.args.get("category", "all")
+        search = request.args.get("search", "")
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 20))
+        
+        # Filter messages
+        filtered_messages = []
+        for msg_id, message in messages.items():
+            # Status filter
+            if status != "all" and message.get("status") != status:
+                continue
+            
+            # Priority filter
+            if priority != "all" and message.get("priority") != priority:
+                continue
+            
+            # Category filter
+            if category != "all" and message.get("category") != category:
+                continue
+            
+            # Search filter
+            if search:
+                search_lower = search.lower()
+                if (search_lower not in message.get("name", "").lower() and
+                    search_lower not in message.get("email", "").lower() and
+                    search_lower not in message.get("subject", "").lower() and
+                    search_lower not in message.get("message", "").lower()):
+                    continue
+            
+            filtered_messages.append({
+                "id": msg_id,
+                **message
+            })
+        
+        # Sort by created date (newest first)
+        filtered_messages.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        
+        # Pagination
+        total = len(filtered_messages)
+        start = (page - 1) * limit
+        end = start + limit
+        paginated_messages = filtered_messages[start:end]
+        
+        return jsonify({
+            "messages": paginated_messages,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total + limit - 1) // limit
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch messages"}), 500
+
+@app.route("/api/messages/<int:message_id>", methods=["GET"])
+def get_message(message_id):
+    """Get single message details"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        if str(message_id) not in messages:
+            return jsonify({"detail": "Message not found"}), 404
+        
+        message = messages[str(message_id)]
+        replies = message_replies.get(str(message_id), [])
+        
+        return jsonify({
+            "message": {
+                "id": message_id,
+                **message
+            },
+            "replies": replies
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch message"}), 500
+
+@app.route("/api/messages/<int:message_id>", methods=["PUT"])
+def update_message(message_id):
+    """Update message status, priority, or category"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        if str(message_id) not in messages:
+            return jsonify({"detail": "Message not found"}), 404
+        
+        data = request.get_json()
+        message = messages[str(message_id)]
+        
+        # Update allowed fields
+        if "status" in data:
+            message["status"] = data["status"]
+            if data["status"] == "read":
+                message["read_at"] = datetime.now().isoformat()
+        
+        if "priority" in data:
+            message["priority"] = data["priority"]
+        
+        if "category" in data:
+            message["category"] = data["category"]
+        
+        message["updated_at"] = datetime.now().isoformat()
+        
+        return jsonify({
+            "message": "Message updated successfully",
+            "data": {
+                "id": message_id,
+                **message
+            }
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to update message"}), 500
+
+@app.route("/api/messages/<int:message_id>/reply", methods=["POST"])
+def reply_to_message(message_id):
+    """Send reply to a message"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        if str(message_id) not in messages:
+            return jsonify({"detail": "Message not found"}), 404
+        
+        data = request.get_json()
+        reply_content = data.get("reply", "")
+        
+        if not reply_content.strip():
+            return jsonify({"detail": "Reply content is required"}), 400
+        
+        # Create reply record
+        global next_reply_id
+        reply_id = str(next_reply_id)
+        next_reply_id += 1
+        
+        reply = {
+            "id": reply_id,
+            "message_id": str(message_id),
+            "reply_content": reply_content,
+            "reply_type": "admin",
+            "sent_at": datetime.now().isoformat(),
+            "sent_by": token_data["email"]
+        }
+        
+        # Store reply
+        if str(message_id) not in message_replies:
+            message_replies[str(message_id)] = []
+        message_replies[str(message_id)].append(reply)
+        
+        # Update message status
+        messages[str(message_id)]["status"] = "replied"
+        messages[str(message_id)]["replied_at"] = datetime.now().isoformat()
+        messages[str(message_id)]["replied_by"] = token_data["email"]
+        messages[str(message_id)]["updated_at"] = datetime.now().isoformat()
+        
+        # TODO: Send actual email reply
+        print(f"Email reply to {messages[str(message_id)]['email']}: {reply_content}")
+        
+        return jsonify({
+            "message": "Reply sent successfully",
+            "reply": reply
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to send reply"}), 500
+
+@app.route("/api/messages", methods=["DELETE"])
+def delete_messages():
+    """Delete multiple messages"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        data = request.get_json()
+        message_ids = data.get("message_ids", [])
+        
+        deleted_count = 0
+        for msg_id in message_ids:
+            if str(msg_id) in messages:
+                del messages[str(msg_id)]
+                if str(msg_id) in message_replies:
+                    del message_replies[str(msg_id)]
+                deleted_count += 1
+        
+        return jsonify({
+            "message": f"{deleted_count} messages deleted successfully"
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to delete messages"}), 500
+
+@app.route("/api/messages/stats", methods=["GET"])
+def get_message_stats():
+    """Get message statistics"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        stats = {
+            "total": len(messages),
+            "new": sum(1 for msg in messages.values() if msg.get("status") == "new"),
+            "read": sum(1 for msg in messages.values() if msg.get("status") == "read"),
+            "replied": sum(1 for msg in messages.values() if msg.get("status") == "replied"),
+            "archived": sum(1 for msg in messages.values() if msg.get("status") == "archived"),
+            "urgent": sum(1 for msg in messages.values() if msg.get("priority") == "urgent"),
+            "high": sum(1 for msg in messages.values() if msg.get("priority") == "high"),
+            "contact": sum(1 for msg in messages.values() if msg.get("category") == "contact"),
+            "consultation": sum(1 for msg in messages.values() if msg.get("category") == "consultation"),
+            "research": sum(1 for msg in messages.values() if msg.get("category") == "research")
+        }
+        
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch stats"}), 500
+
+@app.route("/api/messages", methods=["POST"])
+def create_message():
+    """Create new message (from contact form)"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ["name", "email", "message"]
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({"detail": f"{field} is required"}), 400
+        
+        # Validate email
+        if not is_valid_email(data.get("email", "")):
+            return jsonify({"detail": "Invalid email format"}), 400
+        
+        # Create message
+        global next_message_id
+        message_id = str(next_message_id)
+        next_message_id += 1
+        
+        message = {
+            "from": data["name"].strip(),
+            "from_email": data["email"].lower().strip(),
+            "to": "Administrator",
+            "to_email": ADMIN_EMAIL,
+            "subject": data.get("subject", "").strip(),
+            "message": data["message"].strip(),
+            "phone": data.get("phone", "").strip(),
+            "status": "new",
+            "priority": data.get("priority", "normal"),
+            "category": data.get("category", "contact"),
+            "ip_address": request.headers.get("x-forwarded-for", "unknown"),
+            "user_agent": request.headers.get("user-agent", ""),
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat(),
+            "is_from_admin": False
+        }
+        
+        messages[message_id] = message
+        
+        return jsonify({
+            "message": "Message created successfully",
+            "data": {
+                "id": message_id,
+                **message
+            }
+        }), 201
+    except Exception as e:
+        return jsonify({"detail": "Failed to create message"}), 500
+
+# User Messaging Endpoints
+@app.route("/api/user/messages", methods=["GET"])
+def get_user_messages():
+    """Get messages for authenticated user"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        # Get query parameters
+        status = request.args.get("status", "all")
+        priority = request.args.get("priority", "all")
+        category = request.args.get("category", "all")
+        search = request.args.get("search", "")
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 20))
+        
+        # Filter messages for this user
+        user_email = token_data["email"]
+        filtered_messages = []
+        
+        for msg_id, message in messages.items():
+            # Only show messages where user is sender or recipient
+            if (message.get("from_email") == user_email or 
+                message.get("to_email") == user_email):
+                
+                # Status filter (convert inbox to show new/read messages)
+                if status != "all":
+                    if status == "inbox":
+                        if message.get("status") not in ["new", "read"]:
+                            continue
+                    elif status == "sent":
+                        if message.get("is_from_admin") != False:
+                            continue
+                    elif status != message.get("status"):
+                        continue
+                
+                # Priority filter
+                if priority != "all" and message.get("priority") != priority:
+                    continue
+                
+                # Category filter
+                if category != "all" and message.get("category") != category:
+                    continue
+                
+                # Search filter
+                if search:
+                    search_lower = search.lower()
+                    if (search_lower not in message.get("from", "").lower() and
+                        search_lower not in message.get("from_email", "").lower() and
+                        search_lower not in message.get("to", "").lower() and
+                        search_lower not in message.get("to_email", "").lower() and
+                        search_lower not in message.get("subject", "").lower() and
+                        search_lower not in message.get("message", "").lower()):
+                        continue
+                
+                filtered_messages.append({
+                    "id": int(msg_id),
+                    **message
+                })
+        
+        # Sort by created date (newest first)
+        filtered_messages.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        
+        # Pagination
+        total = len(filtered_messages)
+        start = (page - 1) * limit
+        end = start + limit
+        paginated_messages = filtered_messages[start:end]
+        
+        return jsonify({
+            "messages": paginated_messages,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total + limit - 1) // limit
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch messages"}), 500
+
+@app.route("/api/user/messages/<int:message_id>", methods=["PUT"])
+def update_user_message(message_id):
+    """Update user message status"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        if str(message_id) not in messages:
+            return jsonify({"detail": "Message not found"}), 404
+        
+        message = messages[str(message_id)]
+        user_email = token_data["email"]
+        
+        # Check if user owns this message
+        if (message.get("from_email") != user_email and 
+            message.get("to_email") != user_email):
+            return jsonify({"detail": "Access denied"}), 403
+        
+        data = request.get_json()
+        
+        # Update allowed fields
+        if "status" in data:
+            message["status"] = data["status"]
+            if data["status"] == "read":
+                message["read_at"] = datetime.now().isoformat()
+        
+        message["updated_at"] = datetime.now().isoformat()
+        
+        return jsonify({
+            "message": "Message updated successfully",
+            "data": {
+                "id": message_id,
+                **message
+            }
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to update message"}), 500
+
+@app.route("/api/user/messages/send", methods=["POST"])
+def send_user_message():
+    """Send message from user to admin"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        data = request.get_json()
+        
+        if not data.get("message") or not data.get("message").strip():
+            return jsonify({"detail": "Message content is required"}), 400
+        
+        # Create message from user to admin
+        global next_message_id
+        message_id = str(next_message_id)
+        next_message_id += 1
+        
+        message = {
+            "from": token_data.get("name", token_data["email"]),
+            "from_email": token_data["email"],
+            "to": "Administrator",
+            "to_email": ADMIN_EMAIL,
+            "subject": data.get("subject", "").strip(),
+            "message": data["message"].strip(),
+            "status": "new",
+            "priority": "normal",
+            "category": data.get("category", "general"),
+            "ip_address": request.headers.get("x-forwarded-for", "unknown"),
+            "user_agent": request.headers.get("user-agent", ""),
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat(),
+            "is_from_admin": False
+        }
+        
+        messages[message_id] = message
+        
+        return jsonify({
+            "message": "Message sent successfully",
+            "data": {
+                "id": message_id,
+                **message
+            }
+        }), 201
+    except Exception as e:
+        return jsonify({"detail": "Failed to send message"}), 500
+
+@app.route("/api/user/messages", methods=["DELETE"])
+def delete_user_messages():
+    """Delete user messages"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        data = request.get_json()
+        message_ids = data.get("message_ids", [])
+        user_email = token_data["email"]
+        
+        deleted_count = 0
+        for msg_id in message_ids:
+            if str(msg_id) in messages:
+                message = messages[str(msg_id)]
+                # Check if user owns this message
+                if (message.get("from_email") == user_email or 
+                    message.get("to_email") == user_email):
+                    del messages[str(msg_id)]
+                    if str(msg_id) in message_replies:
+                        del message_replies[str(msg_id)]
+                    deleted_count += 1
+        
+        return jsonify({
+            "message": f"{deleted_count} messages deleted successfully"
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to delete messages"}), 500
+
+@app.route("/api/user/messages/stats", methods=["GET"])
+def get_user_message_stats():
+    """Get message statistics for user"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        user_email = token_data["email"]
+        stats = {
+            "total": 0,
+            "new": 0,
+            "read": 0,
+            "replied": 0,
+            "archived": 0,
+            "sent": 0,
+            "conversations": 0
+        }
+        
+        for msg_id, message in messages.items():
+            # Only count messages where user is sender or recipient
+            if (message.get("from_email") == user_email or 
+                message.get("to_email") == user_email):
+                
+                status = message.get("status", "new")
+                stats["total"] += 1
+                
+                if status == "new":
+                    stats["new"] += 1
+                elif status == "read":
+                    stats["read"] += 1
+                elif status == "replied":
+                    stats["replied"] += 1
+                elif status == "archived":
+                    stats["archived"] += 1
+                
+                # Count sent messages (messages from user to admin)
+                if not message.get("is_from_admin", True):
+                    stats["sent"] += 1
+        
+        # Count conversations
+        for conv_id, conversation in conversations.items():
+            if (conversation.get("participant_email") == user_email or 
+                conversation.get("admin_email") == user_email):
+                stats["conversations"] += 1
+        
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch stats"}), 500
+
+@app.route("/api/user/conversations", methods=["GET"])
+def get_user_conversations():
+    """Get conversation threads for user"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        user_email = token_data["email"]
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 20))
+        
+        # Filter conversations for this user
+        filtered_conversations = []
+        
+        for conv_id, conversation in conversations.items():
+            if (conversation.get("participant_email") == user_email or 
+                conversation.get("admin_email") == user_email):
+                
+                # Get latest message in conversation
+                latest_message = None
+                latest_time = ""
+                
+                for msg_id, message in messages.items():
+                    if (message.get("conversation_id") == conv_id):
+                        msg_time = message.get("updated_at", message.get("created_at", ""))
+                        if msg_time > latest_time:
+                            latest_time = msg_time
+                            latest_message = message
+                
+                if latest_message:
+                    filtered_conversations.append({
+                        "id": int(conv_id),
+                        **conversation,
+                        "latest_message": latest_message,
+                        "unread_count": sum(1 for msg in messages.values() 
+                            if msg.get("conversation_id") == conv_id and 
+                               msg.get("status") == "new" and 
+                               msg.get("to_email") == user_email)
+                    })
+        
+        # Sort by latest message time
+        filtered_conversations.sort(key=lambda x: x["latest_message"]["updated_at"], reverse=True)
+        
+        # Pagination
+        total = len(filtered_conversations)
+        start = (page - 1) * limit
+        end = start + limit
+        paginated_conversations = filtered_conversations[start:end]
+        
+        return jsonify({
+            "conversations": paginated_conversations,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total + limit - 1) // limit
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch conversations"}), 500
+
+@app.route("/api/user/conversations/<int:conversation_id>", methods=["GET"])
+def get_conversation_messages():
+    """Get all messages in a conversation thread"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data:
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        user_email = token_data["email"]
+        conversation_id = str(conversation_id)
+        
+        if conversation_id not in conversations:
+            return jsonify({"detail": "Conversation not found"}), 404
+        
+        conversation = conversations[conversation_id]
+        
+        # Check if user is part of this conversation
+        if (conversation.get("participant_email") != user_email and 
+            conversation.get("admin_email") != user_email):
+            return jsonify({"detail": "Access denied"}), 403
+        
+        # Get all messages in this conversation
+        conversation_messages = []
+        
+        for msg_id, message in messages.items():
+            if message.get("conversation_id") == conversation_id:
+                conversation_messages.append({
+                    "id": int(msg_id),
+                    **message
+                })
+        
+        # Sort by created date
+        conversation_messages.sort(key=lambda x: x.get("created_at", ""))
+        
+        return jsonify({
+            "conversation": {
+                "id": conversation_id,
+                **conversation
+            },
+            "messages": conversation_messages
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch conversation"}), 500
+
+# Email Settings Management Endpoints
+@app.route("/api/admin/email-settings", methods=["GET"])
+def get_email_settings():
+    """Get email configuration settings"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        # Return mock email settings (in production, store in database)
+        settings = {
+            "provider": "none",
+            "smtp_host": "",
+            "smtp_port": 587,
+            "smtp_username": "",
+            "smtp_password": "",
+            "smtp_use_tls": True,
+            "gmail_client_id": "",
+            "gmail_client_secret": "",
+            "gmail_refresh_token": "",
+            "outlook_client_id": "",
+            "outlook_client_secret": "",
+            "outlook_refresh_token": "",
+            "from_email": "noreply@stephenasatsa.com",
+            "from_name": "Dr. Stephen Asatsa",
+            "reply_to_email": "admin@stephenasatsa.com",
+            "enabled": False
+        }
+        
+        return jsonify(settings)
+    except Exception as e:
+        return jsonify({"detail": "Failed to fetch email settings"}), 500
+
+@app.route("/api/admin/email-settings", methods=["PUT"])
+def update_email_settings():
+    """Update email configuration settings"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate provider
+        valid_providers = ["none", "gmail", "outlook", "smtp"]
+        if data.get("provider") not in valid_providers:
+            return jsonify({"detail": "Invalid email provider"}), 400
+        
+        # In production, update database instead of returning mock data
+        return jsonify({
+            "message": "Email settings updated successfully",
+            "data": data
+        })
+    except Exception as e:
+        return jsonify({"detail": "Failed to update email settings"}), 500
+
+@app.route("/api/admin/email-settings/test", methods=["POST"])
+def test_email_settings():
+    """Test email configuration"""
+    token = request.args.get("token")
+    token_data = verify_token(token)
+    
+    if not token_data or token_data["role"] != "admin":
+        return jsonify({"detail": "Invalid token"}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Mock email test (in production, send actual test email)
+        print(f"Email test with provider: {data.get('provider')}")
+        print(f"Settings: {data}")
+        
+        # Simulate test result
+        return jsonify({
+            "message": "Test email sent successfully",
+            "success": True
+        })
+    except Exception as e:
+        return jsonify({
+            "detail": "Failed to send test email",
+            "success": False
+        }), 500
 
 # Serve uploaded files
 @app.route("/uploads/gallery/<filename>")

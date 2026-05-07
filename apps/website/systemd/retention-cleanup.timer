@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Server Metrics Data Retention Daily
+Documentation=https://github.com/stephenasatsa/website
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

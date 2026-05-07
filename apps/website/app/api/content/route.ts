@@ -6,7 +6,6 @@ let homepageContent = {
     id: '1',
     name: 'Dr. Stephen Asatsa',
     titles: ['Licensed Psychologist', 'Senior Lecturer', 'Research Leader'],
-    tagline: 'Senior Lecturer, licensed psychologist, and research leader advancing culturally grounded psychological science.',
     primaryCta: {
       label: 'Book a Consultation',
       url: '/contact'
@@ -36,6 +35,9 @@ let homepageContent = {
     },
     // Add fields expected by InteractiveHeroSection component
     headline: 'Evidence-based psychological care and culturally grounded scholarship for people and institutions shaping healthier futures.',
+    tagline: 'Dr. Stephen is a senior Lecturer and Head of Department of Psychology at the Catholic University of Eastern Africa with extensive experience in academic strategy, research leadership, and culturally grounded care. Licensed and registered with the Kenya Counsellors and Psychologists Board, he advances indigenous knowledge systems, thanatology, and decolonized psychology.',
+    downloadCvUrl: '/Stephen_Asatsa-CV-2025.pdf',
+    researchLabUrl: '/research-hub',
     cta_text: 'Book a Consultation',
     cta_url: '/contact',
     background_image_url: '/assets/people/hero.webp',

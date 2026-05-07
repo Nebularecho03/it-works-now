@@ -90,7 +90,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     };
   }, [isAuthenticated]);
 
-  const checkSession = async () => {
+  const checkSession = async (retryCount = 0) => {
     const storedSessionId = localStorage.getItem('admin_session_id');
     if (!storedSessionId) {
       setUser(null);
@@ -126,10 +126,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Session check failed:', error);
+      // Retry once if network error and haven't retried yet
+      if (retryCount < 1 && error instanceof Error && error.message.includes('fetch')) {
+        setTimeout(() => checkSession(retryCount + 1), 1000);
+        return;
+      }
       // On network error, don't automatically log out
       // Let user try again manually
     } finally {
-      setLoading(false);
+      if (retryCount === 0) {
+        setLoading(false);
+      }
     }
   };
 

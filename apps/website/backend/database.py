@@ -101,6 +101,101 @@ class UserDatabase:
                 )
             """)
             
+            # Server monitoring tables
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS server_metrics (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    cpu_usage REAL NOT NULL,
+                    ram_usage REAL NOT NULL,
+                    disk_usage REAL NOT NULL,
+                    disk_free REAL NOT NULL,
+                    network_sent REAL NOT NULL,
+                    network_received REAL NOT NULL,
+                    uptime_seconds INTEGER NOT NULL,
+                    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_metrics_recorded_at 
+                ON server_metrics(recorded_at)
+            """)
+            
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS server_metrics_hourly (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    hour_timestamp TIMESTAMP UNIQUE NOT NULL,
+                    avg_cpu_usage REAL,
+                    avg_ram_usage REAL,
+                    max_cpu_usage REAL,
+                    max_ram_usage REAL,
+                    avg_disk_usage REAL,
+                    total_network_sent REAL,
+                    total_network_received REAL,
+                    data_points INTEGER DEFAULT 0
+                )
+            """)
+            
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS server_metrics_daily (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    day_timestamp DATE UNIQUE,
+                    avg_cpu_usage REAL,
+                    max_cpu_usage REAL,
+                    min_cpu_usage REAL,
+                    avg_ram_usage REAL,
+                    max_ram_usage REAL,
+                    min_ram_usage REAL,
+                    avg_disk_usage REAL,
+                    total_records INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_daily_day_timestamp 
+                ON server_metrics_daily(day_timestamp)
+            """)
+            
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS cleanup_log (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    action_type TEXT NOT NULL,
+                    records_deleted INTEGER DEFAULT 0,
+                    execution_time_ms INTEGER,
+                    executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    status TEXT CHECK(status IN ('success', 'failed', 'partial')),
+                    notes TEXT
+                )
+            """)
+            
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_cleanup_executed_at 
+                ON cleanup_log(executed_at)
+            """)
+            
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS retention_settings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    raw_retention_days INTEGER DEFAULT 7,
+                    hourly_retention_days INTEGER DEFAULT 30,
+                    daily_retention_days INTEGER DEFAULT 365,
+                    cleanup_time TEXT DEFAULT '02:00',
+                    enabled BOOLEAN DEFAULT 1,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            # Insert default retention settings if not exists
+            cursor = conn.execute("SELECT COUNT(*) as count FROM retention_settings")
+            if cursor.fetchone()['count'] == 0:
+                conn.execute("""
+                    INSERT INTO retention_settings (
+                        raw_retention_days, hourly_retention_days, daily_retention_days,
+                        cleanup_time, enabled
+                    ) VALUES (7, 30, 365, '02:00', 1)
+                """)
+            
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS home_page_content (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

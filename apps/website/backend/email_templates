@@ -1,0 +1,61 @@
+"""
+Email templates for the messaging system
+Uses Jinja2 for dynamic HTML email generation
+"""
+
+import os
+from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
+
+# Setup Jinja2 environment
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+env = Environment(loader=FileSystemLoader(template_dir))
+
+def get_template(template_name):
+    """Get a specific email template"""
+    return env.get_template(template_name)
+
+def render_new_message_notification(user_data, message_data):
+    """Render new message notification email"""
+    template = get_template('new_message_notification.html')
+    
+    return template.render(
+        user_name=user_data.get('full_name', user_data['email']),
+        user_email=user_data['email'],
+        from_name=message_data.get('from_name', 'Unknown'),
+        from_email=message_data['from_email'],
+        subject=message_data.get('subject', 'No Subject'),
+        message=message_data['message'],
+        source=message_data.get('source', 'Website'),
+        created_at=datetime.strptime(message_data['created_at'], '%Y-%m-%dT%H:%M:%S').strftime('%B %d, %Y at %I:%M %p'),
+        dashboard_url="https://stephenasatsa.com/messages",
+        system_name="Stephen Asatsa Website"
+    )
+
+def render_message_reply_notification(user_data, reply_data):
+    """Render message reply notification email"""
+    template = get_template('message_reply_notification.html')
+    
+    return template.render(
+        user_name=user_data.get('full_name', user_data['email']),
+        user_email=user_data['email'],
+        admin_name=reply_data.get('admin_name', 'Administrator'),
+        reply_content=reply_data['reply_content'],
+        original_subject=reply_data.get('original_subject', 'No Subject'),
+        original_message=reply_data.get('original_message', ''),
+        replied_at=datetime.strptime(reply_data['replied_at'], '%Y-%m-%dT%H:%M:%S').strftime('%B %d, %Y at %I:%M %p'),
+        dashboard_url="https://stephenasatsa.com/messages",
+        system_name="Stephen Asatsa Website"
+    )
+
+def render_welcome_email(user_data):
+    """Render welcome email for new user registration"""
+    template = get_template('welcome_email.html')
+    
+    return template.render(
+        user_name=user_data.get('full_name', user_data['email']),
+        user_email=user_data['email'],
+        username=user_data.get('username', user_data['email']),
+        dashboard_url="https://stephenasatsa.com/messages",
+        system_name="Stephen Asatsa Website"
+    )

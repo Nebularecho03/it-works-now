@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { SectionHeading } from "@/components/layout/section-heading";
 import { Card } from "@/components/ui/card";
 import { siteContent } from "@/lib/content/site-content";
-import { Brain, Award, Trophy, Globe, Linkedin, Twitter, Facebook, Instagram, Github, Youtube, ExternalLink } from "lucide-react";
+import { Brain, Award, Trophy, Globe, Linkedin, Twitter, Facebook, Instagram, Github, Youtube, ExternalLink, BookOpen, Users, GraduationCap } from "lucide-react";
 
 const iconMap: Record<string, any> = {
   Brain,
@@ -119,6 +119,13 @@ const getColorClasses = (color: string) => {
   return colors[color] || colors.emerald;
 };
 
+const researchHighlights = [
+  { label: "Research Projects", value: siteContent.researchProjects.length, icon: BookOpen, description: "Active research initiatives and collaborations" },
+  { label: "Publications", value: siteContent.publications.length, icon: GraduationCap, description: "Peer-reviewed academic papers and articles" },
+  { label: "Grants & Funding", value: siteContent.grants.length, icon: Award, description: "Research funding and awards received" },
+  { label: "Talks & Conferences", value: siteContent.conferences.length + siteContent.invitedTalks.length, icon: Users, description: "Academic presentations and speaking engagements" },
+];
+
 export default function AboutPage() {
   const [researchInterests, setResearchInterests] = useState<any[]>([]);
   const [awards, setAwards] = useState<any[]>([]);
@@ -153,12 +160,29 @@ export default function AboutPage() {
 
   return (
     <section className="section-space">
-      <div className="container-shell space-y-10">
+      <div className="container-shell space-y-12">
         <SectionHeading
           eyebrow="About"
-          title="Full biography, affiliations, and professional focus."
-          description="This page carries forward the detailed biography and leadership profile from the original website."
+          title="Academic Leadership & Professional Practice"
+          description="Dr. Stephen Asatsa combines academic excellence with clinical expertise, leading research in cultural psychology while providing evidence-based mental health services."
         />
+
+        {/* Research Overview */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {researchHighlights.map((item) => (
+            <Card key={item.label} className="flex items-center gap-4 p-6 hover:shadow-lg transition-shadow">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <item.icon className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-2xl font-bold text-foreground">{item.value}</p>
+                <p className="text-sm font-medium text-primary">{item.label}</p>
+                <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+
         <div className="space-y-8">
           <Card className="p-8 sm:p-10">
             <div className="prose-copy">
@@ -167,6 +191,7 @@ export default function AboutPage() {
               ))}
             </div>
           </Card>
+
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Research Interests */}
             <Card className="p-7">
@@ -197,8 +222,7 @@ export default function AboutPage() {
                   <li>Decolonization of psychology</li>
                   <li>Thanatology</li>
                   <li>Cultural evolution</li>
-                  <li>Indigenization of psychological practice</li>
-                </ul>
+                  <li>Indigenization of psychological practice</li></ul>
               )}
             </Card>
 
@@ -238,12 +262,12 @@ export default function AboutPage() {
                 <ul className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
                   {siteContent.awards.map((award) => (
                     <li key={`${award.title}-${award.year}`}>
-                      <span className="font-semibold text-foreground">{award.year}</span> {award.title}
+                      <span className="font-semibold text-foreground">{award.year}</span> • {award.title}
                       {award.href ? (
                         <>
                           {" "}
                           <Link href={award.href} className="text-foreground underline-offset-4 hover:underline">
-                            View
+                            Reference
                           </Link>
                         </>
                       ) : null}
@@ -255,7 +279,7 @@ export default function AboutPage() {
 
             {/* External Profiles */}
             <Card className="p-7 lg:col-span-2">
-              <h3 className="font-display text-3xl mb-4">Profiles and Networks</h3>
+              <h3 className="font-display text-3xl mb-4">Professional Networks & Profiles</h3>
               {loading ? (
                 <p className="text-sm text-muted-foreground">Loading...</p>
               ) : externalProfiles.length > 0 ? (
@@ -304,3 +328,4 @@ export default function AboutPage() {
     </section>
   );
 }
+

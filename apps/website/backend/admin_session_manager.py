@@ -1,27 +1,7 @@
 #!/usr/bin/env python3
 """
-Lightweight Flask Session Manager for Admin Panel
-Integrates with existing SQLite database while providing in-memory session tracking
-
-This module provides secure session management with auto-logout functionality
-for Next.js admin interfaces. Features include:
-
-- In-memory session tracking with thread-safe operations
-- PBKDF2 password hashing compatible with existing database
-- Rate limiting for login attempts (5 per minute per IP)
-- Automatic session cleanup with configurable timeout
-- CORS support for Next.js integration
-- Comprehensive audit logging
-- Health monitoring endpoint
-
-Architecture:
-- Flask API server on configurable port (default: 5001)
-- In-memory session store with background cleanup thread
-- Integration with existing SQLite user database
-- Session validation middleware for protected routes
-
-Author: Admin System Integration
-License: See main project license
+Production-Ready Flask Session Manager for Admin Panel
+Enhanced version with comprehensive error handling, monitoring, and database management
 """
 
 import os
@@ -43,18 +23,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ============================================================================
 
 # Server Configuration
-FLASK_PORT = int(os.getenv('FLASK_PORT', 5001))  # Flask server port
-ALLOWED_ORIGIN = os.getenv('ALLOWED_ORIGIN', 'http://localhost:3000')  # CORS allowed origin
-
-# Session Configuration
-SESSION_TIMEOUT = int(os.getenv('SESSION_TIMEOUT', 300))  # Auto-logout timeout (5 minutes)
+FLASK_PORT = int(os.getenv('FLASK_PORT', 5001))
+ALLOWED_ORIGIN = os.getenv('ALLOWED_ORIGIN', 'http://localhost:3002')
+SESSION_TIMEOUT = int(os.getenv('SESSION_TIMEOUT', 300))
 
 # Rate Limiting Configuration
-RATE_LIMIT_ATTEMPTS = int(os.getenv('RATE_LIMIT_ATTEMPTS', 5))  # Max attempts per window
-RATE_LIMIT_WINDOW = int(os.getenv('RATE_LIMIT_WINDOW', 60))  # Time window in seconds
+RATE_LIMIT_ATTEMPTS = int(os.getenv('RATE_LIMIT_ATTEMPTS', 5))
+RATE_LIMIT_WINDOW = int(os.getenv('RATE_LIMIT_WINDOW', 60))
 
 # Database Configuration
-SQLITE_PATH = os.getenv('SQLITE_PATH', 'data/users.db')  # Path to SQLite database
+SQLITE_PATH = os.getenv('SQLITE_PATH', 'data/users.db')
 
 # ============================================================================
 # IN-MEMORY STORES
@@ -66,7 +44,6 @@ SQLITE_PATH = os.getenv('SQLITE_PATH', 'data/users.db')  # Path to SQLite databa
 active_sessions: Dict[str, Dict] = {}
 
 # Rate limiting: ip_address -> {count, last_attempt}
-# Prevents brute force attacks by limiting login attempts per IP
 login_attempts: Dict[str, Dict] = {}
 
 # ============================================================================
@@ -86,51 +63,102 @@ CORS(app, origins=[ALLOWED_ORIGIN], supports_credentials=True)
 
 class UserDatabase:
     """
-    Interface to existing SQLite database
-    
-    Provides methods for user authentication and audit logging while maintaining
-    compatibility with existing database schema from simple_server.py
+    Production-ready database interface with comprehensive error handling
     """
     
     def __init__(self, db_path: str):
         self.db_path = db_path
+        self._connection_pool = []
+        self._max_pool_size = 5
+    
+    def _get_connection(self):
+        """Get database connection from pool or create new one"""
+        try:
+            if self._connection_pool:
+                conn = self._connection_pool.pop()
+                if conn and not conn.closed:
+                    return conn
+        except (IndexError, AttributeError):
+            pass
+        
+        # Create new connection if pool is empty
+        try:
+            conn = sqlite3.connect(
+                self.db_path,
+                timeout=10.0,
+                check_same_thread=False,
+                isolation_level='IMMEDIATE'
+            )
+            
+            # Optimize for production
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.execute("PRAGMA cache_size=2000")
+            conn.execute("PRAGMA temp_store=MEMORY")
+            
+            return conn
+        except sqlite3.Error as e:
+            print(f"Database connection error: {e}")
+            raise
+    
+    def _return_connection(self, conn):
+        """Return connection to pool if still valid"""
+        try:
+            if conn and not conn.closed and len(self._connection_pool) < self._max_pool_size:
+                self._connection_pool.append(conn)
+                return
+            conn.close()
+        except:
+            pass
     
     def verify_user(self, username: str, password: str) -> Optional[Dict]:
-        """Verify user credentials against existing SQLite database"""
+        """Verify user credentials with robust error handling"""
+        conn = None
         try:
-            with sqlite3.connect(self.db_path) as conn:
-                conn.row_factory = sqlite3.Row
-                user = conn.execute(
-                    "SELECT * FROM users WHERE username = ? AND is_active = 1",
-                    (username,)
-                ).fetchone()
-                
-                if not user:
-                    return None
-                
-                # Use existing password verification from simple_server.py
-                if not self._verify_password(password, user['password_hash']):
-                    return None
-                
-                # Update last login
-                conn.execute(
-                    "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
-                    (user['id'],)
-                )
-                conn.commit()
-                
-                return dict(user)
+            conn = self._get_connection()
+            conn.row_factory = sqlite3.Row
+            
+            cursor = conn.cursor()
+            user = cursor.execute(
+                "SELECT * FROM users WHERE username = ? AND is_active = 1",
+                (username,)
+            ).fetchone()
+            
+            if not user:
+                self._return_connection(conn)
+                return None
+            
+            # Use existing password verification
+            if not self._verify_password(password, user['password_hash']):
+                self._return_connection(conn)
+                return None
+            
+            # Update last login
+            cursor.execute(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
+                (user['id'],)
+            )
+            conn.commit()
+            
+            user_dict = dict(user)
+            self._return_connection(conn)
+            return user_dict
+            
+        except sqlite3.Error as e:
+            print(f"Database verification error: {e}")
+            if conn:
+                self._return_connection(conn)
+            return None
         except Exception as e:
-            print(f"Database error: {e}")
+            print(f"Unexpected database error: {e}")
             return None
     
     def _verify_password(self, password: str, stored_hash: str) -> bool:
-        """Verify password using existing method from simple_server.py"""
+        """Verify password using existing method"""
         try:
             import base64
             import hmac
             
-            # Handle PBKDF2 hashes from existing system
             if stored_hash.startswith('pbkdf2_sha256$'):
                 parts = stored_hash.split('$')
                 if len(parts) != 4:
@@ -144,54 +172,43 @@ class UserDatabase:
                     'sha256',
                     password.encode('utf-8'),
                     salt.encode('utf-8'),
-                    int(iterations)
+                    int(iterations),
+                    dklen=32
                 )
                 candidate = base64.urlsafe_b64encode(digest).decode('ascii')
                 return hmac.compare_digest(candidate, encoded)
             
-            # Fallback to werkzeug for other hash formats
             return check_password_hash(stored_hash, password)
-        except Exception:
+        except Exception as e:
+            print(f"Password verification error: {e}")
             return False
     
     def log_audit_event(self, user_id: Optional[int], action: str, actor: str, 
                       summary: str, ip_address: Optional[str] = None):
-        """Log audit event to existing database"""
+        """Log audit event with error handling"""
         try:
-            with sqlite3.connect(self.db_path) as conn:
-                conn.execute("""
-                    INSERT INTO audit_log (user_id, action, actor, summary, ip_address)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (user_id, action, actor, summary, ip_address))
-                conn.commit()
+            conn = self._get_connection()
+            conn.execute("""
+                INSERT INTO audit_log (user_id, action, actor, summary, ip_address)
+                VALUES (?, ?, ?, ?, ?)
+            """, (user_id, action, actor, summary, ip_address))
+            conn.commit()
+            self._return_connection(conn)
         except Exception as e:
             print(f"Audit log error: {e}")
+            if conn:
+                self._return_connection(conn)
 
-# Initialize database connection
-db = UserDatabase(SQLITE_PATH)
+# ============================================================================
+# SESSION MANAGEMENT
+# ============================================================================
 
 def generate_session_id() -> str:
-    """
-    Generate cryptographically secure session ID
-    
-    Returns:
-        str: 32-byte hexadecimal token suitable for session identification
-    """
+    """Generate cryptographically secure session ID"""
     return secrets.token_hex(32)
 
 def is_rate_limited(ip_address: str) -> bool:
-    """
-    Check if IP is rate limited for login attempts
-    
-    Implements sliding window rate limiting to prevent brute force attacks.
-    Tracks attempts per IP and resets counter after time window expires.
-    
-    Args:
-        ip_address: Client IP address to check
-        
-    Returns:
-        bool: True if rate limit exceeded, False otherwise
-    """
+    """Check if IP is rate limited"""
     with rate_limit_lock:
         now = time.time()
         
@@ -199,36 +216,25 @@ def is_rate_limited(ip_address: str) -> bool:
         if ip_address not in login_attempts:
             login_attempts[ip_address] = {'count': 0, 'last_attempt': 0}
         
-        attempts = login_attempts[ip_address]
-        
         # Reset counter if time window has passed
-        if now - attempts['last_attempt'] > RATE_LIMIT_WINDOW:
-            attempts['count'] = 0
+        if now - login_attempts[ip_address]['last_attempt'] > RATE_LIMIT_WINDOW:
+            login_attempts[ip_address] = {'count': 0, 'last_attempt': now}
         
         # Check if rate limit exceeded
-        if attempts['count'] >= RATE_LIMIT_ATTEMPTS:
+        if login_attempts[ip_address]['count'] >= RATE_LIMIT_ATTEMPTS:
             return True
         
-        # Increment counter and update timestamp
-        attempts['count'] += 1
-        attempts['last_attempt'] = now
         return False
 
 def cleanup_expired_sessions():
-    """
-    Background thread to clean up expired sessions
-    
-    Runs continuously in background, checking for expired sessions every 60 seconds.
-    Removes sessions that have exceeded the configured timeout period.
-    """
+    """Background thread to clean up expired sessions"""
     while True:
         try:
             current_time = datetime.now(timezone.utc)
             expired_sessions = []
             
             with session_lock:
-                # Check each active session for expiration
-                for session_id, session_data in active_sessions.items():
+                for session_id, session_data in list(active_sessions.items()):
                     last_activity = session_data['last_activity']
                     
                     # Handle string datetime conversion
@@ -239,31 +245,21 @@ def cleanup_expired_sessions():
                     if current_time - last_activity > timedelta(seconds=SESSION_TIMEOUT):
                         expired_sessions.append(session_id)
                 
-                # Remove expired sessions from active store
+                # Remove expired sessions
                 for session_id in expired_sessions:
                     del active_sessions[session_id]
                     print(f"Cleaned up expired session: {session_id}")
             
+            time.sleep(60)  # Run every minute
         except Exception as e:
             print(f"Session cleanup error: {e}")
-        
-        # Wait before next cleanup cycle
-        time.sleep(60)  # Run every minute
+
+# ============================================================================
+# FLASK APPLICATION
+# ============================================================================
 
 def require_session(f):
-    """
-    Decorator to require valid session for protected endpoints
-    
-    This decorator checks for a valid session ID in the X-Session-ID header,
-    validates the session exists and hasn't expired, updates the last
-    activity timestamp, and attaches user information to the request object.
-    
-    Args:
-        f: The route function to protect
-        
-    Returns:
-        Decorated function that returns 401 if session invalid
-    """
+    """Decorator to require valid session for protected endpoints"""
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         session_id = request.headers.get('X-Session-ID')
@@ -275,7 +271,7 @@ def require_session(f):
             if not session:
                 return jsonify({'error': 'Invalid or expired session'}), 401
             
-            # Update last activity timestamp
+            # Update last activity
             session['last_activity'] = datetime.now(timezone.utc)
             
             # Attach user information to request for use in route handlers
@@ -284,6 +280,22 @@ def require_session(f):
         
         return f(*args, **kwargs)
     return decorated_function
+
+# Initialize database
+try:
+    db = UserDatabase(SQLITE_PATH)
+    print(f"Database successfully initialized: {SQLITE_PATH}")
+except Exception as e:
+    print(f"Failed to initialize database: {e}")
+    db = None
+
+# Start cleanup thread
+cleanup_thread = threading.Thread(target=cleanup_expired_sessions, daemon=True)
+cleanup_thread.start()
+
+# ============================================================================
+# ROUTES
+# ============================================================================
 
 @app.route('/login', methods=['GET'])
 def login_page():
@@ -304,7 +316,7 @@ def login_page():
 
 @app.route('/api/admin/login', methods=['POST'])
 def login():
-    """Login endpoint with rate limiting"""
+    """Enhanced login endpoint with comprehensive error handling"""
     ip_address = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
     
     if is_rate_limited(ip_address):
@@ -317,6 +329,9 @@ def login():
         
         if not username or not password:
             return jsonify({'error': 'Username and password required'}), 400
+        
+        if not db:
+            return jsonify({'error': 'Database not available'}), 503
         
         user = db.verify_user(username, password)
         if not user:
@@ -342,7 +357,7 @@ def login():
             user['id'], 
             'auth.login', 
             username, 
-            'Session manager login successful',
+            'Session manager login successful', 
             ip_address
         )
         
@@ -358,7 +373,6 @@ def login():
             'sessionTimeout': SESSION_TIMEOUT
         })
         
-        # Set session ID in response header for client-side storage
         response.headers['X-Session-ID'] = session_id
         response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
@@ -397,18 +411,20 @@ def logout():
     session_id = request.session_id
     user = request.current_user
     
+    # Log logout
+    if db and user:
+        db.log_audit_event(
+            user.get('user_id'), 
+            'auth.logout', 
+            user.get('username'), 
+            'Session manager logout successful', 
+            request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+        )
+    
+    # Remove session
     with session_lock:
         if session_id in active_sessions:
             del active_sessions[session_id]
-    
-    # Log logout
-    db.log_audit_event(
-        user.get('user_id'),
-        'auth.logout',
-        user.get('username'),
-        'Session manager logout successful',
-        request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
-    )
     
     response = jsonify({'authenticated': False})
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
@@ -419,16 +435,48 @@ def logout():
 
 @app.route('/api/admin/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'active_sessions': len(active_sessions),
-        'session_timeout': SESSION_TIMEOUT
-    })
-
-@app.errorhandler(404)
-def not_found(error):
-    return jsonify({'error': 'Endpoint not found'}), 404
+    """Comprehensive health check endpoint"""
+    try:
+        # Check database connection
+        if db:
+            conn = db._get_connection()
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM users WHERE is_active = 1")
+            result = cursor.fetchone()
+            active_users = result[0] if result else 0
+            db._return_connection(conn)
+            
+            return jsonify({
+                'status': 'healthy',
+                'active_sessions': len(active_sessions),
+                'active_users': active_users,
+                'session_timeout': SESSION_TIMEOUT,
+                'uptime': time.time() - start_time if 'start_time' in globals() else 0,
+                'database_connected': True,
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            })
+        else:
+            return jsonify({
+                'status': 'degraded',
+                'active_sessions': len(active_sessions),
+                'active_users': 0,
+                'session_timeout': SESSION_TIMEOUT,
+                'uptime': time.time() - start_time if 'start_time' in globals() else 0,
+                'database_connected': False,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'error': 'Database not initialized'
+            })
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'active_sessions': len(active_sessions),
+            'active_users': 0,
+            'session_timeout': SESSION_TIMEOUT,
+            'database_connected': False,
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'error': str(e)
+        }), 500
 
 @app.route('/api/admin/gallery/photos', methods=['GET'])
 def get_gallery_photos():
@@ -467,20 +515,27 @@ def get_gallery_photos():
         print(f"Gallery API error: {e}")
         return jsonify({'error': 'Failed to load gallery photos'}), 500
 
+# ============================================================================
+# ERROR HANDLERS
+# ============================================================================
+
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({'error': 'Gallery photos not found'}), 404
+    return jsonify({'error': 'Endpoint not found'}), 404
 
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
+# ============================================================================
+# STARTUP
+# ============================================================================
+
 if __name__ == '__main__':
-    # Start cleanup thread
-    cleanup_thread = threading.Thread(target=cleanup_expired_sessions, daemon=True)
-    cleanup_thread.start()
+    # Global start time for uptime tracking
+    start_time = time.time()
     
-    print(f"🚀 Flask Session Manager starting on port {FLASK_PORT}")
+    print(f"🚀 Production Flask Session Manager starting on port {FLASK_PORT}")
     print(f"🔐 Session timeout: {SESSION_TIMEOUT} seconds")
     print(f"🗄️  Database: {SQLITE_PATH}")
     print(f"🌐 Allowed origin: {ALLOWED_ORIGIN}")

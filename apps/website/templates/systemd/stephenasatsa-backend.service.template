@@ -1,0 +1,19 @@
+[Unit]
+Description=Stephen Asatsa Website Backend API (Python)
+After=network.target
+
+[Service]
+Type=simple
+User={{SERVICE_USER}}
+Group={{SERVICE_USER}}
+WorkingDirectory={{BACKEND_DIR}}
+Environment=PATH={{BACKEND_DIR}}/venv/bin
+EnvironmentFile=-{{INSTALL_DIR}}/.env.auto
+ExecStart={{BACKEND_DIR}}/venv/bin/python admin_session_manager.py
+Restart=always
+RestartSec=10
+StandardOutput=append:{{LOGS_DIR}}/backend.log
+StandardError=append:{{LOGS_DIR}}/backend-error.log
+
+[Install]
+WantedBy=multi-user.target

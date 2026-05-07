@@ -1,0 +1,33 @@
+[Unit]
+Description=Server Monitoring Agent
+Documentation=https://github.com/stephenasatsa/website
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/home/codecrafter/Documents/combined/apps/website/backend
+ExecStart=/usr/bin/python3 /home/codecrafter/Documents/combined/apps/website/backend/server_monitor.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=server-monitor
+
+# Environment variables
+Environment=PYTHONPATH=/home/codecrafter/Documents/combined/apps/website/backend
+Environment=MONITORING_INTERVAL=10
+Environment=MONITORING_BATCH_SIZE=10
+Environment=MONITORING_LOG_LEVEL=INFO
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log /tmp
+
+[Install]
+WantedBy=multi-user.target
