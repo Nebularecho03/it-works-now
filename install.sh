@@ -14,7 +14,7 @@ NC='\033[0m'
 
 # Configuration
 PROJECT_NAME="stephenasatsa"
-INSTALL_DIR="/opt/${PROJECT_NAME}"
+INSTALL_DIR="${1:-/opt/${PROJECT_NAME}}"  # Allow custom install directory
 DOMAIN="localhost"
 DB_NAME="stephenasatsa_prod"
 DB_USER="stephenasatsa"
@@ -22,6 +22,36 @@ DB_PASSWORD="$(openssl rand -base64 32)"
 ADMIN_PASSWORD="ChangeMeToSecurePassword123!"
 LOG_FILE="/var/log/${PROJECT_NAME}_install.log"
 DEPLOY_ONLY=false
+
+# Check system requirements
+check_system_requirements() {
+    log "Checking system requirements..."
+    
+    # Check disk space (minimum 8GB recommended, 4GB minimum)
+    local available_space=$(df / | awk 'NR==2 {print $4}' | sed 's/G//')
+    local required_space=4294967296  # 4GB in KB
+    
+    if [[ $available_space -lt $required_space ]]; then
+        warn "⚠️  Low disk space detected: $(echo "scale=1; $available_space/1024/1024^2" | bc)GB available"
+        warn "Minimum 4GB required, 8GB recommended"
+        read -p "Continue anyway? This may cause installation issues (y/N): " continue_install
+        if [[ ! "$continue_install" =~ ^[Yy] ]]; then
+            log "Installation cancelled by user"
+            exit 0
+        fi
+    else
+        log "✓ Sufficient disk space available ($(echo "scale=1; $available_space/1024/1024^2" | bc)GB)"
+    fi
+    
+    # Check OS and package manager
+    if command -v apt &> /dev/null; then
+        log "✓ Detected OS: Debian/Ubuntu with apt package manager"
+    elif command -v pacman &> /dev/null; then
+        log "✓ Detected OS: Arch Linux with pacman package manager"
+    else
+        warn "⚠️  Unknown package manager. Manual installation may be required."
+    fi
+}
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -34,18 +64,24 @@ while [[ $# -gt 0 ]]; do
             DOMAIN="$2"
             shift 2
             ;;
+        --install-dir)
+            INSTALL_DIR="$2"
+            shift 2
+            ;;
         --help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "Options:"
             echo "  --deploy-only    Skip building, only setup system services and config"
-            echo "  --domain DOMAIN  Set domain name (default: localhost)"
-            echo "  --help          Show this help message"
+            echo "  --domain DOMAIN      Set domain name (default: localhost)"
+            echo "  --install-dir DIR  Set custom installation directory (default: /opt/stephenasatsa)"
+            echo "  --help            Show this help message"
             echo ""
             echo "Examples:"
             echo "  sudo ./install.sh                    # Full installation with build"
             echo "  sudo ./install.sh --deploy-only       # Just setup services and config"
             echo "  sudo ./install.sh --domain example.com # Install with custom domain"
+            echo "  sudo ./install.sh --install-dir /home/user/app # Install in custom directory"
             exit 0
             ;;
         *)
@@ -629,6 +665,7 @@ main() {
     # Run installation steps
     check_root
     get_domain
+    check_system_requirements
     install_system_deps
     
     if [[ "$DEPLOY_ONLY" == "true" ]]; then
