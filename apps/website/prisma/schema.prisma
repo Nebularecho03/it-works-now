@@ -8,8 +8,29 @@ datasource db {
 }
 
 enum UserRole {
+  GUEST
+  USER
+  PREMIUM
   ADMIN
   ASSISTANT
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
+}
+
+enum ResearchStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MessageType {
+  RESEARCH_INQUIRY
+  COLLABORATION_REQUEST
+  GENERAL_MESSAGE
+  ADMIN_REPLY
 }
 
 model User {
@@ -18,7 +39,8 @@ model User {
   email         String    @unique
   passwordHash  String?
   image         String?
-  role          UserRole  @default(ADMIN)
+  role          UserRole  @default(USER)
+  subscription  SubscriptionPlan @default(FREE)
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -27,6 +49,13 @@ model User {
   authoredBlogPosts BlogPost[]
   preferences   UserPreference?
   savedItems    SavedItem[]
+  researchSubscriptions ResearchSubscription[]
+  sentMessages      Message[]       @relation("SentMessages")
+  receivedMessages  Message[]       @relation("ReceivedMessages")
+  notifications     Notification[]
+  researchProjects    ResearchProject[]
+  publications      Publication[]
+  awards            Award[]
 }
 
 model Account {
@@ -94,34 +123,6 @@ model Testimonial {
   updatedAt DateTime @updatedAt
 }
 
-model ResearchProject {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  summary     String   @db.Text
-  content     String?  @db.Text
-  category    String
-  status      String
-  image       String?
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Publication {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  authors     String?
-  year        Int
-  abstract    String?  @db.Text
-  fileUrl     String?
-  coverImage  String?
-  category    String
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
 
 model Media {
   id         String   @id @default(cuid())
@@ -200,21 +201,6 @@ model ResearchInterest {
   updatedAt         DateTime @updatedAt
 }
 
-model Award {
-  id                String   @id @default(cuid())
-  title             String
-  year              Int
-  description       String?  @db.Text
-  organization      String?
-  url               String?
-  imageUrl          String?
-  icon              String
-  color             String
-  displayOrder      Int      @default(0)
-  published         Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-}
 
 model ExternalProfile {
   id                String   @id @default(cuid())
@@ -229,4 +215,133 @@ model ExternalProfile {
   published         Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+// Research Hub v2 Models
+
+model ResearchSubscription {
+  id          String   @id @default(cuid())
+  userId      String
+  category    String?  // Specific research category to follow
+  keywords    String?  // JSON array of keywords
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category])
+}
+
+model Message {
+  id          String      @id @default(cuid())
+  senderId    String
+  receiverId  String
+  subject     String
+  content     String      @db.Text
+  type        MessageType @default(GENERAL_MESSAGE)
+  researchId  String?     // Link to specific research content
+  read        Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  sender      User        @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User        @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String   @db.Text
+  type      String   // RESEARCH_UPDATE, MESSAGE_REPLY, SUBSCRIPTION_ALERT
+  read      Boolean  @default(false)
+  data      String?  // JSON metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ResearchProject {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  summary     String         @db.Text
+  content     String?        @db.Text
+  category    String
+  status      ResearchStatus @default(DRAFT)
+  image       String?
+  published   Boolean        @default(false)
+  publishedAt DateTime?
+  tags        String[]       @default([])
+  funding     String?
+  teamMembers String?        // JSON array of team members
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  authorId    String?
+  author      User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+model Publication {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  authors     String?
+  year        Int
+  abstract    String?        @db.Text
+  content     String?        @db.Text
+  fileUrl     String?
+  coverImage  String?
+  category    String
+  status      ResearchStatus @default(DRAFT)
+  published   Boolean        @default(false)
+  publishedAt DateTime?
+  tags        String[]       @default([])
+  doi         String?
+  journal     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  authorId    String?
+  author      User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+model Award {
+  id          String         @id @default(cuid())
+  title       String
+  year        Int
+  description String?        @db.Text
+  organization String?
+  url         String?
+  imageUrl    String?
+  status      ResearchStatus @default(DRAFT)
+  published   Boolean        @default(false)
+  publishedAt DateTime?
+  tags        String[]       @default([])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  authorId    String?
+  author      User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  role         String
+  affiliation  String
+  bio          String?  @db.Text
+  image        String?
+  email        String?
+  order        Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ResearchCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  icon        String?
+  color       String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
