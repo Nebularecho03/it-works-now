@@ -68,6 +68,30 @@ def require_auth(f):
         # Verify token (simplified for demo)
         # In production, implement proper JWT verification
         return f(*args, **kwargs)
+
+def create_gallery_blueprint(app):
+    """Create and register gallery blueprint with Flask app"""
+    from flask import current_app
+    
+    with app.app_context():
+        gallery_bp = Blueprint('gallery', __name__)
+        
+        # Register all routes with the blueprint
+        @gallery_bp.route('/photos', methods=['GET'])
+        @require_auth
+        def get_gallery_photos():
+            """Get all gallery photos"""
+            # Route implementation here
+            pass
+        
+        @gallery_bp.route('/photos/<int:photo_id>', methods=['GET'])
+        @require_auth
+        def get_gallery_photo(photo_id):
+            """Get specific gallery photo"""
+            # Route implementation here
+            pass
+        
+        return gallery_bp
     
     return decorated_function
 

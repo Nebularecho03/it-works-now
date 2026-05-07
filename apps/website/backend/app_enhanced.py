@@ -24,15 +24,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # Import gallery API
 try:
-    from gallery_api import *
-except ImportError:
-    # Fallback if gallery_api not available
-    pass
-
-# Import gallery API
-try:
-    from gallery_api import create_gallery_app, init_gallery_table
-except ImportError:
     # Fallback if gallery_api not available
     def create_gallery_app():
         from flask import Flask
@@ -42,10 +33,7 @@ except ImportError:
         pass
 
 # Import template functions
-try:
-    from email_templates import (
         render_new_message_notification, render_message_reply_notification, render_welcome_email
-    )
 except ImportError:
     # Fallback if email_templates module not available
     def render_new_message_notification(user_data, message_data):
@@ -68,12 +56,94 @@ logger = logging.getLogger(__name__)
 init_db()
 cleanup_expired_sessions()
 
-# Register gallery API
-try:
-    gallery_app = create_gallery_app()
-    app.register_blueprint(gallery_app)
-except ImportError:
-    print("Gallery API not available, using fallback")
+@app.route("/api/gallery/photos", methods=["GET"])
+@require_auth
+def get_gallery_photos():
+    """Get all gallery photos"""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Get query parameters
+        category = request.args.get('category', '')
+        tags = request.args.get('tags', '').split(',') if request.args.get('tags') else []
+        limit = int(request.args.get('limit', 50))
+        offset = int(request.args.get('offset', 0))
+        
+        # Create gallery table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS gallery_photos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT NOT NULL,
+                original_filename TEXT NOT NULL,
+                title TEXT,
+                description TEXT,
+                category TEXT DEFAULT 'general',
+                tags TEXT,
+                upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                file_size INTEGER,
+                dimensions TEXT,
+                mime_type TEXT,
+                uploaded_by TEXT,
+                is_active BOOLEAN DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Build query
+        query = '''
+            SELECT id, filename, original_filename, title, description, category, tags,
+                   upload_date, file_size, dimensions, mime_type, uploaded_by, is_active
+            FROM gallery_photos 
+            WHERE is_active = 1
+        '''
+        params = []
+        
+        if category:
+            query += ' AND category = ?'
+            params.append(category)
+        
+        if tags:
+            tag_conditions = ' OR '.join(['tags LIKE ?'] * len(tags))
+            query += f' AND ({tag_conditions})'
+            params.extend([f'%{tag.strip()}%' for tag in tags])
+        
+        query += ' ORDER BY upload_date DESC LIMIT ? OFFSET ?'
+        params.extend([limit, offset])
+        
+        cursor.execute(query, params)
+        photos = cursor.fetchall()
+        
+        # Format photos for frontend
+        formatted_photos = []
+        for photo in photos:
+            formatted_photos.append({
+                'id': photo['id'],
+                'title': photo['title'] or f"Photo {photo['id']}",
+                'description': photo['description'] or '',
+                'category': photo['category'],
+                'tags': photo['tags'].split(',') if photo['tags'] else [],
+                'upload_date': photo['upload_date'],
+                'file_size': photo['file_size'],
+                'dimensions': json.loads(photo['dimensions']) if photo['dimensions'] else None,
+                'mime_type': photo['mime_type'],
+                'uploaded_by': photo['uploaded_by'],
+                'image_url': f'/uploads/gallery/{photo["filename"]}',
+                'thumbnail_url': f'/uploads/gallery/thumbnails/{photo["filename"]}',
+                'filename': photo['filename']
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'photos': formatted_photos,
+            'total': len(formatted_photos)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Initialize email service
 email_service = EmailService()
@@ -704,17 +774,102 @@ def test_email_settings():
             "error": "Failed to test email settings"
         }), 500
 
-# Message statistics endpoint
-@app.route("/api/messages/stats", methods=["GET"])
 @require_auth
-def get_message_stats():
-    """Get message statistics for current user"""
+def get_gallery_photos():
+    """Get all gallery photos"""
     try:
-        user = request.current_user
         conn = get_db()
         cursor = conn.cursor()
         
-        # Get message counts
+        # Get query parameters
+        category = request.args.get('category', '')
+        tags = request.args.get('tags', '').split(',') if request.args.get('tags') else []
+        limit = int(request.args.get('limit', 50))
+        offset = int(request.args.get('offset', 0))
+        
+        # Create gallery table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS gallery_photos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT NOT NULL,
+                original_filename TEXT NOT NULL,
+                title TEXT,
+                description TEXT,
+                category TEXT DEFAULT 'general',
+                tags TEXT,
+                upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                file_size INTEGER,
+                dimensions TEXT,
+                mime_type TEXT,
+                uploaded_by TEXT,
+                is_active BOOLEAN DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Build query
+        query = '''
+            SELECT id, filename, original_filename, title, description, category, tags,
+                   upload_date, file_size, dimensions, mime_type, uploaded_by, is_active
+            FROM gallery_photos 
+            WHERE is_active = 1
+        '''
+        params = []
+        
+        if category:
+            query += ' AND category = ?'
+            params.append(category)
+        
+        if tags:
+            tag_conditions = ' OR '.join(['tags LIKE ?'] * len(tags))
+            query += f' AND ({tag_conditions})'
+            params.extend([f'%{tag.strip()}%' for tag in tags])
+        
+        query += ' ORDER BY upload_date DESC LIMIT ? OFFSET ?'
+        params.extend([limit, offset])
+        
+        cursor.execute(query, params)
+        photos = cursor.fetchall()
+        
+        # Format photos for frontend
+        formatted_photos = []
+        for photo in photos:
+            formatted_photos.append({
+                'id': photo['id'],
+                'title': photo['title'] or f"Photo {photo['id']}",
+                'description': photo['description'] or '',
+                'category': photo['category'],
+                'tags': photo['tags'].split(',') if photo['tags'] else [],
+                'upload_date': photo['upload_date'],
+                'file_size': photo['file_size'],
+                'dimensions': json.loads(photo['dimensions']) if photo['dimensions'] else None,
+                'mime_type': photo['mime_type'],
+                'uploaded_by': photo['uploaded_by'],
+                'image_url': f'/uploads/gallery/{photo["filename"]}',
+                'thumbnail_url': f'/uploads/gallery/thumbnails/{photo["filename"]}',
+                'filename': photo['filename']
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'photos': formatted_photos,
+            'total': len(formatted_photos)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Get query parameters
+        category = request.args.get('category', '')
+        tags = request.args.get('tags', '').split(',') if request.args.get('tags') else []
+        limit = int(request.args.get('limit', 50))
+        offset = int(request.args.get('offset', 0))
         cursor.execute('''
             SELECT 
                 COUNT(*) as total,
