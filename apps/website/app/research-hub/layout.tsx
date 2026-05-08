@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ResearchHubSidebar } from "@/components/research-hub/research-hub-sidebar";
+import { UnifiedNavigation } from "@/components/research-hub/unified-navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -48,7 +48,7 @@ export default function ResearchHubLayout({
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <ResearchHubSidebar onClose={() => setMobileOpen(false)} />
+          <UnifiedNavigation onClose={() => setMobileOpen(false)} />
         </aside>
 
         {/* Main content */}

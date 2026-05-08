@@ -1,8 +1,6 @@
-import type { DefaultSession, SessionStrategy } from "next-auth";
+import type { DefaultSession } from "next-auth";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db, hasDatabaseUrl } from "@/lib/db";
 
 declare module "next-auth" {
   interface Session {
@@ -34,47 +32,37 @@ if (
 }
 
 const authConfig = {
-  adapter: hasDatabaseUrl && db ? PrismaAdapter(db) : undefined,
-  session: { strategy: "database" as SessionStrategy },
+  session: { strategy: "jwt" as const },
   pages: {
     signIn: "/signin",
     error: "/signin", // Redirect errors to signin page
   },
   providers,
   callbacks: {
-    async session({ session, user }: any) {
-      if (session.user && user) {
-        const userWithRole = user as typeof user & { role?: string };
-        session.user.id = user.id;
-        session.user.role = userWithRole.role || "USER";
-        session.user.name = user.name;
-        session.user.email = user.email;
-        session.user.image = user.image;
+    async session({ session, token }: any) {
+      if (session.user && token) {
+        session.user.id = token.sub || "";
+        session.user.role = token.role || "USER";
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.picture;
       }
       return session;
     },
-    async signIn({ user, account, profile }: { user: any; account: any; profile?: any }) {
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.role = user.role || "USER";
+      }
+      return token;
+    },
+    async signIn({ user }: { user: any }) {
       // Only allow sign in with verified email
       if (!user.email) {
         return false;
       }
-
-      // Additional validation can be added here
       return true;
-    },
-  },
-  events: {
-    async createUser({ user }: { user: { id: string } }) {
-      if (!db || !user.id) return;
-      await db.userPreference.upsert({
-        where: { userId: user.id },
-        update: {},
-        create: {
-          userId: user.id,
-        },
-      });
     },
   },
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig as any);
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

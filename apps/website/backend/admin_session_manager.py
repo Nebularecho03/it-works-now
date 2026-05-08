@@ -24,7 +24,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Server Configuration
 FLASK_PORT = int(os.getenv('FLASK_PORT', 5001))
-ALLOWED_ORIGIN = os.getenv('ALLOWED_ORIGIN', 'http://localhost:3002')
+ALLOWED_ORIGIN = os.getenv('ALLOWED_ORIGIN', 'http://localhost:3000')
 SESSION_TIMEOUT = int(os.getenv('SESSION_TIMEOUT', 300))
 
 # Rate Limiting Configuration

@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Images,
-  Video,
-  File,
   Upload,
   Download,
   Search,
@@ -20,7 +17,6 @@ import {
   Eye,
   Trash2,
   Edit3,
-  FolderOpen,
   FileImage,
   Calendar,
   Clock,
@@ -29,22 +25,16 @@ import {
   Star,
   Share2,
   Copy,
-  RefreshCw,
   MoreVertical,
-  X,
-  Check,
-  BarChart3,
+  File,
+  Video,
   FileText,
-  Image,
   Folder,
   Tag,
-  Users,
-  Bell,
-  Info,
-  TrendingUp,
-  Maximize2,
-  Zap,
-  Target
+  BarChart3,
+  RefreshCw,
+  FolderOpen,
+  X
 } from "lucide-react";
 
 interface MediaItem {

@@ -192,51 +192,51 @@ def create_monitoring_routes():
             return jsonify({"error": f"Internal server error: {str(e)}"}), 500
     
     @monitoring_bp.route('/retention/settings', methods=['GET', 'POST'])
-def manage_retention_settings():
-    """Get or update retention settings."""
-    try:
-        if not is_admin_authenticated():
-            return jsonify({"error": "Unauthorized"}), 401
-        
-        from monitoring.database import MetricsDatabase
-        db = MetricsDatabase()
-        
-        if request.method == 'GET':
-            # Get current settings
-            settings = db.get_retention_settings()
-            return jsonify({
-                "success": True,
-                "data": settings
-            })
-        
-        elif request.method == 'POST':
-            # Update settings
-            new_settings = request.get_json()
-            if not new_settings:
-                return jsonify({"error": "No settings provided"}), 400
+    def manage_retention_settings():
+        """Get or update retention settings."""
+        try:
+            if not is_admin_authenticated():
+                return jsonify({"error": "Unauthorized"}), 401
             
-            # Validate required fields
-            required_fields = ['raw_retention_days', 'hourly_retention_days', 
-                             'daily_retention_days', 'cleanup_time', 'enabled']
-            for field in required_fields:
-                if field not in new_settings:
-                    return jsonify({"error": f"Missing required field: {field}"}), 400
+            from monitoring.database import MetricsDatabase
+            db = MetricsDatabase()
             
-            # Update settings
-            success = db.update_retention_settings(new_settings)
-            
-            if success:
+            if request.method == 'GET':
+                # Get current settings
+                settings = db.get_retention_settings()
                 return jsonify({
                     "success": True,
-                    "message": "Retention settings updated successfully"
+                    "data": settings
                 })
-            else:
-                return jsonify({
-                    "error": "Failed to update retention settings"
-                }), 500
+            
+            elif request.method == 'POST':
+                # Update settings
+                new_settings = request.get_json()
+                if not new_settings:
+                    return jsonify({"error": "No settings provided"}), 400
+            
+            # Validate required fields
+                required_fields = ['raw_retention_days', 'hourly_retention_days', 
+                                 'daily_retention_days', 'cleanup_time', 'enabled']
+                for field in required_fields:
+                    if field not in new_settings:
+                        return jsonify({"error": f"Missing required field: {field}"}), 400
                 
-    except Exception as e:
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+                # Update settings
+                success = db.update_retention_settings(new_settings)
+            
+            if success:
+                    return jsonify({
+                        "success": True,
+                        "message": "Retention settings updated successfully"
+                    })
+                else:
+                    return jsonify({
+                        "error": "Failed to update retention settings"
+                    }), 500
+                
+        except Exception as e:
+            return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @monitoring_bp.route('/retention/cleanup', methods=['POST'])
 def trigger_cleanup():

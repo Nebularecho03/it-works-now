@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Mail, Phone, MapPin, Calendar, ShieldCheck, GraduationCap, Building2, Facebook, Twitter, Instagram, Linkedin, ExternalLink, ArrowUp, ChevronRight, Copy, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Mail, Phone, MapPin, Calendar, ShieldCheck, GraduationCap, Building2, Facebook, Twitter, Instagram, Linkedin, ExternalLink, ArrowUp, Copy, Check, Users, FileText, Award, BookOpen, MessageCircle } from "lucide-react";
 
 import { siteContent } from "@/lib/content/site-content";
 import { siteConfig } from "@/lib/site";
@@ -10,6 +10,29 @@ import { siteConfig } from "@/lib/site";
 export function SiteFooter() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
+  const [researchStats, setResearchStats] = useState({
+    publications: 0,
+    projects: 0,
+    collaborators: 0
+  });
+  const [mobileSection, setMobileSection] = useState<string | null>(null);
+
+  // Fetch research stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Mock stats for now - replace with actual API call
+        setResearchStats({
+          publications: 48,
+          projects: 12,
+          collaborators: 8
+        });
+      } catch (error) {
+        console.error('Failed to fetch research stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const copyToClipboard = (text: string, type: 'email' | 'phone') => {
     navigator.clipboard.writeText(text);
@@ -26,110 +49,174 @@ export function SiteFooter() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const toggleMobileSection = (section: string) => {
+    setMobileSection(mobileSection === section ? null : section);
+  };
+
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '1s' }} />
+    <footer className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white">
+      {/* Subtle background texture */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-1/4 w-64 h-64 bg-emerald-500 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500 rounded-full blur-3xl" />
       </div>
       
-      <div className="container-shell relative z-10">
-        <div className="grid gap-12 py-16 md:grid-cols-3 lg:gap-16">
-          {/* About Section */}
-          <div className="space-y-6 group">
+      <div className="container-shell relative z-10 py-10 md:py-14">
+        {/* ROW 1 - Primary Footer */}
+        <div className="grid gap-8 md:grid-cols-3 lg:gap-12">
+          
+          {/* LEFT SECTION - Brand Identity */}
+          <div className="space-y-4">
             <div className="space-y-2">
-              <h2 className="font-display text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent group-hover:from-emerald-300 group-hover:to-teal-200 transition-all duration-500">
+              <h2 className="font-display text-2xl font-bold text-white">
                 Dr. Stephen Asatsa
               </h2>
-              <div className="h-1 w-20 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full group-hover:w-32 transition-all duration-500" />
+              <div className="h-0.5 w-16 bg-emerald-500/50 rounded-full" />
             </div>
-            <p className="text-base leading-relaxed text-slate-300 max-w-sm group-hover:text-slate-200 transition-colors duration-300">
-              Professional psychological services, research leadership, and mentorship rooted in rigor, compassion, and cultural relevance.
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Psychologist • Research Leader • Mental Health Advocate
             </p>
+            <Link 
+              href={siteContent.contact.bookingUrl} 
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-600/25"
+            >
+              <Calendar className="w-4 h-4" />
+              Book Consultation
+            </Link>
           </div>
 
-          {/* Contact Section */}
-          <div className="space-y-6">
-            <h3 className="font-semibold text-lg uppercase tracking-wider text-emerald-400 flex items-center gap-2 hover:text-emerald-300 transition-colors">
-              <Mail className="w-5 h-5 hover:scale-110 transition-transform" />
-              Reach Out
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3 group cursor-pointer hover:bg-slate-700/30 p-2 rounded-lg transition-all duration-300">
-                <MapPin className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                <p className="text-slate-300 group-hover:text-white transition-colors">
-                  {siteContent.contact.addressLines.join(", ")}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 group">
-                <Mail className="w-5 h-5 text-emerald-400 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                <div className="flex-1 flex items-center justify-between">
-                  <Link 
-                    href={`mailto:${siteConfig.email}`} 
-                    className="text-slate-300 hover:text-emerald-400 transition-colors group-hover:underline"
-                  >
-                    {siteConfig.email}
-                  </Link>
-                  <button
-                    onClick={() => copyToClipboard(siteConfig.email, 'email')}
-                    className="p-1.5 rounded-md hover:bg-slate-700 transition-colors"
-                    title="Copy email"
-                  >
-                    {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400 hover:text-white" />}
-                  </button>
+          {/* CENTER SECTION - Smart Navigation */}
+          <div className="space-y-4">
+            {/* Mobile Accordion Header */}
+            <button
+              onClick={() => toggleMobileSection('navigation')}
+              className="md:hidden flex items-center justify-between w-full font-semibold text-sm uppercase tracking-wider text-slate-400 hover:text-emerald-400 transition-colors"
+              aria-expanded={mobileSection === 'navigation'}
+              aria-controls="navigation-content"
+            >
+              <span>Explore</span>
+              <ArrowUp className={`w-4 h-4 transition-transform duration-200 ${mobileSection === 'navigation' ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {/* Desktop Header */}
+            <h3 className="hidden md:block font-semibold text-sm uppercase tracking-wider text-slate-400">Explore</h3>
+            
+            {/* Navigation Content */}
+            <div 
+              id="navigation-content"
+              className={`${mobileSection === 'navigation' ? 'block' : 'hidden'} md:block`}
+            >
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="space-y-2">
+                  <Link href="/about" className="block text-slate-300 hover:text-emerald-400 transition-colors">About</Link>
+                  <Link href="/research" className="block text-slate-300 hover:text-emerald-400 transition-colors">Research Hub</Link>
+                  <Link href="/publications" className="block text-slate-300 hover:text-emerald-400 transition-colors">Publications</Link>
+                  <Link href="/gallery" className="block text-slate-300 hover:text-emerald-400 transition-colors">Gallery</Link>
+                </div>
+                <div className="space-y-2">
+                  <Link href="/services" className="block text-slate-300 hover:text-emerald-400 transition-colors">Counseling</Link>
+                  <Link href="/mentorship" className="block text-slate-300 hover:text-emerald-400 transition-colors">Mentorship</Link>
+                  <Link href="/consulting" className="block text-slate-300 hover:text-emerald-400 transition-colors">Consulting</Link>
+                  <Link href="/contact" className="block text-slate-300 hover:text-emerald-400 transition-colors">Contact</Link>
                 </div>
               </div>
-              {siteContent.contact.phones.map((phone) => (
-                <div key={phone} className="flex items-center gap-3 group">
-                  <Phone className="w-5 h-5 text-emerald-400 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                  <div className="flex-1 flex items-center justify-between">
-                    <span className="text-slate-300 group-hover:text-white transition-colors">{phone}</span>
-                    <button
-                      onClick={() => copyToClipboard(phone, 'phone')}
-                      className="p-1.5 rounded-md hover:bg-slate-700 transition-colors"
-                      title="Copy phone number"
+            </div>
+          </div>
+
+          {/* RIGHT SECTION - Compact Contact Card */}
+          <div className="space-y-4">
+            {/* Mobile Accordion Header */}
+            <button
+              onClick={() => toggleMobileSection('contact')}
+              className="md:hidden flex items-center justify-between w-full font-semibold text-sm uppercase tracking-wider text-slate-400 hover:text-emerald-400 transition-colors"
+              aria-expanded={mobileSection === 'contact'}
+              aria-controls="contact-content"
+            >
+              <span>Contact</span>
+              <ArrowUp className={`w-4 h-4 transition-transform duration-200 ${mobileSection === 'contact' ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {/* Desktop Header */}
+            <h3 className="hidden md:block font-semibold text-sm uppercase tracking-wider text-slate-400">Contact</h3>
+            
+            {/* Contact Content */}
+            <div 
+              id="contact-content"
+              className={`${mobileSection === 'contact' ? 'block' : 'hidden'} md:block`}
+            >
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3 group">
+                  <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <span className="text-slate-300">Karen, Nairobi</span>
+                </div>
+                <div className="flex items-center gap-3 group">
+                  <Mail className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <div className="flex items-center gap-2">
+                    <Link 
+                      href={`mailto:${siteConfig.email}`} 
+                      className="text-slate-300 hover:text-emerald-400 transition-colors"
+                      aria-label={`Send email to ${siteConfig.email}`}
                     >
-                      {copiedPhone === phone ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400 hover:text-white" />}
+                      {siteConfig.email}
+                    </Link>
+                    <button
+                      onClick={() => copyToClipboard(siteConfig.email, 'email')}
+                      className="p-1 rounded hover:bg-slate-700 transition-colors"
+                      title="Copy email"
+                      aria-label="Copy email address"
+                    >
+                      {copiedEmail ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400 hover:text-white" />}
                     </button>
                   </div>
                 </div>
-              ))}
-              <Link 
-                href={siteContent.contact.bookingUrl} 
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg hover:shadow-emerald-500/25 hover:scale-105 hover:-translate-y-0.5 group"
-              >
-                <Calendar className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                Book a consultation
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+                <div className="flex items-center gap-3 group">
+                  <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-300">{siteContent.contact.phones[0]}</span>
+                    <button
+                      onClick={() => copyToClipboard(siteContent.contact.phones[0], 'phone')}
+                      className="p-1 rounded hover:bg-slate-700 transition-colors"
+                      title="Copy phone"
+                      aria-label="Copy phone number"
+                    >
+                      {copiedPhone === siteContent.contact.phones[0] ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400 hover:text-white" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Compact Trust Signals */}
+              <div className="pt-2 space-y-1 text-xs text-slate-400">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" aria-hidden="true" />
+                  <span>Licensed KCPB</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-3 h-3 text-emerald-400" aria-hidden="true" />
+                  <span>HOD Psychology, CUEA</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-3 h-3 text-emerald-400" aria-hidden="true" />
+                  <span>Co-Founder, BeautifulMind</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Trust Signals & Social */}
-          <div className="space-y-6">
-            <h3 className="font-semibold text-lg uppercase tracking-wider text-emerald-400 flex items-center gap-2 hover:text-emerald-300 transition-colors">
-              <ShieldCheck className="w-5 h-5 hover:scale-110 transition-transform" />
-              Trust Signals
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 text-slate-300 group cursor-pointer hover:bg-slate-700/30 p-2 rounded-lg transition-all duration-300">
-                <ShieldCheck className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                <p className="group-hover:text-white transition-colors">Licensed by Kenya Counselors and Psychologists Board</p>
-              </div>
-              <div className="flex items-start gap-3 text-slate-300 group cursor-pointer hover:bg-slate-700/30 p-2 rounded-lg transition-all duration-300">
-                <GraduationCap className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                <p className="group-hover:text-white transition-colors">Head of Department of Psychology, CUEA</p>
-              </div>
-              <div className="flex items-start gap-3 text-slate-300 group cursor-pointer hover:bg-slate-700/30 p-2 rounded-lg transition-all duration-300">
-                <Building2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                <p className="group-hover:text-white transition-colors">Co-founder, BeautifulMind Consultants</p>
-              </div>
+        {/* ROW 2 - Utility Bar */}
+        <div className="border-t border-slate-700/50 mt-8 pt-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+            
+            {/* Left - Copyright */}
+            <div className="text-slate-400">
+              © {new Date().getFullYear()} Dr. Stephen Asatsa. All rights reserved.
             </div>
             
-            <div className="pt-4">
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 mb-4 hover:text-emerald-400 transition-colors">Connect</h4>
-              <div className="flex gap-3">
+            {/* Center - Socials & Stats */}
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+              {/* Social Links */}
+              <div className="flex items-center gap-3">
                 {siteContent.contact.socialLinks.map((item) => {
                   const iconMap: Record<string, any> = {
                     'Facebook': Facebook,
@@ -145,32 +232,51 @@ export function SiteFooter() {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-700/50 text-slate-300 hover:bg-emerald-500 hover:text-white transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/25"
-                      aria-label={item.label}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-700/30 text-slate-300 hover:bg-emerald-600 hover:text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      aria-label={`Visit ${item.label} profile`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-4 h-4" />
                     </Link>
                   );
                 })}
               </div>
+              
+              {/* Research Stats */}
+              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-xs text-slate-400">
+                <div className="flex items-center gap-1">
+                  <FileText className="w-3 h-3" aria-hidden="true" />
+                  <span>{researchStats.publications} Publications</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Award className="w-3 h-3" aria-hidden="true" />
+                  <span>{researchStats.projects} Projects</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="w-3 h-3" aria-hidden="true" />
+                  <span>{researchStats.collaborators} Collaborators</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="border-t border-slate-700/50 py-6 mt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-center text-sm text-slate-400 hover:text-slate-300 transition-colors">
-              © {new Date().getFullYear()} Dr. Stephen Asatsa. All rights reserved.
-            </p>
-            <button
-              onClick={scrollToTop}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-emerald-500 text-slate-300 hover:text-white rounded-lg transition-all duration-300 hover:scale-105 group"
-              title="Scroll to top"
-            >
-              <span className="text-sm">Back to top</span>
-              <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
-            </button>
+            
+            {/* Right - Actions */}
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin-signup"
+                className="px-3 py-1.5 text-xs bg-slate-700/30 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                aria-label="Go to admin login"
+              >
+                Admin Login
+              </Link>
+              <button
+                onClick={scrollToTop}
+                className="flex items-center gap-1 px-3 py-1.5 text-xs bg-slate-700/30 hover:bg-emerald-600/50 text-slate-300 hover:text-white rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                title="Scroll to top"
+                aria-label="Back to top"
+              >
+                <ArrowUp className="w-3 h-3" />
+                <span>Top</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

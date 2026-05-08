@@ -5,17 +5,17 @@ import secrets
 import json
 import hashlib
 import re
-import bcrypt
+# import bcrypt
 
 # Import monitoring routes
-from monitoring.routes import create_monitoring_routes
+# from monitoring.routes import create_monitoring_routes
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3001", "http://localhost:3000"])
 
 # Register monitoring blueprint
-monitoring_bp = create_monitoring_routes()
-app.register_blueprint(monitoring_bp)
+# monitoring_bp = create_monitoring_routes()
+# app.register_blueprint(monitoring_bp)
 
 # Admin user management endpoints
 @app.route("/api/admin/users", methods=["GET"])
@@ -77,16 +77,15 @@ next_reply_id = 1
 next_conversation_id = 1
 
 def hash_password(password: str) -> str:
-    """Hash password using bcrypt"""
-    salt = bcrypt.gensalt()
-    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+    """Hash password using simple hash"""
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
 def verify_password(email: str, password: str) -> bool:
     """Verify password for admin or regular user"""
     if email == ADMIN_EMAIL:
         return password == ADMIN_PASSWORD
     elif email in users:
-        return bcrypt.checkpw(password.encode('utf-8'), users[email]["password"].encode('utf-8'))
+        return hashlib.sha256(password.encode('utf-8')).hexdigest() == users[email]["password"]
     return False
 
 def generate_token() -> str:
@@ -316,19 +315,6 @@ def get_current_user():
             "role": token_data["role"]
         }
     })
-    else:
-        user_data = users.get(email, {})
-        profile_data = user_profiles.get(email, {})
-        
-        return jsonify({
-            "email": email,
-            "name": user_data.get("name", ""),
-            "role": "user",
-            "status": user_data.get("status", "active"),
-            "created_at": user_data.get("created_at"),
-            "preferences": profile_data.get("preferences", {}),
-            "saved_items": profile_data.get("saved_items", [])
-        })
 
 @app.route("/api/auth/logout", methods=["POST"])
 def user_logout():

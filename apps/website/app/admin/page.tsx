@@ -1,504 +1,350 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { SessionProvider } from "next-auth/react";
-import { SessionGuard } from "@/components/admin/session-guard";
-import { AdminLayout } from "@/components/admin/admin-layout";
-import { ContentManagementSection } from "@/components/admin/content-management-section";
-import { MediaLibrarySection } from "@/components/admin/media-library-section";
-import { AnalyticsSection } from "@/components/admin/analytics-section";
-import { ResearchProjectsSection } from "@/components/admin/research-projects-section";
-import { ResearchTasksSection } from "@/components/admin/research-tasks-section";
-import { HomepageContentSection } from "@/components/admin/homepage-content-section";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import {
   LayoutDashboard,
   FileText,
-  Images,
   Users,
   BarChart3,
   Settings,
   Plus,
   Edit3,
-  Trash2,
-  Search,
-  Home,
-  Trophy,
   Brain,
-  Target,
-  ExternalLink,
-  Menu,
-  X,
-  TrendingUp,
-  Eye,
+  Upload,
   Clock,
   CheckCircle,
-  AlertCircle,
-  Activity,
-  Zap,
-  ShieldCheck,
-  Globe,
-  Star,
-  FolderOpen,
-  Upload,
-  Download,
-  RefreshCw,
-  Bell,
-  User,
-  LogOut,
-  Sparkles,
-  GraduationCap,
-  BookOpen,
-  Award,
-  Heart,
-  Mail,
-  MessageSquare
+  Trophy
 } from "lucide-react";
 
-interface ContentItem {
-  id: string;
-  title: string;
-  type: 'page' | 'research' | 'testimonial' | 'service';
-  status: 'published' | 'draft';
-  updatedAt: string;
-  views?: number;
-}
-
-interface SystemStats {
-  totalContent: number;
+interface AdminStats {
+  totalProjects: number;
+  publishedProjects: number;
+  draftProjects: number;
+  totalPublications: number;
+  totalTeamMembers: number;
+  totalAwards: number;
+  totalEvents: number;
   totalMedia: number;
-  publishedPages: number;
-  draftPages: number;
-  totalViews: number;
-  lastUpdate: string;
-  activeUsers: number;
-  bounceRate: number;
-  avgSessionDuration: string;
-}
-
-function AdminDashboardContent() {
-  const [stats, setStats] = useState<SystemStats | null>(null);
-  const [recentContent, setRecentContent] = useState<ContentItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
-
-  // Load dashboard data
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      // Mock data for now - replace with actual API calls
-      const mockStats: SystemStats = {
-        totalContent: 24,
-        totalMedia: 156,
-        publishedPages: 18,
-        draftPages: 6,
-        totalViews: 15420,
-        lastUpdate: new Date().toISOString(),
-        activeUsers: 127,
-        bounceRate: 32.5,
-        avgSessionDuration: "4:32"
-      };
-
-      const mockRecentContent: ContentItem[] = [
-        {
-          id: '1',
-          title: 'Home Page Hero Section',
-          type: 'page',
-          status: 'published',
-          updatedAt: '2024-01-15T10:30:00Z',
-          views: 8920
-        },
-        {
-          id: '2',
-          title: 'Research on Afrocentric Psychology',
-          type: 'research',
-          status: 'published',
-          updatedAt: '2024-01-14T15:45:00Z',
-          views: 3420
-        },
-        {
-          id: '3',
-          title: 'Professional Services Overview',
-          type: 'service',
-          status: 'draft',
-          updatedAt: '2024-01-13T09:20:00Z',
-          views: 2100
-        },
-        {
-          id: '4',
-          title: 'Client Testimonial - John Doe',
-          type: 'testimonial',
-          status: 'published',
-          updatedAt: '2024-01-12T14:15:00Z',
-          views: 1560
-        }
-      ];
-
-      setStats(mockStats);
-      setRecentContent(mockRecentContent);
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    const colors = {
-      page: 'bg-blue-100 text-blue-800',
-      research: 'bg-purple-100 text-purple-800',
-      testimonial: 'bg-yellow-100 text-yellow-800',
-      service: 'bg-red-100 text-red-800'
-    };
-    return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-800';
-  };
-
-  const getStatusColor = (status: string) => {
-    const colors = {
-      published: 'bg-green-100 text-green-800',
-      draft: 'bg-gray-100 text-gray-800'
-    };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const renderSection = () => {
-    switch (activeSection) {
-      case 'dashboard':
-        return (
-          <div className="space-y-4">
-            {/* Personalized Dashboard Header */}
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden">
-              {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-xl" />
-              
-              <div className="relative z-10 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
-                    <Brain className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-bold mb-1">Dr. Stephen Asatsa</h1>
-                    <p className="text-blue-100 text-sm">Professional Admin Dashboard</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Sparkles className="w-4 h-4 text-yellow-300" />
-                      <span className="text-xs text-blue-100">Psychology • Research • Academic Excellence</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm">
-                    <Globe className="w-4 h-4 mr-2" />
-                    View Site
-                  </Button>
-                  <Button size="sm" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Quick Add
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Enhanced Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="group p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-blue-600 mb-1 flex items-center gap-1">
-                      <FileText className="w-3 h-3" />
-                      Publications
-                    </p>
-                    <p className="text-2xl font-bold text-blue-900">{stats?.totalContent}</p>
-                    <p className="text-xs text-blue-600 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
-                      +12% this month
-                    </p>
-                  </div>
-                  <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center ml-3 group-hover:scale-110 transition-transform">
-                    <BookOpen className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="group p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-emerald-600 mb-1 flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      Clients
-                    </p>
-                    <p className="text-2xl font-bold text-emerald-900">{stats?.totalMedia}</p>
-                    <p className="text-xs text-emerald-600 flex items-center gap-1">
-                      <Heart className="w-3 h-3" />
-                      Active sessions
-                    </p>
-                  </div>
-                  <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center ml-3 group-hover:scale-110 transition-transform">
-                    <Users className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="group p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-purple-600 mb-1 flex items-center gap-1">
-                      <GraduationCap className="w-3 h-3" />
-                      Research
-                    </p>
-                    <p className="text-2xl font-bold text-purple-900">{stats?.publishedPages}</p>
-                    <p className="text-xs text-purple-600 flex items-center gap-1">
-                      <Award className="w-3 h-3" />
-                      {stats?.draftPages} ongoing
-                    </p>
-                  </div>
-                  <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center ml-3 group-hover:scale-110 transition-transform">
-                    <GraduationCap className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="group p-4 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-amber-600 mb-1 flex items-center gap-1">
-                      <Eye className="w-3 h-3" />
-                      Impact
-                    </p>
-                    <p className="text-2xl font-bold text-amber-900">{stats?.totalViews ? (stats.totalViews / 1000).toFixed(1) + 'k' : '0k'}</p>
-                    <p className="text-xs text-amber-600 flex items-center gap-1">
-                      <Star className="w-3 h-3" />
-                      {stats?.activeUsers} engaged
-                    </p>
-                  </div>
-                  <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center ml-3 group-hover:scale-110 transition-transform">
-                    <Star className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Enhanced Quick Actions */}
-            <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-xl p-4">
-              <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-blue-500" />
-                Quick Actions
-                <span className="text-xs text-slate-500 font-normal">Manage your professional content</span>
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                <Button 
-                  onClick={() => setActiveSection('projects')}
-                  size="sm"
-                  className="h-12 p-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md hover:shadow-purple-500/25 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <Brain className="w-5 h-5" />
-                  <span className="text-xs">Research</span>
-                </Button>
-                <Button 
-                  onClick={() => setActiveSection('tasks')}
-                  size="sm"
-                  className="h-12 p-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <Target className="w-5 h-5" />
-                  <span className="text-xs">Tasks</span>
-                </Button>
-                <Button 
-                  onClick={() => setActiveSection('homepage')}
-                  size="sm"
-                  className="h-12 p-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-md hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <Home className="w-5 h-5" />
-                  <span className="text-xs">Homepage</span>
-                </Button>
-                <Button 
-                  onClick={() => setActiveSection('content')}
-                  size="sm"
-                  className="h-12 p-3 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white shadow-md hover:shadow-slate-500/25 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <FileText className="w-5 h-5" />
-                  <span className="text-xs">Content</span>
-                </Button>
-                <Button 
-                  onClick={() => setActiveSection('media')}
-                  size="sm"
-                  className="h-12 p-3 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-md hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <Images className="w-5 h-5" />
-                  <span className="text-xs">Media</span>
-                </Button>
-                <Button 
-                  onClick={() => setActiveSection('email-settings')}
-                  size="sm"
-                  className="h-12 p-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md hover:shadow-purple-500/25 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-2"
-                >
-                  <Settings className="w-5 h-5" />
-                  <span className="text-xs">Email</span>
-                </Button>
-              </div>
-            </div>
-
-            {/* Enhanced Recent Content */}
-            <Card className="p-5 bg-gradient-to-br from-white to-slate-50 border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-500" />
-                  Recent Activity
-                  <span className="text-xs text-slate-500 font-normal">Latest updates to your professional content</span>
-                </h2>
-                <Button variant="outline" size="sm" onClick={() => setActiveSection('content')} className="hover:bg-blue-50 hover:border-blue-300">
-                  View All
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {recentContent.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <Badge className={`${getTypeColor(item.type)} px-3 py-1 rounded-full text-xs font-medium`} variant="outline">
-                        {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                      </Badge>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate group-hover:text-blue-700 transition-colors">{item.title}</p>
-                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
-                            {item.views?.toLocaleString()} views
-                          </span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {new Date(item.updatedAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={`${getStatusColor(item.status)} px-2 py-1 rounded-full text-xs font-medium`} variant="outline">
-                        {item.status === 'published' ? '✓ Published' : '○ Draft'}
-                      </Badge>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-blue-50">
-                          <Edit3 className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        );
-      
-      case 'projects':
-        return <ResearchProjectsSection onNavigate={setActiveSection} />;
-      
-      case 'tasks':
-        return <ResearchTasksSection onNavigate={setActiveSection} />;
-      
-      case 'homepage':
-        return <HomepageContentSection onNavigate={setActiveSection} />;
-      
-      case 'content':
-        return <ContentManagementSection onNavigate={setActiveSection} />;
-      
-      case 'media':
-        return <MediaLibrarySection onNavigate={setActiveSection} />;
-      
-      case 'analytics':
-        return <AnalyticsSection onNavigate={setActiveSection} />;
-      
-      case 'messages':
-        return (
-          <div className="space-y-6">
-            <div className="text-center p-12">
-              <Mail className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Messages</h2>
-              <p className="text-slate-600 mb-6">Manage contact form submissions and communications</p>
-              <Button onClick={() => window.location.href = '/admin/messages'}>
-                Open Messages
-              </Button>
-            </div>
-          </div>
-        );
-      
-      case 'email-settings':
-        return (
-          <div className="space-y-6">
-            <div className="text-center p-12">
-              <Settings className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Email Settings</h2>
-              <p className="text-slate-600 mb-6">Configure email providers and server settings</p>
-              <Button onClick={() => window.location.href = '/admin/email-settings'}>
-                Open Email Settings
-              </Button>
-            </div>
-          </div>
-        );
-      
-      case 'settings':
-        return (
-          <div className="space-y-6">
-            <div className="text-center p-12">
-              <Settings className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Settings</h2>
-              <p className="text-slate-600 mb-6">Configuration and settings management coming soon</p>
-              <Button onClick={() => setActiveSection('dashboard')}>
-                Back to Dashboard
-              </Button>
-            </div>
-          </div>
-        );
-      
-      default:
-        return (
-          <div className="space-y-6">
-            <div className="text-center p-12">
-              <AlertCircle className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Section Not Found</h2>
-              <p className="text-slate-600 mb-6">The requested section is not available</p>
-              <Button onClick={() => setActiveSection('dashboard')}>
-                Back to Dashboard
-              </Button>
-            </div>
-          </div>
-        );
-    }
-  };
-
-  return (
-    <AdminLayout>
-      {renderSection()}
-    </AdminLayout>
-  );
 }
 
 export default function AdminPage() {
+  const [stats] = useState<AdminStats>({
+    totalProjects: 12,
+    publishedProjects: 8,
+    draftProjects: 4,
+    totalPublications: 28,
+    totalTeamMembers: 6,
+    totalAwards: 15,
+    totalEvents: 8,
+    totalMedia: 156
+  });
+
   return (
-    <SessionProvider>
-      <SessionGuard>
-        <AdminDashboardContent />
-      </SessionGuard>
-    </SessionProvider>
+    <div className="space-y-8">
+      {/* Header */}
+      <section className="text-center space-y-6">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <LayoutDashboard className="w-8 h-8 text-[#0F766E]" />
+          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+        </div>
+        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          Unified content management for the Research Hub
+        </p>
+      </section>
+
+      {/* Stats Overview */}
+      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <Brain className="w-6 h-6 text-emerald-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">{stats.totalProjects}</h3>
+              <p className="text-muted-foreground">Total Projects</p>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {stats.publishedProjects} published • {stats.draftProjects} drafts
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <FileText className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">{stats.totalPublications}</h3>
+              <p className="text-muted-foreground">Publications</p>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Papers, articles, and research outputs
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Users className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">{stats.totalTeamMembers}</h3>
+              <p className="text-muted-foreground">Team Members</p>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Researchers and collaborators
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+              <Trophy className="w-6 h-6 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">{stats.totalAwards}</h3>
+              <p className="text-muted-foreground">Awards & Events</p>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Recognition and activities
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Quick Actions */}
+      <section className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4">Content Management</h2>
+          <p className="text-muted-foreground">Manage all aspects of your Research Hub</p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <Card className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <div className="space-y-4">
+              <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <Brain className="w-6 h-6 text-emerald-600" />
+              </div>
+              <h3 className="text-xl font-bold">Projects</h3>
+              <p className="text-muted-foreground">Create, edit, and manage research projects</p>
+              <Button className="w-full" asChild>
+                <Link href="/admin/projects">
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Manage Projects
+                </Link>
+              </Button>
+            </div>
+          </Card>
+
+          <Card className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <div className="space-y-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <FileText className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold">Publications</h3>
+              <p className="text-muted-foreground">Manage papers, articles, and research outputs</p>
+              <Button className="w-full" variant="outline" asChild>
+                <Link href="/admin/publications">
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Manage Publications
+                </Link>
+              </Button>
+            </div>
+          </Card>
+
+          <Card className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <div className="space-y-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-bold">Team</h3>
+              <p className="text-muted-foreground">Manage team members and collaborators</p>
+              <Button className="w-full" variant="outline" asChild>
+                <Link href="/admin/team">
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Manage Team
+                </Link>
+              </Button>
+            </div>
+          </Card>
+
+          <Card className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <div className="space-y-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-bold">Awards & Events</h3>
+              <p className="text-muted-foreground">Manage awards, recognition, and events</p>
+              <Button className="w-full" variant="outline" asChild>
+                <Link href="/admin/awards">
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Manage Awards
+                </Link>
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* Media Management */}
+      <section className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4">Media & Files</h2>
+          <p className="text-muted-foreground">Manage images, documents, and other media</p>
+        </div>
+
+        <Card className="p-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="w-16 h-16 bg-teal-100 rounded-lg flex items-center justify-center">
+                <Upload className="w-8 h-8 text-teal-600" />
+              </div>
+              <h3 className="text-2xl font-bold">Media Library</h3>
+              <p className="text-muted-foreground">
+                Upload, organize, and manage all media files for your research hub
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>{stats.totalMedia} files uploaded</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Image optimization enabled</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Automatic backup system</span>
+                </div>
+              </div>
+              <Button className="w-full" asChild>
+                <Link href="/admin/media">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Manage Media
+                </Link>
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Settings className="w-8 h-8 text-orange-600" />
+              </div>
+              <h3 className="text-2xl font-bold">System Settings</h3>
+              <p className="text-muted-foreground">
+                Configure system-wide settings and preferences
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Site configuration</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>User permissions</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Backup settings</span>
+                </div>
+              </div>
+              <Button className="w-full" variant="outline">
+                <Settings className="w-4 h-4 mr-2" />
+                System Settings
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Recent Activity */}
+      <section className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4">Recent Activity</h2>
+          <p className="text-muted-foreground">Latest updates and changes</p>
+        </div>
+
+        <Card className="p-6">
+          <div className="space-y-4">
+            {[
+              {
+                action: "Project Updated",
+                title: "Traditional Luhya Mourning Rituals",
+                time: "2 hours ago",
+                icon: Brain,
+                color: "text-emerald-600 bg-emerald-50"
+              },
+              {
+                action: "Publication Added",
+                title: "Decolonizing Mental Health in African Contexts",
+                time: "1 day ago",
+                icon: FileText,
+                color: "text-blue-600 bg-blue-50"
+              },
+              {
+                action: "Team Member Added",
+                title: "Dr. Jane Smith - Research Collaborator",
+                time: "3 days ago",
+                icon: Users,
+                color: "text-purple-600 bg-purple-50"
+              },
+              {
+                action: "Award Received",
+                title: "Excellence in Cultural Psychology Research",
+                time: "1 week ago",
+                icon: Trophy,
+                color: "text-amber-600 bg-amber-50"
+              }
+            ].map((activity, index) => (
+              <div key={index} className="flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${activity.color}`}>
+                  <activity.icon className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">{activity.action}</div>
+                  <div className="text-sm text-muted-foreground">{activity.title}</div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <Clock className="w-4 h-4 inline mr-1" />
+                  {activity.time}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      {/* Quick Stats */}
+      <section className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-8 text-white">
+        <div className="text-center space-y-6">
+          <BarChart3 className="w-16 h-16 mx-auto mb-4" />
+          <h2 className="text-3xl font-bold">System Overview</h2>
+          <div className="grid gap-6 md:grid-cols-4">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-400">{stats.totalProjects}</div>
+              <div className="text-white/80">Projects</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-400">{stats.totalPublications}</div>
+              <div className="text-white/80">Publications</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-purple-400">{stats.totalTeamMembers}</div>
+              <div className="text-white/80">Team Members</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-amber-400">{stats.totalMedia}</div>
+              <div className="text-white/80">Media Files</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
