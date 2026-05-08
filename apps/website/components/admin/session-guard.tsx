@@ -2,7 +2,7 @@
 
 import { useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "./session-provider";
+import { useSession } from "next-auth/react";
 
 /**
  * Session Guard Component for Admin Route Protection
@@ -26,18 +26,18 @@ interface SessionGuardProps {
 const FLASK_SESSION_URL = process.env.NEXT_PUBLIC_FLASK_SESSION_URL || "http://localhost:5001";
 
 export function SessionGuard({ children, fallback }: SessionGuardProps) {
-  const { isAuthenticated, loading } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      // Redirect to Next.js admin signup page if not authenticated
-      router.push('/admin-signup');
+    if (status === "unauthenticated") {
+      // Redirect to NextAuth signin page if not authenticated
+      router.push('/signin');
     }
-  }, [isAuthenticated, loading, router]);
+  }, [status, router]);
 
   // Show loading spinner while checking authentication
-  if (loading) {
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -46,7 +46,7 @@ export function SessionGuard({ children, fallback }: SessionGuardProps) {
   }
 
   // Show fallback UI if not authenticated
-  if (!isAuthenticated) {
+  if (status === "unauthenticated") {
     return fallback || (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -54,7 +54,7 @@ export function SessionGuard({ children, fallback }: SessionGuardProps) {
           <p className="text-gray-600 mb-4">Please log in to access this page.</p>
           <button
             onClick={() => {
-              router.push('/admin-signup');
+              router.push('/signin');
             }}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
@@ -65,6 +65,26 @@ export function SessionGuard({ children, fallback }: SessionGuardProps) {
     );
   }
 
-  // Render protected content if authenticated
+  // Check if user has admin role
+  if (session && session.user?.role !== 'ADMIN') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You need admin privileges to access this page.</p>
+          <button
+            onClick={() => {
+              router.push('/dashboard');
+            }}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Render protected content if authenticated and authorized
   return <>{children}</>;
 }

@@ -2,7 +2,6 @@ import type { DefaultSession, SessionStrategy } from "next-auth";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-
 import { db, hasDatabaseUrl } from "@/lib/db";
 
 declare module "next-auth" {

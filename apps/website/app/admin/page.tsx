@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SessionProvider } from "@/components/admin/session-provider";
+import { SessionProvider } from "next-auth/react";
 import { SessionGuard } from "@/components/admin/session-guard";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { ContentManagementSection } from "@/components/admin/content-management-section";
