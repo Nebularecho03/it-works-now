@@ -1,0 +1,20 @@
+[Unit]
+Description=Research Hub Dashboard - Next.js application for Dr. Stephen Asatsa
+Documentation=https://github.com/Nebularecho03/it-works-now
+After=network.target
+
+[Service]
+Type=simple
+User={{SERVICE_USER}}
+WorkingDirectory={{INSTALL_DIR}}
+Environment=NODE_ENV=production
+Environment=PORT={{FRONTEND_PORT}}
+ExecStart=/usr/bin/npm start
+ExecReload=/bin/kill -USR1 $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

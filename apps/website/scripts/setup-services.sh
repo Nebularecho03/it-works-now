@@ -122,6 +122,17 @@ setup_services() {
     warn "Frontend service template not found"
   fi
   
+  # Generate dashboard service (new)
+  if [ -f "$template_dir/stephenasatsa-frontend.service.template" ]; then
+    generate_service_from_template \
+      "$template_dir/stephenasatsa-frontend.service.template" \
+      "/etc/systemd/system/stephenasatsa-dashboard.service" \
+      "$install_dir" \
+      "$service_user"
+  else
+    warn "Dashboard service template not found"
+  fi
+  
   # Generate backend service
   if [ -f "$template_dir/stephenasatsa-backend.service.template" ]; then
     generate_service_from_template \
